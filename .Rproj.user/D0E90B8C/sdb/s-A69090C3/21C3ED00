@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\n\ntabsetPanel(type = \"tabs\",\n            tabPanel(\n              title = \"Time series\",\n              sidebarLayout(\n                sidebarPanel(\n                  sliderInput(\"rangeFby\", label=h4(\"Years\"), min(as.numeric(fltStk$year)), max(as.numeric(fltStk$year)), value=range(as.numeric(fltStk$year)),step = 1),\n                 selectizeInput(\"stockFby\", label=h4(\"Stock\"), unique(as.factor(fltStk$stock)), selected=unique(fltStk$stock),multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n               #   uiOutput(\"stockFby\"),\n                  selectizeInput(\"fleetFby\", label=h4(\"Fleet\"), levels(as.factor(fltStk$fleet)), selected=unique(fltStk$fleet)[1],multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"indicatorFby\", label=h4(\"Indicator\"), levels(as.factor(fltStk$indicator)), selected=\"landings\", multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"scenarioFby\", label=h4(\"Scenarios\"), levels(as.factor(fltStk$scenario)), selected=unique(fltStk$scenario)[1], multiple=F, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n    \t\t\t  hr(),\n                  checkboxInput(\"fitCIFby\", h5(\"Confident intervals\"), FALSE),\n                  checkboxInput(\"fitFby\", h5(\"Free scales\"), FALSE)\n\n                ),\n                mainPanel(\n                  plotOutput(\"plotFby\")\n                  # bsTooltip(\"plotS\", \"Click to download\"),\n                  # bsModal(\"modal1\", \"Download plot\", \"plotS\",\n                  #     radioButtons(\"TypeF\", \"Format\", c(\"pdf\", \"png\", \"tiff\"), selected=\"pdf\"),\n                  #     downloadButton(\"downloadplotS\", \"OK\"))\n                )\n              ))\n)# end of the tabsetPanel",
+    "created" : 1542099891865.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3118816042",
+    "id" : "21C3ED00",
+    "lastKnownWriteTime" : 1542112499,
+    "last_content_update" : 1542112499447,
+    "path" : "~/FLR/FLBEIA/shiny/FLBEIAShiny/inst/flbeiaApp/ui_files/PAGE_simul_fleetsby.r",
+    "project_path" : "inst/flbeiaApp/ui_files/PAGE_simul_fleetsby.r",
+    "properties" : {
+    },
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

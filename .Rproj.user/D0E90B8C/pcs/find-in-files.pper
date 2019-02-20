@@ -1,0 +1,10 @@
+{
+    "dialog-state" : {
+        "caseSensitive" : false,
+        "filePatterns" : [
+        ],
+        "path" : "~/FLR/FLBEIA/shiny/FLBEIAShiny",
+        "query" : "stockK",
+        "regex" : false
+    }
+}

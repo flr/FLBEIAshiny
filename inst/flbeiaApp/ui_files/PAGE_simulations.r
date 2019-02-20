@@ -1,0 +1,7 @@
+tabPanel("Stocks")
+tabPanel("Fleets")
+tabPanel("Fleets by stock")
+tabPanel("Metiers")
+tabPanel("Metiers by stock")
+tabPanel("Summary")
+tabPanel("Advice")

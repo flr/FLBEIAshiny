@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\ntabsetPanel(type = \"tabs\",\n            tabPanel( \n              title = \"Time series\",\n              sidebarLayout(\n                sidebarPanel(\n                  sliderInput(\"rangeA\", label=h4(\"Years\"), min(as.numeric(adv$year)), max(as.numeric(adv$year)), value=range(as.numeric(adv$year)),step = 1),\n                  selectizeInput(\"stockA\", label=h4(\"Stock\"), levels(as.factor(adv$stock)), selected=unique(adv$stock),multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"indicatorA\", label=h4(\"Indicators\"), levels(as.factor(adv$indicator)),selected=\"tac\",multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"scenarioA\", label=h4(\"Scenarios\"), levels(as.factor(adv$scenario)), selected=unique(adv$scenario)[1], multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  hr(),\n                  checkboxInput(\"fitCIA\", h5(\"Confident intervals\"), FALSE),\n                  checkboxInput(\"fitA\", h5(\"Free scales\"), FALSE)\n                  \n                ),\n                mainPanel(\n                  plotOutput(\"plotA\")\n                  # bsTooltip(\"plotS\", \"Click to download\"),\n                  # bsModal(\"modal1\", \"Download plot\", \"plotS\",                  selectizeInput(\"scenarioA\", label=h4(\"Scenarios\"), levels(as.factor(adv$scenario)), selected=\"1\", multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n\n                  #     radioButtons(\"TypeF\", \"Format\", c(\"pdf\", \"png\", \"tiff\"), selected=\"pdf\"),\n                  #     downloadButton(\"downloadplotS\", \"OK\"))\n                )\n              ))\n)# end of the tabsetPanel",
+    "created" : 1542099969160.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4236249655",
+    "id" : "68617169",
+    "lastKnownWriteTime" : 1542100346,
+    "last_content_update" : 1542100346042,
+    "path" : "~/FLR/FLBEIA/shiny/FLBEIAShiny/inst/flbeiaApp/ui_files/PAGE_simul_advice.r",
+    "project_path" : "inst/flbeiaApp/ui_files/PAGE_simul_advice.r",
+    "properties" : {
+    },
+    "relative_order" : 12,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

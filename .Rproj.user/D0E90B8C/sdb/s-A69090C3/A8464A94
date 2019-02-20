@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "##------------------------------------------------------------------------##\n#  Dorleta Garcia\n#  2018/06/28\n#  \n#  Run the MIXFISH scenarios.\n##------------------------------------------------------------------------##\n\nsetwd(\"~/OneDrive - AZTI/BoB/01_MultiStockHCR\")\n\n\nrm(list = ls())\n\nlibrary(FLBEIA)\nlibrary(FLBEIAShiny)\n\n\nload('./output/res_sums.RData')\nload('./output/res_sums_cluster.RData')\n\n\nscnms <- unique(bioQ$scenario)\nstknms <- c('ANK', unique(mtStkQ$stock))\nRefPts <- expand.grid(indicator=c(\"Bmsy\", \"Fmsy\", \"Bpa\", \"Blim\", \"Fpa\", \"Flim\"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]\nrp <- c(rep(NA, length(scnms)*6), rep(c(45000, 0.28, 45000, 32000, 0.62, 0.87), length(scnms)),\n        rep(c(41800, 0.191, 41800, 37100, 0.45, 0.53), length(scnms)), \n        rep(c(22278, 0.28, 222278, 16032, 0.36, 0.53), length(scnms)))     \nRefPts[,4] <- rp\n                        \n\n\nflbeiaApp(RefPts=RefPts,bio = bioQ, flt = fltQ, adv = advQ, \n          fltStk = fltStkQ, mt = mtQ, mtStk = mtStkQ, \n          years = as.character(2010:2024), \n          calculate_npv = FALSE, npv =  NULL, npv.y0 = NULL, npv.yrs = NULL) \n\n\nload('./output/results_oneFleet.RData')\nload('./output/results_sums_oneFleet.RData')\n\n\nflbeiaApp(RefPts=RefPts,bio = bioQ, flt = fltQ, adv = advQ, \n          fltStk = fltStkQ, mt = mtQ, mtStk = mtStkQ, \n          years = as.character(2010:2024), \n          use_npv = FALSE, npv.y0 = NULL, npv.yrs = NULL) \n",
+    "created" : 1542118788105.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1796499949",
+    "id" : "A8464A94",
+    "lastKnownWriteTime" : 1542120091,
+    "last_content_update" : 1542120091477,
+    "path" : "~/OneDrive - AZTI/BoB/01_MultiStockHCR/05_BoB_Analysis.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 13,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\n data<-reshape(as.data.frame(bio), direction = \"wide\",\n               timevar = \"indicator\", v.names = c(\"q05\",\"q50\",\"q95\"),\n               idvar = c(\"year\",\"stock\",\"scenario\"))\n\n data<-data[, c(\"stock\", \"year\",\"scenario\", \"q50.f\", \"q50.ssb\")]\n\n\n data$Bmsy<-NA\n data$Fmsy<-NA\n \n bmsy  <- fmsy <-  numeric(length(unique(reference_points$stock)))\n names(bmsy)  <- names(bmsy) <- unique(reference_points$stock)\n \n for(st in unique(reference_points$stock)){\n   bmsy[st] <- reference_points$value[reference_points$stock== st & reference_points$indicator==\"Bmsy\"] \n   data$Bmsy[data$stock==st] <- bmsy[st] \n   \n   fmsy[st] <- reference_points$value[reference_points$stock== st & reference_points$indicator==\"Fmsy\"] \n   data$Fmsy[data$stock==st] <- fmsy[st] \n  }\n\n names(data)<- c(\"unit\",\"year\",\"scenario\", \"q50.f\",\"q50.ssb\",\"Bmsy\",\"Fmsy\")\n\n data$stock<-data$q50.ssb/data$Bmsy\n data$harvest<-data$q50.f/data$Fmsy\n\n # save(data, file=\"data/data.RData\")\n #  load(\"data/data.RData\")\n\n \n head(data)\n# Begin shinyUI\n\nui <- tagList(\n  shinyjs::useShinyjs(),\n  includeCSS(\"css/solar.css\"),\n\n  navbarPage(\n    title=\"FLBEIA SHINY\",\n    fluid=FALSE, # TRUE Layout izateko fluid baina FALSE ikonoa jarri ahal izateko\n    inverse=TRUE,\n\n    #### 1.HOME ####\n    tabPanel(\n      title = \"Home\",\n      value = \"home\",\n      source(\"ui_files/PAGE_home.r\")$value # eliminates printed \"TRUE\" word\n    ),\n \n    #### 2.ABOUT ####\n    tabPanel(\n      title = \"About\",\n      value = \"about\",\n      source(\"ui_files/PAGE_about.r\",local =TRUE)$value\n    ),\n\n    #### 4.SIMULATIONS ####\n    navbarMenu(\"Simulations\",\n               tabPanel(\"Stocks\", \n                        source(\"ui_files/PAGE_simul_stocks.r\",local =TRUE)$value),\n               tabPanel(\"Fleets\",\n                        source(\"ui_files/PAGE_simul_fleets.r\",local =TRUE)$value),\n               tabPanel(\"Fleets by stock\",\n                        source(\"ui_files/PAGE_simul_fleetsby.r\",local =TRUE)$value),\n               tabPanel(\"Metiers\",\n                        source(\"ui_files/PAGE_simul_metiers.r\",local =TRUE)$value),\n               tabPanel(\"Metiers by stock\",\n                        source(\"ui_files/PAGE_simul_metiersby.r\",local =TRUE)$value),\n               tabPanel(\"Summary\",\n                        source(\"ui_files/PAGE_simul_summary.r\",local =TRUE)$value),\n               tabPanel(\"Advice\",\n                        source(\"ui_files/PAGE_simul_advice.r\",local =TRUE)$value)\n    ),\n    \n    # #FLBEIA logo (with link) in the right of the navigation bar. Note that it should be: fluid=FALSE\n    # tags$script(HTML(\"var header=$('.navbar > .container');\n    #                   header.append('<div style=\\\"float:right\\\"><a href=\\\"http://flbeia.azti.es\\\"><img src=\\\"FLBEIA.png\\\" height=\\\"50\\\"></a></div>');\n    #                console.log(header)\"))\n\n    tags$style('.navbar-default .navbar-brand {\n                color: #000000;\n                #font-family: Arial;\n                font-size: 30px;\n                }'\n                \n    )\n    ) # end navbarPage\n) # end tagList\n",
+    "created" : 1542091263576.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1056800267",
+    "id" : "C9E7FA18",
+    "lastKnownWriteTime" : 1542099029,
+    "last_content_update" : 1542099029133,
+    "path" : "~/FLR/FLBEIA/shiny/FLBEIAShiny/inst/flbeiaApp/ui.r",
+    "project_path" : "inst/flbeiaApp/ui.r",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\ntabsetPanel(type = \"tabs\",\n            tabPanel(\n              title = \"Time series\",\n              sidebarLayout(\n                sidebarPanel(\n                  sliderInput(\"rangeMby\", label=h4(\"Years\"), min(as.numeric(mtStk$year)), max(as.numeric(mtStk$year)), value=range(as.numeric(mtStk$year)),step = 1),\n                 # uiOutput(\"metierMby\"),\n                 selectizeInput(\"fleetMby\", label=h4(\"Fleet\"), levels(as.factor(mtStk$fleet)), selected=unique(mtStk$fleet)[1],multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"metierMby\", label=h4(\"Metier\"), levels(as.factor(mtStk$metier)), selected=unique(mtStk$metier),multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                 selectizeInput(\"stockMby\", label=h4(\"Stock\"), levels(as.factor(mtStk$stock)), selected=unique(mtStk$stock),multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"indicatorMby\", label=h4(\"Indicator\"), levels(as.factor(mtStk$indicator)), selected=\"catch\", multiple=T, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                  selectizeInput(\"scenarioMby\", label=h4(\"Scenario\"), levels(as.factor(mtStk$scenario)), selected=unique(mtStk$scenario)[1], multiple=F, options=list(plugins=list(\"remove_button\", \"drag_drop\"))),\n                 hr(),\n                  #checkboxInput(\"fitCIMby\", h5(\"Confident interval\"), FALSE),\n                  checkboxInput(\"fitMby\", h5(\"Free scales\"), FALSE)\n                ),\n                mainPanel(\n                  plotOutput(\"plotMby\")\n                  # bsTooltip(\"plotS\", \"Click to download\"),\n                  # bsModal(\"modal1\", \"Download plot\", \"plotS\",\n                  #     radioButtons(\"TypeF\", \"Format\", c(\"pdf\", \"png\", \"tiff\"), selected=\"pdf\"),\n                  #     downloadButton(\"downloadplotS\", \"OK\"))\n                )\n              ))\n)# end of the tabsetPanel",
+    "created" : 1542099846542.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2453417481",
+    "id" : "49936A2A",
+    "lastKnownWriteTime" : 1542099866,
+    "last_content_update" : 1542099866144,
+    "path" : "~/FLR/FLBEIA/shiny/FLBEIAShiny/inst/flbeiaApp/ui_files/PAGE_simul_metiersby.r",
+    "project_path" : "inst/flbeiaApp/ui_files/PAGE_simul_metiersby.r",
+    "properties" : {
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

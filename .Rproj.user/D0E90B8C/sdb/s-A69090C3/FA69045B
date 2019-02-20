@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "setUnitsNA <- function(obj){\n  if(class(obj) == 'FLBiol'){\n    for(sl in c('n', 'wt', 'spwn', 'm')){ \n      units(slot(obj, sl))[] <- NA\n      \n    }\n    for(sl in c('fec', 'mat')){\n      units(slot(obj, sl))[[sl]] <- NA\n    }\n  }\n  \n  if(class(obj) == 'FLFleetExt'){\n    for(sl in c(\"effort\", \"fcost\", \"capacity\", \"crewshare\")){ \n      units(slot(obj, sl))[] <- NA\n    }\n    for(mt in names(obj@metiers)){\n      for(sl in c('effshare', 'vcost')){\n        units(slot(obj@metiers[[mt]], sl))[] <- NA\n      }\n      for(ct in names(obj@metiers[[mt]]@catches)){\n        for(sl in c(\"landings\", \"landings.n\", \"landings.wt\", \"landings.sel\", \n                    \"discards\", \"discards.n\", \"discards.wt\", \"discards.sel\", \n                    \"catch.q\",  \"price\")){\n          units(slot(obj@metiers[[mt]]@catches[[ct]], sl))[] <- NA\n      }\n    }\n  }}\n  \n  return(obj)\n}",
+    "created" : 1542091028023.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3728042107",
+    "id" : "FA69045B",
+    "lastKnownWriteTime" : 1542064623,
+    "last_content_update" : 1542064623,
+    "path" : "~/escritorio/unitsNA.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

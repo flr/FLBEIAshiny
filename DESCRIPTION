@@ -1,0 +1,15 @@
+Package: FLBEIAshiny
+Title: Shiny application to explore the output of FLBEIA simulation model
+Version: 1.0
+Date: 2018-11-13
+Authors@R: c(person("Dorleta", "Garcia", email = "dgarcia@azti.es", role = c("cre")),
+             person("Maria", "Korta", email = "mkorta@azti.es", role = c("aut")))
+Description: Shiny application to explore the output of FLBEIA simulation model
+Depends:
+    methods,
+    ggplot2,
+    schoolmath,shinyBS,RColorBrewer, reshape, R.rsp, kobe, shiny
+Additional_repositories: http://flr-project.org/R
+License: GPL-2
+VignetteBuilder: R.rsp
+RoxygenNote: 6.1.1

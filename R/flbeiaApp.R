@@ -101,7 +101,7 @@
     
 
 
-flbeiaShiny <- function (flbeiaObjs = NULL, RefPts = NULL, bio = NULL, flt = NULL, 
+flbeiaApp <- function (flbeiaObjs = NULL, RefPts = NULL, bio = NULL, flt = NULL, 
                      fltStk = NULL, mt = NULL, mtStk = NULL, adv = NULL, risk = NULL, 
                    years = dimnames(flbeiaObjs[[1]][[1]][[1]]@n)[[2]], calculate_npv = NULL, 
                    npv = NULL, npv.y0 = NULL, npv.yrs = NULL) {

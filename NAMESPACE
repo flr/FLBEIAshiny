@@ -1,4 +1,4 @@
-export(flbeiaShiny)
+export(flbeiaApp)
 import(shiny)
 import(ggplot2)
 import(reshape)

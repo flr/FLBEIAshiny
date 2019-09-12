@@ -169,7 +169,7 @@ flbeiaApp <- function (flbeiaObjs = NULL, RefPts = NULL, bio = NULL, flt = NULL,
   t0 <- subset(bio, indicator == 'f')
   t1 <- subset(bio, indicator == 'ssb')
 
-  data <- cbind(t0[,c(1,3:4,6)], t1[,6])
+  data <- cbind(t0[,c("stock", "year", "scenario", "q50")], t1[,'q50'])
   names(data) <- c('unit', 'year', 'scenario', 'q50.f', 'q50.ssb')
   data <- cbind(data, Bmsy = NA,Fmsy = NA)
 

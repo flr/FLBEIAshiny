@@ -35,7 +35,7 @@
 
 ui <- tagList(
   shinyjs::useShinyjs(),
-  includeCSS("css/solar.css"),
+  includeCSS("css/lumen.css"),
 
   navbarPage(
     title="FLBEIA SHINY",

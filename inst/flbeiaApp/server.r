@@ -48,7 +48,8 @@ server <- function(input, output, session){
     
     output$plotS<-renderPlot({
       print(plotStock())
-    }, height = PlotHeight_stk)
+    } #, height = PlotHeight_stk
+    )
     
     
     # Code to download the plot

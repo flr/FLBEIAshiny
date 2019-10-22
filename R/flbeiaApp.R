@@ -110,6 +110,7 @@ flbeiaApp <- function (flbeiaObjs = NULL, RefPts = NULL, bio = NULL, flt = NULL,
   require(ggplot2)
   require(schoolmath)
 
+  
  npv2 <- npv
 
   if(missing(RefPts)){

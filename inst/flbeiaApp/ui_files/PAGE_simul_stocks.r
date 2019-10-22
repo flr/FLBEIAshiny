@@ -28,7 +28,7 @@ tabsetPanel(type = "tabs",
                   textInput('filenmS', h5("File Name"), value = "", width = NULL, placeholder = NULL),
                   numericInput('fileWS', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 75),
                   numericInput('fileHS', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 75),
-                  numericInput('fileScS', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 75),
+                  numericInput('fileScS', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
                   selectInput(inputId = "fileTypeS", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
                   downloadButton(outputId = "down", label = "Download the plot")
                   ))),

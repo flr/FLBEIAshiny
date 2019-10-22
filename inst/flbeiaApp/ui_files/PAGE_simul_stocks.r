@@ -26,8 +26,8 @@ tabsetPanel(type = "tabs",
                   bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmS', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                  numericInput('fileWS', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 75),
-                  numericInput('fileHS', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 75),
+                  numericInput('fileWS', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+                  numericInput('fileHS', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
                   numericInput('fileScS', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
                   selectInput(inputId = "fileTypeS", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
                   downloadButton(outputId = "down", label = "Download the plot")
@@ -43,12 +43,16 @@ tabsetPanel(type = "tabs",
             #------------------------------------
             tabPanel(
               title = "Kobe plot",
-              sidebarLayout(
-                sidebarPanel(
+              fluidRow(
+                br(),
+                column(3,
+                       bsCollapse(id = "collapse", #open = "Stock and Indicator",
+                       bsCollapsePanel("Stock and Indicator",
                   sliderInput("rangeK", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
                   selectizeInput("stockK", label=h4("Stock"),        unique(reference_points$stock),  selected=unique(reference_points$stock),       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(bio$scenario)), selected=unique(reference_points$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                 
+                       ),
+                  bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmSK', h5("File Name"), value = "", width = NULL, placeholder = NULL),
                   numericInput('fileWSK', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 75),
@@ -56,13 +60,12 @@ tabsetPanel(type = "tabs",
                   numericInput('fileScSK', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 75),
                   selectInput(inputId = "fileTypeSK", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
                   downloadButton(outputId = "downSK", label = "Download the plot"),
-                  hr()
-                ),
-                mainPanel(
-                  plotOutput("plotK")
-                )
+                  ))),
+                
+              column(9,
+                  plotOutput("plotK", height = "600px", width = "900px")
               
-            )),
+              ))),
             
             
             #------------------------------------

@@ -215,9 +215,10 @@ server <- function(input, output, session){
   #---------------------------------------------------
   # PAGE_simulation FLEET_TIMES SERIES
   #---------------------------------------------------
-  PlotHeight_flt <- reactive({
-    nids <- length(input$fleetF)
-    return(300*nids)})
+  # PlotHeight_flt <- reactive({
+  #   nids <- length(input$fleetF)
+  #   return(300*nids)})
+  # 
   
   observe ({
     dataF<-reactive({
@@ -231,17 +232,19 @@ server <- function(input, output, session){
     
     plotFleet <- function(){
       
-      p <- ggplotF <-ggplot(dataF(), aes(x=as.numeric(year), y=q50, color=scenario))+
+      p <- ggplotF <-ggplot(dataF(), aes(x=year, y=q50, color=scenario))+
                   geom_line(aes(color=scenario),lwd=1)+
                   ylab("")+
                   xlab("Year")+
-                  theme(strip.text=element_text(size=16),
-                    legend.title=element_text(size=16),
-                    axis.title=element_text(size=16))
+        theme_bw()+
+        theme( strip.text=element_text(size=16),
+               title=element_text(size=16),
+               text=element_text(size=16))+
+        scale_x_continuous(limits = c(input$rangeF[1], input$rangeF[2]))
       
       # With Conf Int.
       if (input$fitCIF == TRUE){
-        p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3) 
+        p <- p + geom_ribbon(aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3) 
       }
       
       if(input$fitF==TRUE){
@@ -257,7 +260,8 @@ server <- function(input, output, session){
    
     output$plotF <-renderPlot({
       print(plotFleet())
-    }, height = PlotHeight_flt)
+    }#, height = PlotHeight_flt
+    )
     
     # Code to download the plot
     getFW <- function(){
@@ -293,7 +297,7 @@ server <- function(input, output, session){
     # print('caracola02')   
     dataN<-reactive({
         req(input$fleetN)
-        npv2[npv2$fleet%in%input$fleetN & npv2$scenario%in%input$scenarioN,]})
+        npv[npv$fleet%in%input$fleetN & npv$scenario%in%input$scenarioN,]})
 
     plotNPV <- function(){
       ggplot(dataN(), aes(x=fleet, y=q50, group=scenario))+
@@ -350,13 +354,14 @@ server <- function(input, output, session){
 
       
     plotFLRisk <- function(){
-        ggplot(dataE(), aes(x=as.numeric(year), y=value, color=scenario))+
+        ggplot(dataE(), aes(x=year, y=value, color=scenario))+
         geom_line(aes(color=scenario),lwd=1)+
         facet_wrap(~unit, scales="free")+
         ylab("")+ xlab("Year")+
-        theme(strip.text=element_text(size=16),
-              legend.title=element_text(size=14),
-              axis.title= element_text(size =14))
+        theme_bw()+
+        theme( strip.text=element_text(size=16),
+               title=element_text(size=16),
+               text=element_text(size=16))
       }
       
     output$plotFR <-renderPlot({
@@ -393,12 +398,12 @@ server <- function(input, output, session){
 # PAGE_simulation METIER_Times series 
 #-----------------------------------------------------------------------------------------------------------------------  
   
-  PlotHeight_mt <- reactive({
-    
-    nids <- length(input$metierM)
-    
-    return(300*nids)})
-  
+  # PlotHeight_mt <- reactive({
+  #   
+  #   nids <- length(input$metierM)
+  #   
+  #   return(300*nids)})
+  # 
   
   observe ({
     
@@ -420,9 +425,11 @@ server <- function(input, output, session){
                   geom_line(aes(color=scenario),lwd=1)+
                   ylab("")+
                   xlab("Year")+
-                  theme(strip.text=element_text(size=16),
-                  legend.title=element_text(size=14),
-                  axis.title=element_text(size=14))
+          theme_bw()+
+          theme( strip.text=element_text(size=16),
+                 title=element_text(size=16),
+                 text=element_text(size=16))+
+          scale_x_continuous(limits = c(input$rangeM[1], input$rangeM[2]))
       
         if(input$fitCIM == TRUE)
             p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -437,7 +444,9 @@ server <- function(input, output, session){
     
     
     output$plotMM<-renderPlot({
-      print(plotMetier())}, height = PlotHeight_mt)
+      print(plotMetier())}
+      #, height = PlotHeight_mt
+      )
     
     # Code to download the plot
     getMW <- function(){
@@ -471,11 +480,11 @@ server <- function(input, output, session){
 #-----------------------------------------------------------------------------------------------------------------------  
   
   # print('caracola06')      
-  PlotHeight_Fby <- reactive({
-    
-    nids <- length(input$fleetFby)*length(input$stockFby)
-    
-    return(300*nids)})
+  # PlotHeight_Fby <- reactive({
+  #   
+  #   nids <- length(input$fleetFby)*length(input$stockFby)
+  #   
+  #   return(300*nids)})
   
   observe ({
     
@@ -503,9 +512,10 @@ server <- function(input, output, session){
                 geom_line(aes(color=scenario),lwd=1)+
                 ylab("")+
                 xlab("Year")+
-                theme(strip.text=element_text(size=16),
-                legend.title=element_text(size=14),
-                axis.title=element_text(size=14))
+          theme_bw()+
+          theme( strip.text=element_text(size=16),
+                 title=element_text(size=16),
+                 text=element_text(size=16))
         
         if(input$fitCIFby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -522,7 +532,8 @@ server <- function(input, output, session){
       
       output$plotFby <-renderPlot({
         print(plotFleetby())
-      }, height = PlotHeight_Fby)
+      }#, height = PlotHeight_Fby
+      )
       
       # Code to download the plot
       getFbyW <- function(){
@@ -553,12 +564,12 @@ server <- function(input, output, session){
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_simulation METIER BY_Times series 
 #-----------------------------------------------------------------------------------------------------------------------  
-  
-  PlotHeight_Mby <- reactive({
-    
-    nids <- length(input$fleetMby)*length(input$stockMby)
-    
-    return(300*nids)})
+  # 
+  # PlotHeight_Mby <- reactive({
+  #   
+  #   nids <- length(input$fleetMby)*length(input$stockMby)
+  #   
+  #   return(300*nids)})
   
   
   observe ({
@@ -591,9 +602,10 @@ server <- function(input, output, session){
                 geom_line(aes(color=scenario),lwd=1)+
                 ylab("")+
                 xlab("Year")+
-                theme(strip.text=element_text(size=16),
-                legend.title=element_text(size=14),
-                axis.title=element_text(size=14))
+          theme_bw()+
+          theme( strip.text=element_text(size=16),
+                 title=element_text(size=16),
+                 text=element_text(size=16))
 
         if (input$fitCIMby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -609,7 +621,8 @@ server <- function(input, output, session){
     
     output$plotMby <- renderPlot({
              print(plotMetierby())
-      }, height = PlotHeight_Mby)
+      }#, height = PlotHeight_Mby
+      )
          
     
     # Code to download the plot
@@ -661,9 +674,10 @@ server <- function(input, output, session){
         p <- ggplotA <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
               geom_line(lwd=1)+
               ylab("")+ xlab("Year")+
-              theme(strip.text=element_text(size=16),
-                    legend.title=element_text(size=14),
-                    axis.title=element_text(size=14))
+          theme_bw()+
+          theme( strip.text=element_text(size=16),
+                 title=element_text(size=16),
+                 text=element_text(size=16))
         
         if (input$fitCIA == TRUE){
           p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -680,7 +694,8 @@ server <- function(input, output, session){
       
       output$plotA <- renderPlot({
         print(plotAdvice())
-      }, height = PlotHeight_adv)
+      }#, height = PlotHeight_adv
+      )
       
       
       # Code to download the plot
@@ -715,12 +730,12 @@ server <- function(input, output, session){
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_simulation Summary_polar plots 
 #-----------------------------------------------------------------------------------------------------------------------  
-  
-    PlotHeight_sum <- reactive({
-      
-      nids <- length(input$scenarioP)
-      
-      return(300*nids)})
+    # 
+    # PlotHeight_sum <- reactive({
+    #   
+    #   nids <- length(input$scenarioP)
+    #   
+    #   return(300*nids)})
     
     # print('caracola09')   
     #reactive: ssb and f
@@ -742,13 +757,13 @@ server <- function(input, output, session){
 
       # cuadrante superior: 2 biological indicators by stock:
       st <- merge(st1(), st3, by=c("indicator","stock", "scenario"))
-      st$ratio <- st$q50.x/st$q50.y
+      st$ratio <- st$q50.y/st$q50.x
       st.dat <- st
       st.dat$stock <- paste("stock.",st.dat$stock,sep="")
       
       # cuadrante inferior: 2 economical indicators
       fl <- merge(fl1(), fl3, by=c("indicator","fleet", "scenario"), all.x=TRUE)
-      fl$ratio <- fl$q50.x/fl$q50.y
+      fl$ratio <- fl$q50.y/fl$q50.x
       fl.dat <- fl
       fl.dat$fleet <- paste("fleet.",fl.dat$fleet,sep="")
       
@@ -815,7 +830,7 @@ server <- function(input, output, session){
         annotate(geom="text",x=w*5/2, y=ymax, label=c("Capacity"), size=6)+
         annotate(geom="text",x=w*7/2, y=ymax, label=c("Gross-Surplus"), size=6)+
         labs(fill="")+
-        geom_text(aes(x=1, y = min(dat.flpolar$ratio),label = sum(npv2$q50)))
+        geom_text(aes(x=1, y = min(dat.flpolar$ratio),label = sum(npv$q50)))
       
       return(p)
       
@@ -823,7 +838,8 @@ server <- function(input, output, session){
     
     output$plotP <- renderPlot({
         print(plotPolar())
-    }, height = PlotHeight_sum)
+    }#, height = PlotHeight_sum
+    )
     
     # Code to download the plot
     getPW <- function(){

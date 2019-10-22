@@ -49,8 +49,8 @@ tabsetPanel(type = "tabs",
                        bsCollapse(id = "collapse", #open = "Stock and Indicator",
                        bsCollapsePanel("Stock and Indicator",
                   sliderInput("rangeK", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
-                  selectizeInput("stockK", label=h4("Stock"),        unique(reference_points$stock),  selected=unique(reference_points$stock),       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(bio$scenario)), selected=unique(reference_points$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("stockK", label=h4("Stock"),        unique(RefPts$stock),  selected=unique(RefPts$stock)[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(bio$scenario)), selected=unique(RefPts$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                        ),
                   bsCollapsePanel("Download",
                   # Options for file downloading
@@ -59,7 +59,7 @@ tabsetPanel(type = "tabs",
                   numericInput('fileHSK', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 75),
                   numericInput('fileScSK', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 75),
                   selectInput(inputId = "fileTypeSK", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                  downloadButton(outputId = "downSK", label = "Download the plot"),
+                  downloadButton(outputId = "downSK", label = "Download the plot")
                   ))),
                 
               column(9,
@@ -76,7 +76,7 @@ tabsetPanel(type = "tabs",
               sidebarLayout(
                 sidebarPanel(
                   sliderInput("rangeR", label=h4("Years"), min(as.numeric(risk$year)), max(as.numeric(risk$year)), value=range(as.numeric(risk$year)),step = 1),
-                  selectizeInput("stockR", label=h4("Stock"), choices= unique((reference_points$stock)), selected=unique((reference_points$stock))[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("stockR", label=h4("Stock"), choices= unique((RefPts$stock)), selected=unique((RefPts$stock))[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioR", label=h4("Scenarios"), levels(as.factor(risk$scenario)), selected= unique((risk$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("brpR", label=h4("Biological reference point"), choices=c("pBlim", "pBpa"),selected="pBlim", multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   

@@ -1,33 +1,38 @@
+# 
+# 
+#   data<-reshape(as.data.frame(bio), direction = "wide",
+#                 timevar = "indicator", v.names = c("q05","q50","q95"),
+#                 idvar = c("year","stock","scenario"))
+#  
+#   data<-data[, c("stock", "year","scenario", "q50.f", "q50.ssb")]
+#  
+#  
+#   data$Bmsy<-NA
+#   data$Fmsy<-NA
+#  
+#   bmsy  <- fmsy <-  numeric(length(unique(reference_points$stock)))
+#   names(bmsy)  <- names(bmsy) <- unique(reference_points$stock)
+#  
+#   for(st in unique(reference_points$stock)){
+#     bmsy[st] <- reference_points$value[reference_points$stock== st & reference_points$indicator=="Bmsy"]
+#     data$Bmsy[data$stock==st] <- bmsy[st]
+#  
+#     fmsy[st] <- reference_points$value[reference_points$stock== st & reference_points$indicator=="Fmsy"]
+#     data$Fmsy[data$stock==st] <- fmsy[st]
+#    }
+#  
+#   names(data)<- c("unit","year","scenario", "q50.f","q50.ssb","Bmsy","Fmsy")
+#  
+#   data$stock<-data$q50.ssb/data$Bmsy
+#   data$harvest<-data$q50.f/data$Fmsy
+# 
+#  # save(data, file="data/data.RData")
+#  # load("data/data.RData")
 
-
- data<-reshape(as.data.frame(bio), direction = "wide",
-               timevar = "indicator", v.names = c("q05","q50","q95"),
-               idvar = c("year","stock","scenario"))
-
- data<-data[, c("stock", "year","scenario", "q50.f", "q50.ssb")]
-
-
- data$Bmsy<-NA
- data$Fmsy<-NA
- 
- bmsy  <- fmsy <-  numeric(length(unique(reference_points$stock)))
- names(bmsy)  <- names(bmsy) <- unique(reference_points$stock)
- 
- for(st in unique(reference_points$stock)){
-   bmsy[st] <- reference_points$value[reference_points$stock== st & reference_points$indicator=="Bmsy"] 
-   data$Bmsy[data$stock==st] <- bmsy[st] 
-   
-   fmsy[st] <- reference_points$value[reference_points$stock== st & reference_points$indicator=="Fmsy"] 
-   data$Fmsy[data$stock==st] <- fmsy[st] 
-  }
-
- names(data)<- c("unit","year","scenario", "q50.f","q50.ssb","Bmsy","Fmsy")
-
- data$stock<-data$q50.ssb/data$Bmsy
- data$harvest<-data$q50.f/data$Fmsy
-
- # save(data, file="data/data.RData")
- #  load("data/data.RData")
+names(RefPts)<- c("stock", "scenario", "refpoint","value")
+RefPts$indicator <- NA
+RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
+RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
 
  
  head(data)

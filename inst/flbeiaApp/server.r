@@ -22,11 +22,11 @@ server <- function(input, output, session){
           & bio$scenario%in%input$scenarioS,]
     })
     
-  observe ({
+
       datarpS<-reactive({
         req(input$stockS)
         RefPts[RefPts$stock%in%input$stockS
-                #& RefPts$indicator%in%c(Bmsy,Fmsy)
+                & RefPts$indicator%in%input$indicatorS
                 & RefPts$scenario%in%input$scenarioS,]
       })
     
@@ -43,7 +43,7 @@ server <- function(input, output, session){
       
       # Refence points
       if (input$refpointS== TRUE){
-        p <- p +geom_hline(data = datarpS()[datarpS()$refpoint%in%c("Bmsy", "Fmsy"),], aes(yintercept=value))
+        p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
       }
       
       # Confidence intervals

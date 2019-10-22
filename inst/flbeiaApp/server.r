@@ -37,10 +37,12 @@ server <- function(input, output, session){
         geom_line(aes(color=scenario), lwd = 1) +
         ylab("")+xlab("Year")+
         theme_bw()+
-        theme(strip.text=element_text(size=16),
-               legend.title=element_text(size=14),
-               axis.title= element_text(size =14))
+        theme( strip.text=element_text(size=16),
+               title=element_text(size=16),
+               text=element_text(size=16))
       
+
+
       # Refence points
       if (input$refpointS== TRUE){
         p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
@@ -165,13 +167,14 @@ server <- function(input, output, session){
   
   plotSR <- function(){
     ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
-      geom_line(aes(color=scenario), lwd = 1.5)+
+      geom_line(aes(color=scenario), lwd = 1)+
       facet_grid(indicator~unit)+
       theme_bw()+
       theme(text=element_text(size=16),
             title=element_text(size=16),
-            strip.text=element_text(size=16),
-            axis.text.x = element_text(angle = 90, hjust = 1))+
+            strip.text=element_text(size=16)#,
+            #axis.text.x = element_text(angle = 90, hjust = 1)
+            )+
       xlab("Year")+ ylab("Probability")
   }
   
@@ -233,8 +236,8 @@ server <- function(input, output, session){
                   ylab("")+
                   xlab("Year")+
                   theme(strip.text=element_text(size=16),
-                    legend.title=element_text(size=14),
-                    axis.title=element_text(size=14))
+                    legend.title=element_text(size=16),
+                    axis.title=element_text(size=16))
       
       # With Conf Int.
       if (input$fitCIF == TRUE){

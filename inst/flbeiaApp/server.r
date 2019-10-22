@@ -6,11 +6,12 @@ server <- function(input, output, session){
 #-----------------------------------------------------------------------------------------------------------------------  
   
   
-  PlotHeight_stk <- reactive({
-    
-    nids <- length(input$stockS)
-    
-    return(300*nids)})
+  # PlotHeight_stk <- reactive({
+  #   
+  #   nids <- length(input$stockS)
+  #   
+  #   return(300*nids)})
+  # 
   
   observe ({
     dataS<-reactive({
@@ -21,15 +22,29 @@ server <- function(input, output, session){
           & bio$scenario%in%input$scenarioS,]
     })
     
+  observe ({
+      datarpS<-reactive({
+        req(input$stockS)
+        RefPts[RefPts$stock%in%input$stockS
+                #& RefPts$indicator%in%c(Bmsy,Fmsy)
+                & RefPts$scenario%in%input$scenarioS,]
+      })
+    
     
     plotStock <- function(){
       
       p <-ggplot(dataS(), aes(x=year, y=q50, color=scenario))+
         geom_line(aes(color=scenario), lwd = 1) +
         ylab("")+xlab("Year")+
+        theme_bw()+
         theme(strip.text=element_text(size=16),
-              legend.title=element_text(size=14),
-              axis.title= element_text(size =14))
+               legend.title=element_text(size=14),
+               axis.title= element_text(size =14))
+      
+      # Refence points
+      if (input$refpointS== TRUE){
+        p <- p +geom_hline(data = datarpS()[datarpS()$refpoint%in%c("Bmsy", "Fmsy"),], aes(yintercept=value))
+      }
       
       # Confidence intervals
       if (input$fitCIS == TRUE){

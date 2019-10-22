@@ -15,12 +15,13 @@ tabsetPanel(type = "tabs",
                   sliderInput("rangeS", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
                   selectizeInput("stockS", label=h4("Stock"), levels(as.factor(bio$stock)), selected=unique(bio$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorS", label=h4("Indicators"), levels(as.factor(bio$indicator)),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioS", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))#,
+                  selectizeInput("scenarioS", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  checkboxInput("refpointS", h5("Reference points"), FALSE)
                   #hr(),
                       ),
                   bsCollapsePanel("Graphs",
-                  checkboxInput("fitCIS", h5("Confident interval"), FALSE),
-                  checkboxInput("fitS", h5("Free scales"), FALSE)
+                  checkboxInput("fitCIS", "Confident interval", FALSE),
+                  checkboxInput("fitS", "Free scales", FALSE)
                   ),
                   bsCollapsePanel("Download",
                   # Options for file downloading

@@ -5,7 +5,7 @@
     column(3,
            bsCollapse(id = "collapse", #open = "Stock and Indicator",
            bsCollapsePanel("Projection",
-      selectInput("yearP", label=h4("Reference year"), levels(as.factor(bio$year)), selected=max(bio$year)),
+      selectInput("yearP", label=h4("Reference year"), levels(as.factor(bio$year)), selected=max(bio$year)-1),
       sliderInput("rangeP", label=h4("Projection years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
       selectizeInput("scenarioP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
       ),

@@ -1,4 +1,4 @@
-<h2 style="color: #66B29F;")> FLBEIA </h2>
+<h2 style="color: #000000;")> FLBEIA </h2>
 <p style="text-align:JUSTIFY">
 This is a simulation toolbox implemented as an R library 
 which facilitates the development of bio-economic impact assessments 
@@ -7,11 +7,22 @@ strategy evaluation framework using FLR libraries. The simulation is
 divided in two worlds, the operating model (OM, the real world) and 
 the management procedure model (MPM, the perceived world).
 
-<BR>&nbsp;<BR> 
-<BR>&nbsp;<BR>                      
+<BR>&nbsp;<BR>                   
 
 <p> 
 For more information visit the web page:
 <a href="http://flbeia.azti.es">http://flbeia.azti.es</a> 
 
-                      
+<BR>&nbsp;<BR> 
+<BR>&nbsp;<BR>   
+
+<h2 style="color: #000000;")> CASE STUDY </h2>   
+<p style="text-align:JUSTIFY">          
+
+This shiny App shows the performance of the dynamic of the fisheries Lorem ipsum dolor sit amet, 
+consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim 
+ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. 
+Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur 
+sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<BR>&nbsp;<BR>                       

@@ -35,6 +35,7 @@ server <- function(input, output, session){
       
       p <-ggplot(dataS(), aes(x=year, y=q50, color=scenario))+
         geom_line(aes(color=scenario), lwd = 1) +
+        geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         ylab("")+xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
@@ -168,6 +169,7 @@ server <- function(input, output, session){
   plotSR <- function(){
     ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
       geom_line(aes(color=scenario), lwd = 1)+
+      geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
       facet_grid(indicator~unit)+
       theme_bw()+
       theme(text=element_text(size=16),
@@ -232,15 +234,15 @@ server <- function(input, output, session){
     
     plotFleet <- function(){
       
-      p <- ggplotF <-ggplot(dataF(), aes(x=year, y=q50, color=scenario))+
+      p <- ggplot(dataF(), aes(x=year, y=q50, color=scenario))+
                   geom_line(aes(color=scenario),lwd=1)+
-                  ylab("")+
-                  xlab("Year")+
-        theme_bw()+
-        theme( strip.text=element_text(size=16),
-               title=element_text(size=16),
-               text=element_text(size=16))+
-        scale_x_continuous(limits = c(input$rangeF[1], input$rangeF[2]))
+                geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+                ylab("")+ xlab("Year")+
+                theme_bw()+
+                theme( strip.text=element_text(size=16),
+                        title=element_text(size=16),
+                        text=element_text(size=16))+
+                scale_x_continuous(limits = c(input$rangeF[1], input$rangeF[2]))
       
       # With Conf Int.
       if (input$fitCIF == TRUE){
@@ -356,6 +358,7 @@ server <- function(input, output, session){
     plotFLRisk <- function(){
         ggplot(dataE(), aes(x=year, y=value, color=scenario))+
         geom_line(aes(color=scenario),lwd=1)+
+        geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         facet_wrap(~unit, scales="free")+
         ylab("")+ xlab("Year")+
         theme_bw()+
@@ -423,13 +426,13 @@ server <- function(input, output, session){
     plotMetier <- function(){
         p <-ggplot(dataM(), aes(x=as.numeric(year), y=q50, color=scenario))+
                   geom_line(aes(color=scenario),lwd=1)+
-                  ylab("")+
-                  xlab("Year")+
-          theme_bw()+
-          theme( strip.text=element_text(size=16),
-                 title=element_text(size=16),
-                 text=element_text(size=16))+
-          scale_x_continuous(limits = c(input$rangeM[1], input$rangeM[2]))
+                  geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+                  ylab("")+xlab("Year")+
+                  theme_bw()+
+                  theme( strip.text=element_text(size=16),
+                          title=element_text(size=16),
+                        text=element_text(size=16))+
+                  scale_x_continuous(limits = c(input$rangeM[1], input$rangeM[2]))
       
         if(input$fitCIM == TRUE)
             p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -510,12 +513,13 @@ server <- function(input, output, session){
             
         p <- ggplotFby<-ggplot(dataFby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
+                geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
-          theme_bw()+
-          theme( strip.text=element_text(size=16),
-                 title=element_text(size=16),
-                 text=element_text(size=16))
+                theme_bw()+
+                theme( strip.text=element_text(size=16),
+                      title=element_text(size=16),
+                      text=element_text(size=16))
         
         if(input$fitCIFby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -600,12 +604,13 @@ server <- function(input, output, session){
     plotMetierby <- function(){
         p <- ggplot(dataMby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
+                geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
-          theme_bw()+
-          theme( strip.text=element_text(size=16),
-                 title=element_text(size=16),
-                 text=element_text(size=16))
+                theme_bw()+
+                theme( strip.text=element_text(size=16),
+                      title=element_text(size=16),
+                      text=element_text(size=16))
 
         if (input$fitCIMby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -673,11 +678,12 @@ server <- function(input, output, session){
       plotAdvice <- function(){
         p <- ggplotA <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
               geom_line(lwd=1)+
+              geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
               ylab("")+ xlab("Year")+
-          theme_bw()+
-          theme( strip.text=element_text(size=16),
-                 title=element_text(size=16),
-                 text=element_text(size=16))
+              theme_bw()+
+              theme( strip.text=element_text(size=16),
+                      title=element_text(size=16),
+                      text=element_text(size=16))
         
         if (input$fitCIA == TRUE){
           p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)

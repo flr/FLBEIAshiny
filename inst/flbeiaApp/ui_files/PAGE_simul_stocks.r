@@ -108,6 +108,20 @@ tabsetPanel(type = "tabs",
                    bsCollapse(id = "collapse", #open = "Stock and Indicator",
                    bsCollapsePanel("Stock and Indicator",
                      radioButtons("yearSP", label=h4("Year"),  c("Year" = "radio1","Years ratio" = "radio2")),
+                     
+                     # Only show this panel if the radio1 is selected
+                     conditionalPanel(
+                       condition = "input.yearSP == 'radio1'",
+                       div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP1", "Year",levels(as.factor(bio$year)), selected = 2015, multiple = FALSE))
+                       ),
+                       
+                       # Only show this panel if radio2 is selected
+                       conditionalPanel(
+                         condition = "input.yearSP == 'radio2'",
+                         div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP1", "Year 1",levels(as.factor(bio$year)), selected=2015, multiple = FALSE)),
+                         div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP2", "Year 2", levels(as.factor(bio$year)), selected=2013, multiple = FALSE))
+                         ),
+                     
                      selectizeInput("stockSP", label=h4("Stock"), levels(as.factor(bio$stock)), selected=unique(bio$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("indicatorSP", label=h4("Indicators"), levels(as.factor(bio$indicator)),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("scenarioSP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))

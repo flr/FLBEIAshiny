@@ -1,42 +1,31 @@
 
-## For the kobe plot
-  # data<-reshape(as.data.frame(bio), direction = "wide",
-  #              timevar = "indicator", v.names = c("q05","q50","q95"),
-  #               idvar = c("year","stock","scenario"))
-  # 
-  # data <- data[, c("stock", "year","scenario", "q50.f", "q50.ssb")]
-  # 
-  # 
-  # data$Bmsy<-NA
-  # data$Fmsy<-NA
-  # 
-  # bmsy  <- fmsy <-  numeric(length(unique(RefPts$stock)))
-  # names(bmsy)  <- names(fmsy) <- unique(RefPts$stock)
-  # 
-   # for(st in unique(RefPts$stock)){
-   #   
-   #   bmsy[st] <- RefPts$value[RefPts$stock == st & RefPts$refpoint=="Bmsy"]
-   #   data$Bmsy[data$stock==st] <- bmsy[st]
-   # 
-   #   fmsy[st] <- RefPts$value[RefPts$stock == st & RefPts$refpoint=="Fmsy"]
-   #   data$Fmsy[data$stock==st] <- fmsy[st]
-   #  }
-   # 
-   # names(data)<- c("unit","year","scenario", "q50.f","q50.ssb","Bmsy","Fmsy")
-   # 
-   # data$stock<-data$q50.ssb/data$Bmsy
-   # data$harvest<-data$q50.f/data$Fmsy
-
-# save(data, file="data/data.RData")
-# load("data/data.RData")
-
+## Reference points for kobe plots::
 names(RefPts)<- c("stock", "scenario", "refpoint","value")
 RefPts$indicator <- NA
 RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
 RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
 
+
+## radar coordinate system for spider plots::
+coord_radar <- function (theta = "x", start = 0, direction = 1) {
+  theta <- match.arg(theta, c("x", "y"))
+  r <- if (theta == "x") "y" else "x"
+  ggproto("CordRadar", CoordPolar, theta = theta, r = r, start = start, 
+          direction = sign(direction),
+          is_linear = function(coord) TRUE)
+}
+
+###  rescale all the coordinates within 0 and 1 and 
+###   melt the dataset in order to plot it easily with ggplot.
+
+library(dplyr)
+library(scales)
+
+bio.scaled <- bio %>% group_by(stock, scenario) %>% 
+  mutate(value2 = rescale(q50))
+bio.scaled <- as.data.frame(bio.scaled)
+
  
- head(data)
 # Begin shinyUI
 
 ui <- tagList(

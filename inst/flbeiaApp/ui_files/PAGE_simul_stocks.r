@@ -95,6 +95,37 @@ tabsetPanel(type = "tabs",
                 
                 column(9,
                   plotOutput("plotR", height = "600px", width = "900px")
+                ))), 
+            
+            #------------------------------------
+            # SPIDER PLOTS
+            #------------------------------------
+            tabPanel( 
+              title = "Spider",
+              fluidRow(
+                br(),
+                column(3,
+                   bsCollapse(id = "collapse", #open = "Stock and Indicator",
+                   bsCollapsePanel("Stock and Indicator",
+                     radioButtons("yearSP", label=h4("Year"),  c("Year" = "radio1","Years ratio" = "radio2")),
+                     selectizeInput("stockSP", label=h4("Stock"), levels(as.factor(bio$stock)), selected=unique(bio$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                     selectizeInput("indicatorSP", label=h4("Indicators"), levels(as.factor(bio$indicator)),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                     selectizeInput("scenarioSP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                     #hr(),
+                     ),
+                    bsCollapsePanel("Download"#,
+                     # Options for file downloading
+                     # textInput('filenmS', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+                     # numericInput('fileWS', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+                     # numericInput('fileHS', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+                     # numericInput('fileScS', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+                     # selectInput(inputId = "fileTypeS", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+                     # downloadButton(outputId = "down", label = "Download the plot")
+                    ))),
+                
+                column(9,
+                    plotOutput("plotSP", height = "600px", width = "900px")
                 )))
+            
 )#end of tabsetPanel
 

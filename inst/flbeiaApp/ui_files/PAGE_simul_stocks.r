@@ -16,6 +16,7 @@ tabsetPanel(type = "tabs",
                   selectizeInput("stockS", label=h4("Stock"), levels(as.factor(bio$stock)), selected=unique(bio$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorS", label=h4("Indicators"), levels(as.factor(bio$indicator)),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioS", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("iterS", label=h4("Iteractions"), levels(as.factor(bio.iter$iter)), selected=NULL, multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   checkboxInput("refpointS", h5("Reference points"), FALSE)
                   #hr(),
                       ),

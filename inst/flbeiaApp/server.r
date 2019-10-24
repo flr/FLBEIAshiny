@@ -210,6 +210,80 @@ server <- function(input, output, session){
   )
   
   print('three') 
+  
+  #-----------------------------------------------------------------------------------------------------------------------  
+  # PAGE_simulation STOCK_Spider plot
+  #-----------------------------------------------------------------------------------------------------------------------  
+  
+    dataSP<-reactive({
+      
+      if (input$yearSP == "radio1"){
+        req(input$stockSP)
+      
+      dat<-bio.scaled[bio.scaled$year == input$yearSP0
+          & bio.scaled$stock%in%input$stockSP
+          & bio.scaled$indicator%in%input$indicatorSP
+          & bio.scaled$scenario%in%input$scenarioSP,]
+      
+      }else{
+
+      if (input$yearSP == "radio2"){
+          req(input$stockSP)
+       dat <- bio.scaled[bio.scaled$year%in%c(input$yearSP1,input$yearSP2)
+          & bio.scaled$stock%in%input$stockSP
+          & bio.scaled$indicator%in%input$indicatorSP
+          & bio.scaled$scenario%in%input$scenarioSP,]
+       
+       dat<- dat %>% group_by (stock, scenario, indicator) %>%
+         summarize(Ratio = c(value2[1] / value2[2]))
+
+        } 
+      
+      dat
+      }
+    })
+
+    
+  output$plotSP<-renderPlot({
+
+     if (input$yearSP == "radio1"){
+  
+       ggplot(data=dataSP(), aes(x=scenario, y=value2, col=stock, fill=stock, group=stock))+
+         # geom_polygon(alpha=0.2, lwd=1)+
+         geom_polygon(fill=NA, lwd=1)+
+         geom_point(cex=1.5)+
+         facet_grid (. ~ indicator)+
+         coord_radar()+
+         theme_bw()+
+         theme(text=element_text(size=14),
+               strip.text=element_text(size=14),
+               title=element_text(size=18,face="bold"))+
+         ylab("")+
+         ylim(c(0,1))
+     }else{
+    
+     if (input$yearSP == "radio2"){
+
+      ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
+        # geom_polygon(alpha=0.2, lwd=1)+
+        geom_polygon(fill=NA, lwd=1)+
+        geom_point(cex=1.5)+
+        facet_grid (. ~ indicator)+
+        coord_radar()+
+        theme_bw()+
+        theme(text=element_text(size=16),
+              strip.text=element_text(size=16),
+              title=element_text(size=18,face="bold"))+
+        ylab("")+
+        ylim(c(0,1))
+
+     }
+     }
+      
+    })
+    
+  
+  
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_simulation FLEET
 #-----------------------------------------------------------------------------------------------------------------------  
@@ -396,6 +470,78 @@ server <- function(input, output, session){
       } 
     )
     print('six')
+    
+    #------------------------------------------------
+    # PAGE_simulation FLEET_Spider plot
+    #------------------------------------------------
+    
+    dataFP<-reactive({
+      
+      if (input$yearFP == "radioF1"){
+        req(input$fleetFP)
+        
+        dat<-flt.scaled[flt.scaled$year == input$yearFP0
+                        & flt.scaled$fleet%in%input$fleetFP
+                        & flt.scaled$indicator%in%input$indicatorFP
+                        & flt.scaled$scenario%in%input$scenarioFP,]
+        
+      }else{
+        
+        if (input$yearFP == "radioF2"){
+          req(input$fleetFP)
+          dat <- flt.scaled[flt.scaled$year%in%c(input$yearFP1,input$yearFP2)
+                            & flt.scaled$fleet%in%input$fleetFP
+                            & flt.scaled$indicator%in%input$indicatorFP
+                            & flt.scaled$scenario%in%input$scenarioFP,]
+          
+          dat<- dat %>% group_by (fleet, scenario, indicator) %>%
+            summarize(Ratio = c(value2[1] / value2[2]))
+          
+        } 
+        
+        dat
+      }
+    })
+    
+    
+    output$plotFP<-renderPlot({
+      
+      if (input$yearFP == "radioF1"){
+        
+        ggplot(data=dataFP(), aes(x=scenario, y=value2, col=fleet, fill=fleet, group=fleet))+
+          # geom_polygon(alpha=0.2, lwd=1)+
+          geom_polygon(fill=NA, lwd=1)+
+          geom_point(cex=1.5)+
+          facet_grid (. ~ indicator)+
+          coord_radar()+
+          theme_bw()+
+          theme(text=element_text(size=14),
+                strip.text=element_text(size=14),
+                title=element_text(size=18,face="bold"))+
+          ylab("")+
+          ylim(c(0,1))
+      }else{
+        
+        if (input$yearFP == "radioF2"){
+          
+          ggplot(data=dataFP(), aes(x=scenario, y=Ratio, col=fleet, fill=fleet, group=fleet))+
+            # geom_polygon(alpha=0.2, lwd=1)+
+            geom_polygon(fill=NA, lwd=1)+
+            geom_point(cex=1.5)+
+            facet_grid (. ~ indicator)+
+            coord_radar()+
+            theme_bw()+
+            theme(text=element_text(size=16),
+                  strip.text=element_text(size=16),
+                  title=element_text(size=18,face="bold"))+
+            ylab("")+
+            ylim(c(0,1))
+          
+        }
+      }
+      
+    })
+    
   
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_simulation METIER_Times series 

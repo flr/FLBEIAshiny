@@ -1,11 +1,12 @@
-
+## *********************************
 ## Reference points for kobe plots::
 names(RefPts)<- c("stock", "scenario", "refpoint","value")
 RefPts$indicator <- NA
 RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
 RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
+## *********************************
 
-
+## *********************************
 ## radar coordinate system for spider plots::
 coord_radar <- function (theta = "x", start = 0, direction = 1) {
   theta <- match.arg(theta, c("x", "y"))
@@ -14,17 +15,27 @@ coord_radar <- function (theta = "x", start = 0, direction = 1) {
           direction = sign(direction),
           is_linear = function(coord) TRUE)
 }
+## *********************************
 
-###  rescale all the coordinates within 0 and 1 and 
-###   melt the dataset in order to plot it easily with ggplot.
+## *********************************
+## rescale all the coordinates within 0 and 1 and 
+## melt the dataset in order to plot it easily with ggplot.
 
 library(dplyr)
 library(scales)
 
+## bio
 bio.scaled <- bio %>% group_by(stock, scenario) %>% 
   mutate(value2 = rescale(q50))
 bio.scaled <- as.data.frame(bio.scaled)
 
+## stock
+
+flt.scaled <- flt %>% group_by(fleet, scenario) %>% 
+  mutate(value2 = rescale(q50))
+flt.scaled <- as.data.frame(flt.scaled)
+
+## *********************************
  
 # Begin shinyUI
 

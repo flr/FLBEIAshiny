@@ -294,15 +294,15 @@ server <- function(input, output, session){
     })
   
   # Code to download the plot
-  getWP <- function(){
+  getWSP <- function(){
     return(input$fileWSP)
   }
   
-  getHP <- function(){
+  getHSP <- function(){
     return(input$fileHSP)
   }
   
-  getSP <- function(){
+  getScSP <- function(){
     return(input$fileScSP)
   }
   
@@ -313,7 +313,7 @@ server <- function(input, output, session){
     },
     # content is a function with argument file. content writes the plot to the device
     content = function(file) {
-      ggsave(file, plotSP(), width = getW(), height = getH(), units = 'cm', scale = getS())
+      ggsave(file, plotSP(), width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
     } 
   )
   
@@ -578,6 +578,32 @@ print('three spider')
       }
       
     })
+    
+    # Code to download the plot
+    getWFP <- function(){
+      return(input$fileWFP)
+    }
+    
+    getHFP <- function(){
+      return(input$fileHFP)
+    }
+    
+    getScFP <- function(){
+      return(input$fileScFP)
+    }
+    
+    # Download the plot
+    output$downFP <- downloadHandler(
+      filename =  function() {
+        paste(input$filenmFP, input$fileTypeFP, sep=".")
+      },
+      # content is a function with argument file. content writes the plot to the device
+      content = function(file) {
+        ggsave(file, plotFP(), width = getWFP(), height = getHFP(), units = 'cm', scale = getScFP())
+      } 
+    )
+    
+    print('six spider')
     
   
 #-----------------------------------------------------------------------------------------------------------------------  

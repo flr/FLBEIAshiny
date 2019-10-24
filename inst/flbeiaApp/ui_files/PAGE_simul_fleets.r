@@ -117,14 +117,14 @@ tabsetPanel(type = "tabs",
                     selectizeInput("scenarioFP", label=h4("Scenarios"),  unique(flt$scenario),      selected= unique((flt$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                     selectizeInput("indicatorFP", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                                ),
-                    bsCollapsePanel("Download"#,
+                    bsCollapsePanel("Download",
                              # Options for file downloading
-                             # textInput('filenmS', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                             # numericInput('fileWS', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-                             # numericInput('fileHS', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-                             # numericInput('fileScS', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-                             # selectInput(inputId = "fileTypeS", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                              # downloadButton(outputId = "down", label = "Download the plot")
+                     textInput('filenmFP', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+                     numericInput('fileWFP', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+                     numericInput('fileHFP', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+                     numericInput('fileScFP', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+                     selectInput(inputId = "fileTypeFP", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+                     downloadButton(outputId = "downFP", label = "Download the plot")
                      ))),
                 
                 column(9,

@@ -112,7 +112,7 @@ tabsetPanel(type = "tabs",
                      # Only show this panel if the radio1 is selected
                      conditionalPanel(
                        condition = "input.yearSP == 'radio1'",
-                       div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP1", "Year",levels(as.factor(bio$year)), selected = 2015, multiple = FALSE))
+                       div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP0", "Year",levels(as.factor(bio$year)), selected = 2015, multiple = FALSE))
                        ),
                        
                        # Only show this panel if radio2 is selected

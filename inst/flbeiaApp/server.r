@@ -22,6 +22,14 @@ server <- function(input, output, session){
           & bio$scenario%in%input$scenarioS,]
     })
     
+    dataSI<-reactive({
+      req(input$iterS)
+      bio.iter[bio.iter$year>=input$rangeS[1] & bio.iter$year<=input$rangeS[2] 
+             & bio.iter$stock%in%input$stockS
+             & bio.iter$indicator%in%input$indicatorS
+             & bio.iter$scenario%in%input$scenarioS
+             & bio.iter$iter%in%input$interS]
+    })
 
       datarpS<-reactive({
         req(input$stockS)
@@ -42,7 +50,10 @@ server <- function(input, output, session){
                title=element_text(size=16),
                text=element_text(size=16))
       
-
+      # Iteraction
+       if(!is.null(input$iterS)){
+         p <- p + geom_line(data = dataSI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1) 
+       }
 
       # Refence points
       if (input$refpointS== TRUE){
@@ -281,6 +292,32 @@ server <- function(input, output, session){
      }
       
     })
+  
+  # Code to download the plot
+  getWP <- function(){
+    return(input$fileWSP)
+  }
+  
+  getHP <- function(){
+    return(input$fileHSP)
+  }
+  
+  getSP <- function(){
+    return(input$fileScSP)
+  }
+  
+  # Download the plot
+  output$downSP <- downloadHandler(
+    filename =  function() {
+      paste(input$filenmSP, input$fileTypeSP, sep=".")
+    },
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      ggsave(file, plotSP(), width = getW(), height = getH(), units = 'cm', scale = getS())
+    } 
+  )
+  
+print('three spider')
     
   
   

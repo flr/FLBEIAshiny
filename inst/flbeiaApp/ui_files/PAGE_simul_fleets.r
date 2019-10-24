@@ -87,5 +87,47 @@ tabsetPanel(type = "tabs",
   
                 column(9,
                   plotOutput("plotFR", height = "600px", width = "900px")
+                ))), 
+            #------------------------------------
+            # SPIDER PLOTS
+            #------------------------------------
+            tabPanel( 
+              title = "Spider",
+              fluidRow(
+                br(),
+                column(3,
+                  bsCollapse(id = "collapse", #open = "Stock and Indicator",
+                  bsCollapsePanel("Fleet and Indicator",
+                    radioButtons("yearFP", label=h4("Year"),  c("Year" = "radioF1","Years ratio" = "radioF2")),
+                       
+                     # Only show this panel if the radio1 is selected
+                     conditionalPanel(
+                        condition = "input.yearFP == 'radioF1'",
+                           div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearFP0", "Year",levels(as.factor(flt$year)), selected = 2015, multiple = FALSE))
+                            ),
+                                                  
+                     # Only show this panel if radio2 is selected
+                      conditionalPanel(
+                        condition = "input.yearFP == 'radioF2'",
+                            div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearFP1", "Year 1",levels(as.factor(flt$year)), selected=2015, multiple = FALSE)),
+                            div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearFP2", "Year 2", levels(as.factor(flt$year)), selected=2013, multiple = FALSE))
+                             ),
+                                                  
+                    selectizeInput("fleetFP",   label=h4("Fleet"),      unique(flt$fleet),         selected= unique((flt$fleet))[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                    selectizeInput("scenarioFP", label=h4("Scenarios"),  unique(flt$scenario),      selected= unique((flt$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                    selectizeInput("indicatorFP", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                               ),
+                    bsCollapsePanel("Download"#,
+                             # Options for file downloading
+                             # textInput('filenmS', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+                             # numericInput('fileWS', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+                             # numericInput('fileHS', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+                             # numericInput('fileScS', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+                             # selectInput(inputId = "fileTypeS", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+                              # downloadButton(outputId = "down", label = "Download the plot")
+                     ))),
+                
+                column(9,
+                       plotOutput("plotFP", height = "600px", width = "900px")
                 )))
 )#end of the tabsetPanel

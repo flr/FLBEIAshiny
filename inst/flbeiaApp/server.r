@@ -28,10 +28,10 @@ server <- function(input, output, session){
              & bio.iter$stock%in%input$stockS
              & bio.iter$indicator%in%input$indicatorS
              & bio.iter$scenario%in%input$scenarioS
-             & bio.iter$iter%in%input$interS]
+             & bio.iter$iter%in%input$iterS,]
     })
 
-      datarpS<-reactive({
+    datarpS<-reactive({
         req(input$stockS)
         RefPts[RefPts$stock%in%input$stockS
                 & RefPts$indicator%in%input$indicatorS
@@ -41,9 +41,9 @@ server <- function(input, output, session){
     
     plotStock <- function(){
       
-      p <-ggplot(dataS(), aes(x=year, y=q50, color=scenario))+
-        geom_line(aes(color=scenario), lwd = 1) +
-        geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+      p <-ggplot()+
+        geom_line(data = dataS(), aes(x=year, y=q50, color=scenario), lwd = 1) +
+        geom_vline(data = dataS(), aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         ylab("")+xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
@@ -52,7 +52,8 @@ server <- function(input, output, session){
       
       # Iteraction
        if(!is.null(input$iterS)){
-         p <- p + geom_line(data = dataSI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1) 
+         p <- p + geom_line(data = dataSI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1)+
+           scale_linetype_manual(values = c(2:6))
        }
 
       # Refence points
@@ -62,7 +63,8 @@ server <- function(input, output, session){
       
       # Confidence intervals
       if (input$fitCIS == TRUE){
-        p <- p + geom_ribbon(aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+        p <- p + geom_ribbon(data = dataS(), aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)+
+                 geom_ribbon(data = dataSI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
       }
       
       if(input$fitS == FALSE){
@@ -342,11 +344,20 @@ print('three spider')
           & flt$indicator%in%input$indicatorF,]
     })
     
+    dataFI<-reactive({
+      req(input$iterF)
+      flt.iter[flt.iter$year>=input$rangeF[1] & flt.iter$year<=input$rangeF[2] 
+               & flt.iter$fleet%in%input$fleetF
+               & flt.iter$indicator%in%input$indicatorF
+               & flt.iter$scenario%in%input$scenarioF
+               & flt.iter$iter%in%input$iterF,]
+    })
+    
     
     plotFleet <- function(){
       
       p <- ggplot(dataF(), aes(x=year, y=q50, color=scenario))+
-                  geom_line(aes(color=scenario),lwd=1)+
+                geom_line(aes(color=scenario),lwd=1)+
                 geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+ xlab("Year")+
                 theme_bw()+

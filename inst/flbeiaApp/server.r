@@ -10,11 +10,17 @@ server <- function(input, output, session){
     input$caption 
     })
   
-  observeEvent(input$submit, {
-    # every time the button is pressed, alternate between hiding and showing the text
-    toggle("caption")
-  })
-
+   observeEvent(input$submit, {
+     
+   if(input$submit %% 2 == 1){
+     shinyjs::hide(id = "caption")
+     shinyjs::show(id = "value")
+    }else{         
+     shinyjs::show(id = "caption")
+     shinyjs::hide(id = "value")
+    }
+   
+})
   
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_simulation STOCK 

@@ -356,9 +356,9 @@ print('three spider')
     
     plotFleet <- function(){
       
-      p <- ggplot(dataF(), aes(x=year, y=q50, color=scenario))+
-                geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+      p <- ggplot()+
+                geom_line(data= dataF(), aes(x=year, y=q50, color=scenario),lwd=1)+
+                geom_vline(data=dataF(), aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+ xlab("Year")+
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
@@ -366,9 +366,16 @@ print('three spider')
                         text=element_text(size=16))+
                 scale_x_continuous(limits = c(input$rangeF[1], input$rangeF[2]))
       
+      # Iteraction
+      if(!is.null(input$iterF)){
+        p <- p + geom_line(data = dataFI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1)+
+          scale_linetype_manual(values = c(2:6))
+      }
+      
       # With Conf Int.
       if (input$fitCIF == TRUE){
-        p <- p + geom_ribbon(aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3) 
+        p <- p + geom_ribbon(data= dataF(), aes(x=year, y=q50, color=scenario), aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)+
+                 geom_ribbon(data = dataFI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
       }
       
       if(input$fitF==TRUE){

@@ -1,5 +1,5 @@
 ## *********************************
-## Reference points for kobe plots::
+## Reference points for Reference point checkbox plots::
 names(RefPts)<- c("stock", "scenario", "refpoint","value")
 RefPts$indicator <- NA
 RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"

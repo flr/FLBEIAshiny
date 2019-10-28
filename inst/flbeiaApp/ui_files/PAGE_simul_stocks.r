@@ -50,8 +50,8 @@ tabsetPanel(type = "tabs",
                        bsCollapse(id = "collapse", #open = "Stock and Indicator",
                        bsCollapsePanel("Stock and Scenarios",
                   sliderInput("rangeK", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
-                  selectizeInput("stockK", label=h4("Stock"), unique(RefPts$stock),  selected=unique(RefPts$stock)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(bio$scenario)), selected=unique(RefPts$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                  selectizeInput("stockK", label=h4("Stock"), unique(reference_points$stock),  selected=unique(reference_points$stock)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(reference_points$scenario)), selected=unique(reference_points$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                        ),
                   bsCollapsePanel("Download",
                   # Options for file downloading

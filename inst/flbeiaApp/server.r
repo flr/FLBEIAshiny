@@ -84,8 +84,8 @@ server <- function(input, output, session){
       
       # Confidence intervals
       if (input$fitCIS == TRUE){
-        p <- p + geom_ribbon(data = dataS(), aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)+
-                 geom_ribbon(data = dataSI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
+        p <- p + geom_ribbon(data = dataS(), aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)#+
+                 #geom_ribbon(data = dataSI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
       }
       
       if(input$fitS == FALSE){
@@ -135,7 +135,8 @@ server <- function(input, output, session){
 # PAGE_simulation STOCK_kobe plot 
 #-----------------------------------------------------------------------------------------------------------------------  
   
- observe({ dataK<-reactive({
+ observe({ 
+   dataK<-reactive({
         req(input$stockK)
   
     data[data$year>=input$rangeK[1] & data$year<=input$rangeK[2] 
@@ -395,8 +396,8 @@ print('three spider')
       
       # With Conf Int.
       if (input$fitCIF == TRUE){
-        p <- p + geom_ribbon(data= dataF(), aes(x=year, y=q50, color=scenario), aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)+
-                 geom_ribbon(data = dataFI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
+        p <- p + geom_ribbon(data = dataF(),  aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)#+
+                 #geom_ribbon(data = dataFI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
       }
       
       if(input$fitF==TRUE){

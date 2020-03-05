@@ -1,4 +1,6 @@
 
+source ("global.R") # radar plot function
+
 server <- function(input, output, session){
 
 #-----------------------------------------------------------------------------------------------------------------------  
@@ -19,8 +21,13 @@ server <- function(input, output, session){
      shinyjs::show(id = "caption")
      shinyjs::hide(id = "value")
     }
-   
 })
+   
+   #CASE STUDY TEXT
+   
+   output$cs <- renderTable({
+     desc
+   }, colnames = F)
   
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_simulation STOCK 
@@ -64,7 +71,7 @@ server <- function(input, output, session){
       
       p <-ggplot()+
         geom_line(data = dataS(), aes(x=year, y=q50, color=scenario), lwd = 1) +
-        geom_vline(data = dataS(), aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+        geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         ylab("")+xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
@@ -204,7 +211,7 @@ server <- function(input, output, session){
   plotSR <- function(){
     ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
       geom_line(aes(color=scenario), lwd = 1)+
-      geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+      geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
       facet_grid(indicator~unit)+
       theme_bw()+
       theme(text=element_text(size=16),
@@ -380,7 +387,7 @@ print('three spider')
       
       p <- ggplot()+
                 geom_line(data= dataF(), aes(x=year, y=q50, color=scenario),lwd=1)+
-                geom_vline(data=dataF(), aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+                geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+ xlab("Year")+
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
@@ -509,7 +516,7 @@ print('three spider')
     plotFLRisk <- function(){
         ggplot(dataE(), aes(x=year, y=value, color=scenario))+
         geom_line(aes(color=scenario),lwd=1)+
-        geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+        geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         facet_wrap(~unit, scales="free")+
         ylab("")+ xlab("Year")+
         theme_bw()+
@@ -675,7 +682,7 @@ print('three spider')
     plotMetier <- function(){
         p <-ggplot(dataM(), aes(x=as.numeric(year), y=q50, color=scenario))+
                   geom_line(aes(color=scenario),lwd=1)+
-                  geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+                  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                   ylab("")+xlab("Year")+
                   theme_bw()+
                   theme( strip.text=element_text(size=16),
@@ -762,7 +769,7 @@ print('three spider')
             
         p <- ggplotFby<-ggplot(dataFby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+                geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -853,7 +860,7 @@ print('three spider')
     plotMetierby <- function(){
         p <- ggplot(dataMby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+                geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -927,7 +934,7 @@ print('three spider')
       plotAdvice <- function(){
         p <- ggplotA <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
               geom_line(lwd=1)+
-              geom_vline(aes(xintercept=2017), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+              geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
               ylab("")+ xlab("Year")+
               theme_bw()+
               theme( strip.text=element_text(size=16),

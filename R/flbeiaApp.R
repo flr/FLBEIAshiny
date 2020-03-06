@@ -267,9 +267,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   ## Assign object in globalenv() to code ui and sever
 
    assign("bio",        bio,envir = globalenv())
-   assign("bio.iter",   bioIt,envir = globalenv())
+   assign("bioIt",      bioIt,envir = globalenv())
    assign("flt",        flt,envir = globalenv())
-   assign("flt.iter",   fltIt,envir = globalenv())
+   assign("fltIt   ",   fltIt,envir = globalenv())
    assign("fltStk",     fltStk,envir = globalenv())
    assign("mt",         mt,envir = globalenv())
    assign("mtStk",      mtStk,envir = globalenv())

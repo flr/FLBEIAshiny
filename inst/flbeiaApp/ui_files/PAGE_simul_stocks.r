@@ -16,7 +16,7 @@ tabsetPanel(type = "tabs",
                   selectizeInput("stockS", label=h4("Stock"), levels(as.factor(bio$stock)), selected=unique(bio$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorS", label=h4("Indicators"), levels(as.factor(bio$indicator)),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioS", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("iterS", label=h4("Iteractions"), levels(as.factor(bio.iter$iter)), selected=NULL, multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("iterS", label=h4("Iterations"), levels(as.factor(bioIt$iter)), selected=NULL, multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   checkboxInput("refpointS", h5("Reference points"), FALSE)
                   #hr(),
                       ),
@@ -50,8 +50,8 @@ tabsetPanel(type = "tabs",
                        bsCollapse(id = "collapse", #open = "Stock and Indicator",
                        bsCollapsePanel("Stock and Scenarios",
                   sliderInput("rangeK", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
-                  selectizeInput("stockK", label=h4("Stock"), unique(reference_points$stock),  selected=unique(reference_points$stock)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(reference_points$scenario)), selected=unique(reference_points$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                  selectizeInput("stockK", label=h4("Stock"), unique(RefPts$stock),  selected=unique(RefPts$stock)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(RefPts$scenario)), selected=unique(RefPts$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                        ),
                   bsCollapsePanel("Download",
                   # Options for file downloading

@@ -15,7 +15,7 @@ tabsetPanel(type = "tabs",
                   selectizeInput("fleetF",     label=h4("Fleet"),      unique(flt$fleet),         selected= unique((flt$fleet))[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioF",  label=h4("Scenarios"),  unique(flt$scenario),      selected= unique((flt$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorF", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("iterF", label=h4("Iteractions"), levels(flt.iter$iter), selected=NULL, multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                  selectizeInput("iterF", label=h4("Iterations"), levels(as.factor(fltIt$iter)), selected=NULL, multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                        ),
                   bsCollapsePanel("Graphs",
                   checkboxInput("fitCIF", h5("Confident intervals"), FALSE),

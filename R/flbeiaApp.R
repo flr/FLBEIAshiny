@@ -131,7 +131,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   
  npv2 <- npv
 
-  if(missing(RefPts)){
+  if(is.null(RefPts)){
 
     if(missing(flbeiaObjs)){
       stknms <- unique(bio$stock)
@@ -147,20 +147,16 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                                     value = NA)
     # # # ## *********************************
     # # # ## Reference points for Reference point checkbox plots::
-    # names(reference_points)<- c("stock", "scenario", "refpoint","value")
-    # reference_points$indicator <- NA
-    # reference_points$indicator[reference_points$refpoint =="Bmsy"] <-"ssb"
-    # reference_points$indicator[reference_points$refpoint =="Fmsy"] <-"f"
+    names(reference_points)<- c("stock", "scenario", "refpoint","value")
+    reference_points$indicator <- NA
+    reference_points$indicator[reference_points$refpoint =="Bmsy"] <-"ssb"
+    reference_points$indicator[reference_points$refpoint =="Fmsy"] <-"f"
     # # ## *********************************
     
     }
   else{
 
     reference_points <- RefPts
-    # names(reference_points)<- c("stock", "scenario", "refpoint","value")
-    # reference_points$indicator <- NA
-    # reference_points$indicator[reference_points$refpoint =="Bmsy"] <-"ssb"
-    # reference_points$indicator[reference_points$refpoint =="Fmsy"] <-"f"
   }
 
   if(!is.null(flbeiaObjs)){
@@ -175,6 +171,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     flt   <- NULL
     fltIt <- NULL
     fltStk <- NULL
+    RefPts <- NULL
     mt     <- NULL
     mtStk  <- NULL
     adv    <- NULL
@@ -184,16 +181,16 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     for(sc in names(flbeiaObjs)){
       print(sc)
       flbeiaObj <- flbeiaObjs[[sc]]
-      aux<- bioSum(flbeiaObj, scenario = sc, years = years)
-      bio    <- rbind(bio,bioSumQ(aux))
-      bioIt <-rbind(bioIt,aux)
-      aux<- fltSum(flbeiaObj, scenario = sc, years = years)
-      flt    <- rbind(flt,fltSumQ(aux))
-      fltIt <-rbind(fltIt,aux)
-      fltStk <- rbind(fltStk,fltStkSumQ(fltStkSum(flbeiaObj, scenario = sc, years = years)))
-      mt     <- rbind(mt,mtSumQ(mtSum(flbeiaObj, scenario = sc, years = years)))
-      mtStk  <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years)))
-      adv    <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years)))
+      aux     <- bioSum(flbeiaObj, scenario = sc, years = years)
+      bio     <- rbind(bio,bioSumQ(aux))
+      bioIt   <- rbind(bioIt,aux)
+      aux     <- fltSum(flbeiaObj, scenario = sc, years = years)
+      flt     <- rbind(flt,fltSumQ(aux))
+      fltIt   <- rbind(fltIt,aux)
+      fltStk  <- rbind(fltStk,fltStkSumQ(fltStkSum(flbeiaObj, scenario = sc, years = years)))
+      mt      <- rbind(mt,mtSumQ(mtSum(flbeiaObj, scenario = sc, years = years)))
+      mtStk   <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years)))
+      adv     <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years)))
 
       Bpa <- subset(reference_points, indicator=='Bpa' & scenario == sc)[,'value']
       names(Bpa) <- subset(reference_points, indicator=='Bpa' & scenario == sc)[,'stock']
@@ -217,16 +214,16 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   data <- cbind(data, Bmsy = NA,Fmsy = NA)
 
   for(st in unique(data$unit)){
-    
+
     for(sc in unique(data$scenario)){
 
-      bmsy <- subset(reference_points, stock == st & scenario == sc & indicator == 'Bmsy')
-      fmsy <- subset(reference_points, stock == st & scenario == sc & indicator == 'Fmsy')
+      bmsy <- subset(reference_points, stock == st & scenario == sc & refpoint == 'Bmsy')
+      fmsy <- subset(reference_points, stock == st & scenario == sc & refpoint == 'Fmsy')
 
       data[data$unit == st & data$scenario == sc, 'Bmsy'] <- bmsy$value
       data[data$unit == st & data$scenario == sc, 'Fmsy'] <- fmsy$value
     }}
-  
+
   data$stock <- data$q50.ssb/data$Bmsy
   data$harvest <- data$q50.f/data$Fmsy
   ## --------------------------------------------------------------------------
@@ -249,15 +246,15 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   # # # ## *********************************
   # # # ## Reference points for Reference point checkbox plots::
   
-  # names(reference_points)<- c("stock", "scenario", "refpoint","value")
-  # reference_points$indicator <- NA
-  # reference_points[reference_points$refpoint =="Bmsy"] <-"ssb"
-  # reference_points[reference_points$refpoint =="Fmsy"] <-"f"
+   # names(reference_points)<- c("stock", "scenario", "refpoint","value")
+   # reference_points$indicator <- NA
+   # reference_points[reference_points$refpoint =="Bmsy"] <-"ssb"
+   # reference_points[reference_points$refpoint =="Fmsy"] <-"f"
 
-  names(RefPts)<- c("stock", "scenario", "refpoint","value")
-  RefPts$indicator <- NA
-  RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
-  RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
+  # names(RefPts)<- c("stock", "scenario", "refpoint","value")
+  # RefPts$indicator <- NA
+  # RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
+  # RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
   
   
   ## --------------------------------------------------------------------------
@@ -269,18 +266,16 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("bio",        bio,envir = globalenv())
    assign("bioIt",      bioIt,envir = globalenv())
    assign("flt",        flt,envir = globalenv())
-   assign("fltIt   ",   fltIt,envir = globalenv())
+   assign("fltIt",      fltIt,envir = globalenv())
    assign("fltStk",     fltStk,envir = globalenv())
    assign("mt",         mt,envir = globalenv())
    assign("mtStk",      mtStk,envir = globalenv())
    assign("adv",        adv,envir = globalenv())
    assign("risk",       risk,envir = globalenv())
+   assign("RefPts",     RefPts,envir = globalenv())
    assign("npv2",       npv2,envir = globalenv())
    assign("npv",        npv2,envir = globalenv())
    assign("data",       data,envir = globalenv())
-   assign("desc",       desc,envir = globalenv())
-   assign("proj.yr",    proj.yr, envir = globalenv())
-   assign("RefPts",     RefPts,envir = globalenv())
    assign("reference_points",  reference_points,envir = globalenv())
    assign("bio.scaled",        bio.scaled,envir = globalenv())
    assign("flt.scaled",        flt.scaled,envir = globalenv())
@@ -289,6 +284,6 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
  # load('FLBEIAApp.Rdata')
   shiny::runApp(system.file('flbeiaApp', package='FLBEIAShiny'), launch.browser = TRUE)
-
+   
   }
 

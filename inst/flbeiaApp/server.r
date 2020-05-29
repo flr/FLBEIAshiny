@@ -52,11 +52,11 @@ server <- function(input, output, session){
     
     dataSI<-reactive({
       req(input$iterS)
-      bio.iter[bio.iter$year>=input$rangeS[1] & bio.iter$year<=input$rangeS[2] 
-             & bio.iter$stock%in%input$stockS
-             & bio.iter$indicator%in%input$indicatorS
-             & bio.iter$scenario%in%input$scenarioS
-             & bio.iter$iter%in%input$iterS,]
+      bioIt[bioIt$year>=input$rangeS[1] & bioIt$year<=input$rangeS[2] 
+             & bioIt$stock%in%input$stockS
+             & bioIt$indicator%in%input$indicatorS
+             & bioIt$scenario%in%input$scenarioS
+             & bioIt$iter%in%input$iterS,]
     })
 
     datarpS<-reactive({
@@ -85,9 +85,11 @@ server <- function(input, output, session){
        }
 
       # Refence points
-      if (input$refpointS== TRUE){
-        p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
-      }
+        if (input$refpointS == TRUE ){
+          validate (
+            need(nrow(datarpS())>0, "Please check if reference points are loaded or adequate indicator selected"))
+          p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
+          }
       
       # Confidence intervals
       if (input$fitCIS == TRUE){
@@ -106,6 +108,7 @@ server <- function(input, output, session){
     
     
     output$plotS<-renderPlot({
+
       print(plotStock())
     } #, height = PlotHeight_stk
     )
@@ -164,7 +167,7 @@ server <- function(input, output, session){
   }
   
   output$plotK <- renderPlot({
-
+    if (is.null(dataK())) return()
     plotKobe()
   })
   
@@ -375,11 +378,11 @@ print('three spider')
     
     dataFI<-reactive({
       req(input$iterF)
-      flt.iter[flt.iter$year>=input$rangeF[1] & flt.iter$year<=input$rangeF[2] 
-               & flt.iter$fleet%in%input$fleetF
-               & flt.iter$indicator%in%input$indicatorF
-               & flt.iter$scenario%in%input$scenarioF
-               & flt.iter$iter%in%input$iterF,]
+      fltIt[fltIt$year>=input$rangeF[1] & fltIt$year<=input$rangeF[2] 
+               & fltIt$fleet%in%input$fleetF
+               & fltIt$indicator%in%input$indicatorF
+               & fltIt$scenario%in%input$scenarioF
+               & fltIt$iter%in%input$iterF,]
     })
     
     

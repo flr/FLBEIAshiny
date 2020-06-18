@@ -11,7 +11,7 @@ ui <- tagList(
   shinyjs::useShinyjs(),
   includeCSS("css/lumen.css"),
 
-  navbarPage(
+  navbarPage( id = "tabs",
     title="FLBEIA SHINY",
     fluid=FALSE, # TRUE Layout izateko fluid baina FALSE ikonoa jarri ahal izateko
     inverse=TRUE,
@@ -34,7 +34,7 @@ ui <- tagList(
     navbarMenu("Simulations",
                tabPanel("Stocks", 
                         source("ui_files/PAGE_simul_stocks.r",local =TRUE)$value),
-               tabPanel("Fleets",
+               tabPanel(id="Fleets","Fleets",
                         source("ui_files/PAGE_simul_fleets.r",local =TRUE)$value),
                tabPanel("Fleets by stock",
                         source("ui_files/PAGE_simul_fleetsby.r",local =TRUE)$value),

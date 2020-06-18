@@ -3,9 +3,32 @@ source ("global.R") # radar plot function
 
 server <- function(input, output, session){
 
+  
+  observe({
+    
+    if (version == 1){ 
+      
+      #shinyjs::show(id = "Fleets")
+      showTab(inputId = "tabs", target = "Fleets")
+      showTab(inputId = "tabs", target = "Fleets by stock")
+      showTab(inputId = "tabs", target = "Metiers")
+      showTab(inputId = "tabs", target = "Metiers by stock")
+
+      
+      }else {
+      
+      hideTab(inputId = "tabs", target = "Fleets")
+      hideTab(inputId = "tabs", target = "Fleets by stock")
+      hideTab(inputId = "tabs", target = "Metiers")
+      hideTab(inputId = "tabs", target = "Metiers by stock")
+    }
+    })
+  
+  
 #-----------------------------------------------------------------------------------------------------------------------  
 # PAGE_about 
 #-----------------------------------------------------------------------------------------------------------------------  
+  
   
   output$value <- renderText({ 
     req(input$submit)

@@ -119,8 +119,8 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        npv = NULL, 
                        npv.y0 = NULL, 
                        npv.yrs = NULL,
-                       desc = NULL#,
-                       #reduced = T,
+                       desc = NULL,
+                       reduced = NULL#,
                        #deploy = F
                        ) {
   require(FLBEIA)
@@ -198,9 +198,20 @@ flbeiaApp <- function (flbeiaObjs = NULL,
       names(Blim) <- subset(reference_points, indicator=='Blim' & scenario == sc)[,'stock']
       risk   <- rbind(risk,riskSum(flbeiaObj, scenario = sc, Bpa = Bpa, Blim = Blim, Prflim = 0, years = years))
   
-  if(calculate_npv == TRUE) npv2    <- rbind(npv2,npvQ(npv(flbeiaObj, scenario = sc, y0 = npv.y0, years = npv.yrs )))
+  if(calculate_npv == TRUE) 
+    npv2    <- rbind(npv2,npvQ(npv(flbeiaObj, scenario = sc, y0 = npv.y0, years = npv.yrs )))
     }}
   if(calculate_npv == FALSE & !is.null(npv)) npv2 <- npv
+ 
+ ## --------------------------------------------------------------------------
+ 
+ ## --------------------------------------------------------------------------
+ 
+ # Reduced version ::
+ if (reduced == "FALSE")
+   version <- 1
+ if (reduced == "TRUE")
+   version <- 2
  
  ## --------------------------------------------------------------------------
  
@@ -257,6 +268,8 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   # RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
   
   
+
+  
   ## --------------------------------------------------------------------------
   
   ## --------------------------------------------------------------------------
@@ -275,6 +288,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("RefPts",     RefPts,envir = globalenv())
    assign("npv2",       npv2,envir = globalenv())
    assign("npv",        npv2,envir = globalenv())
+   assign("version",    version, envir = globalenv())
    assign("data",       data,envir = globalenv())
    assign("reference_points",  reference_points,envir = globalenv())
    assign("bio.scaled",        bio.scaled,envir = globalenv())
@@ -283,7 +297,15 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    ## --------------------------------------------------------------------------
 
  # load('FLBEIAApp.Rdata')
-  shiny::runApp(system.file('flbeiaApp', package='FLBEIAShiny'), launch.browser = TRUE)
+   
+   # if (reduced == FALSE)
+     
+    shiny::runApp(system.file('flbeiaApp', package='FLBEIAShiny'), launch.browser = TRUE)
+     
+   # if (reduced == TRUE)
+   
+   # shiny::runApp(system.file('flbeiaApp2', package='FLBEIAShiny'), launch.browser = TRUE)  
+     
    
   }
 

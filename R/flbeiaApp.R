@@ -288,6 +288,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("RefPts",     RefPts,envir = globalenv())
    assign("npv2",       npv2,envir = globalenv())
    assign("npv",        npv2,envir = globalenv())
+   assign("proj.yr",    proj.yr,envir = globalenv())
    assign("version",    version, envir = globalenv())
    assign("data",       data,envir = globalenv())
    assign("reference_points",  reference_points,envir = globalenv())

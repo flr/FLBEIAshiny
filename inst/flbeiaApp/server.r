@@ -94,7 +94,6 @@ server <- function(input, output, session){
       
       p <-ggplot()+
         geom_line(data = dataS(), aes(x=year, y=q50, color=scenario), lwd = 1) +
-        geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         ylab("")+xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
@@ -107,6 +106,10 @@ server <- function(input, output, session){
            scale_linetype_manual(values = c(2:6))
        }
 
+      if(!is.null(proj.yr)){
+        p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+      }
+      
       # Refence points
         if (input$refpointS == TRUE ){
           validate (
@@ -235,9 +238,9 @@ server <- function(input, output, session){
   
   
   plotSR <- function(){
-    ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
+    p <- ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
       geom_line(aes(color=scenario), lwd = 1)+
-      geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+       # projection starting year 
       facet_grid(indicator~unit)+
       theme_bw()+
       theme(text=element_text(size=16),
@@ -246,7 +249,17 @@ server <- function(input, output, session){
             #axis.text.x = element_text(angle = 90, hjust = 1)
             )+
       xlab("Year")+ ylab("Probability")
+    
+    if(!is.null(proj.yr)){
+      p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)
+    }
+    
+    p
+    
   }
+  
+ 
+  
   
   output$plotR<-renderPlot({
     plotSR()
@@ -413,7 +426,6 @@ print('three spider')
       
       p <- ggplot()+
                 geom_line(data= dataF(), aes(x=year, y=q50, color=scenario),lwd=1)+
-                geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+ xlab("Year")+
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
@@ -426,6 +438,13 @@ print('three spider')
         p <- p + geom_line(data = dataFI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1)+
           scale_linetype_manual(values = c(2:6))
       }
+      
+      
+      if(!is.null(proj.yr)){
+        p <- p + geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
+      }
+      
       
       # With Conf Int.
       if (input$fitCIF == TRUE){
@@ -540,15 +559,21 @@ print('three spider')
 
       
     plotFLRisk <- function(){
-        ggplot(dataE(), aes(x=year, y=value, color=scenario))+
+        p <- ggplot(dataE(), aes(x=year, y=value, color=scenario))+
         geom_line(aes(color=scenario),lwd=1)+
-        geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         facet_wrap(~unit, scales="free")+
         ylab("")+ xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
                title=element_text(size=16),
                text=element_text(size=16))
+      
+        if(!is.null(proj.yr)){
+            p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+        
+        }
+      
+        p
       }
       
     output$plotFR <-renderPlot({
@@ -708,7 +733,6 @@ print('three spider')
     plotMetier <- function(){
         p <-ggplot(dataM(), aes(x=as.numeric(year), y=q50, color=scenario))+
                   geom_line(aes(color=scenario),lwd=1)+
-                  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                   ylab("")+xlab("Year")+
                   theme_bw()+
                   theme( strip.text=element_text(size=16),
@@ -716,6 +740,11 @@ print('three spider')
                         text=element_text(size=16))+
                   scale_x_continuous(limits = c(input$rangeM[1], input$rangeM[2]))
       
+        if(!is.null(proj.yr)){
+         p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
+        }
+        
         if(input$fitCIM == TRUE)
             p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
         
@@ -795,7 +824,6 @@ print('three spider')
             
         p <- ggplotFby<-ggplot(dataFby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -805,6 +833,12 @@ print('three spider')
         
         if(input$fitCIFby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+        }
+        
+        
+        if(!is.null(proj.yr)){
+          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
         }
         
         if(input$fitFby == FALSE){
@@ -886,7 +920,6 @@ print('three spider')
     plotMetierby <- function(){
         p <- ggplot(dataMby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -899,6 +932,10 @@ print('three spider')
         } 
         if(input$fitMby==TRUE){
           p <- p + facet_wrap(metier*stock ~ indicator, ncol=length(input$metierMby), scales="free_y")
+        }
+        if(!is.null(proj.yr)){
+          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
         }
         else{
           p <- p + facet_grid(metier*stock ~ indicator)
@@ -958,7 +995,7 @@ print('three spider')
       
       
       plotAdvice <- function(){
-        p <- ggplotA <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
+       p <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
               geom_line(lwd=1)+
               geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
               ylab("")+ xlab("Year")+
@@ -966,6 +1003,12 @@ print('three spider')
               theme( strip.text=element_text(size=16),
                       title=element_text(size=16),
                       text=element_text(size=16))
+        
+        if(!is.null(proj.yr)){
+          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
+        }
+        
         
         if (input$fitCIA == TRUE){
           p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)

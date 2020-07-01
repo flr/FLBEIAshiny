@@ -6,18 +6,18 @@ tabsetPanel(type = "tabs",
               fluidRow(
                 br(),
                 column(3,
-                       bsCollapse(id = "collapse", #open = "Stock and Indicator",
-                       bsCollapsePanel("Stock and Indicator",
+                  shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
+                  shinyBS::bsCollapsePanel("Stock and Indicator",
                   sliderInput("rangeA", label=h4("Years"), min(as.numeric(adv$year)), max(as.numeric(adv$year)), value=range(as.numeric(adv$year)),step = 1),
                   selectizeInput("stockA", label=h4("Stock"), levels(as.factor(adv$stock)), selected=unique(adv$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorA", label=h4("Indicators"), levels(as.factor(adv$indicator)),selected="tac",multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioA", label=h4("Scenarios"), levels(as.factor(adv$scenario)), selected=unique(adv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                   ),
-                  bsCollapsePanel("Graphs",
+                  shinyBS::bsCollapsePanel("Graphs",
                   checkboxInput("fitCIA", h5("Confident intervals"), FALSE),
                   checkboxInput("fitA", h5("Free scales"), FALSE)
                   ),
-                  bsCollapsePanel("Download",
+                  shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmA', h5("File Name"), value = "", width = NULL, placeholder = NULL),
                   numericInput('fileWA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 75),

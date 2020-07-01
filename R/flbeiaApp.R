@@ -120,8 +120,8 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        npv.y0 = NULL, 
                        npv.yrs = NULL,
                        desc = NULL,
-                       reduced = NULL#,
-                       #deploy = F
+                       reduced = NULL,
+                       deploy = NULL
                        ) {
   require(FLBEIA)
   require(kobe)
@@ -208,10 +208,38 @@ flbeiaApp <- function (flbeiaObjs = NULL,
  ## --------------------------------------------------------------------------
  
  # Reduced version ::
- if (reduced == "FALSE")
+ 
+ if (reduced == FALSE)
    version <- 1
- if (reduced == "TRUE")
+ if (reduced == TRUE)
    version <- 2
+ 
+ ## --------------------------------------------------------------------------
+ 
+ ## --------------------------------------------------------------------------
+  
+ # Deploy to shinyapps.io
+ 
+ # copy contents to temporary directory and write necessary additional lines to
+ # ui, server, and global
+ # appDir <- file.path(getwd(), "inst")
+ # deployDir <- file.path(appDir, "ShinyStan")
+ # contents <- system.file("ShinyStan", package = "shinystan")
+ # file.copy(from = contents, to = appDir, recursive = TRUE)
+ 
+ # First need to create a shinystan object.
+ # sso <- as.shinystan(flbeiaApp) # replace ... with optional arguments or omit it
+ # launch_shinystan(sso)
+ 
+ # save sso to deployDir
+ # .SHINYSTAN_OBJECT <- sso
+ # save(.SHINYSTAN_OBJECT, file = file.path(deployDir, "sso.RData"))
+ 
+ # also in the same directory put a file called global.R that just contains the line 
+ # load("shinystan_object.RData")
+ 
+ 
+ ## --------------------------------------------------------------------------
  
  ## --------------------------------------------------------------------------
  
@@ -237,6 +265,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
   data$stock <- data$q50.ssb/data$Bmsy
   data$harvest <- data$q50.f/data$Fmsy
+  
   ## --------------------------------------------------------------------------
   
   ## --------------------------------------------------------------------------
@@ -268,8 +297,6 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   # RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
   
   
-
-  
   ## --------------------------------------------------------------------------
   
   ## --------------------------------------------------------------------------
@@ -290,6 +317,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("npv",        npv2,envir = globalenv())
    assign("proj.yr",    proj.yr,envir = globalenv())
    assign("version",    version, envir = globalenv())
+   assign("proj.yr",    proj.yr, envir = globalenv())
    assign("data",       data,envir = globalenv())
    assign("reference_points",  reference_points,envir = globalenv())
    assign("bio.scaled",        bio.scaled,envir = globalenv())
@@ -299,14 +327,22 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
  # load('FLBEIAApp.Rdata')
    
-   # if (reduced == FALSE)
-     
-    shiny::runApp(system.file('flbeiaApp', package='FLBEIAShiny'), launch.browser = TRUE)
-     
-   # if (reduced == TRUE)
    
-   # shiny::runApp(system.file('flbeiaApp2', package='FLBEIAShiny'), launch.browser = TRUE)  
+   if (deploy == FALSE)
+
+    shiny::runApp(system.file('flbeiaApp', package='FLBEIAShiny'), launch.browser = TRUE)
+   
+   if (deploy == TRUE)
      
+      appDir <- file.path(getwd(), "inst/flbeiaApp")
+      
+      rsconnect::deployApp(
+        appDir = appDir #,
+        #appName = appName,
+        #account = account,
+        #lint = TRUE
+      )
+      
    
   }
 

@@ -306,6 +306,8 @@ server <- function(input, output, session){
           & bio.scaled$indicator%in%input$indicatorSP
           & bio.scaled$scenario%in%input$scenarioSP,]
       
+      dat <- dat[order(dat$scenario), ]
+      
       }else{
 
       if (input$yearSP == "radio2"){
@@ -317,6 +319,8 @@ server <- function(input, output, session){
        
        dat<- dat %>% group_by (stock, scenario, indicator) %>%
          summarize(Ratio = c(value2[1] / value2[2]))
+       
+       dat <- dat[order(dat$scenario), ]
 
         } 
       
@@ -328,6 +332,9 @@ server <- function(input, output, session){
   output$plotSP<-renderPlot({
 
      if (input$yearSP == "radio1"){
+    #   browser()
+       
+       
   
        ggplot(data=dataSP(), aes(x=scenario, y=value2, col=stock, fill=stock, group=stock))+
          # geom_polygon(alpha=0.2, lwd=1)+

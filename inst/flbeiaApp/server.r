@@ -1,4 +1,6 @@
 
+# Change the size of the plot area: https://groups.google.com/g/shiny-discuss/c/dkZxTvfHOvo?pli=1
+
 source ("global.R") # radar plot function
 
 server <- function(input, output, session){
@@ -175,24 +177,35 @@ server <- function(input, output, session){
    dataK<-reactive({
         req(input$stockK)
   
-    data[data$year>=input$rangeK[1] & data$year<=input$rangeK[2] 
-        & data$unit%in%input$stockK
-        & data$scenario%in%input$scenarioK,]
-  })
+    res <- bio.kobe[bio.kobe$year>=input$rangeK[1] & bio.kobe$year<=input$rangeK[2] 
+        & bio.kobe$unit%in%input$stockK
+        & bio.kobe$scenario%in%input$scenarioK,]
+
+    res
+    }
+  )
 
   
   plotKobe <- function(){
-      kobePhase(dataK())+
-      geom_point(aes(stock,harvest, group=unit, col=scenario))+
-      geom_text(data=dataK(),aes(stock,harvest, col=scenario, group=unit, label=year))+
-      geom_path(aes(stock, harvest, group=unit, col=scenario), data=dataK())+
-      facet_wrap(~unit)+
+
+    dd <- dataK()
+    dy0 <- subset(dd, year == unique(dd$year)[1])
+    dy1 <- subset(dd, year == unique(dd$year)[length(unique(dd$year))])
+    
+    kobePhase(dataK(), ylim = c(0, max(dataK()$harvest)), xlim = c(0, max(dataK()$stock))) + 
+      geom_point(aes(stock,harvest, group = scenario, col = scenario)) + 
+      geom_path( aes(stock,harvest, group = scenario, col = scenario)) + 
+      geom_text(aes(stock, harvest, label = year), data = dy0, pch = 16, col = 1) +
+      geom_text(aes(stock, harvest, label = year), data = dy1, pch = 4, col = 1) +
+      facet_wrap(~unit) +
       theme(text=element_text(size=16),
             title=element_text(size=16),
-            strip.text=element_text(size=16))
+            strip.text=element_text(size=16)) #+
+  #    labs(caption = 'First year = black dot & Final year = black cross')
   }
   
   output$plotK <- renderPlot({
+ #   browser()
     if (is.null(dataK())) return()
     plotKobe()
   })
@@ -301,27 +314,29 @@ server <- function(input, output, session){
       if (input$yearSP == "radio1"){
         req(input$stockSP)
       
-      dat<-bio.scaled[bio.scaled$year == input$yearSP0
-          & bio.scaled$stock%in%input$stockSP
-          & bio.scaled$indicator%in%input$indicatorSP
-          & bio.scaled$scenario%in%input$scenarioSP,]
+      dat <- bio[bio$year == input$yearSP0 & bio$stock %in% input$stockSP & 
+               bio$indicator %in% input$indicatorSP & bio$scenario %in% input$scenarioSP,]
       
+      dat <- dat %>% group_by(stock, indicator)  %>% mutate(value2 = q50/max(q50))
       dat <- dat[order(dat$scenario), ]
+      
+   #   browser()
       
       }else{
 
       if (input$yearSP == "radio2"){
           req(input$stockSP)
-       dat <- bio.scaled[bio.scaled$year%in%c(input$yearSP1,input$yearSP2)
-          & bio.scaled$stock%in%input$stockSP
-          & bio.scaled$indicator%in%input$indicatorSP
-          & bio.scaled$scenario%in%input$scenarioSP,]
+       dat1 <- bio[bio$year %in% c(input$yearSP1) & bio$stock %in% input$stockSP & 
+                  bio$indicator %in% input$indicatorSP & bio$scenario%in%input$scenarioSP,]
+       dat2 <- bio[bio$year %in% c(input$yearSP2) & bio$stock %in% input$stockSP & 
+                     bio$indicator %in% input$indicatorSP & bio$scenario%in%input$scenarioSP,]
+       dat <- dat1 %>% bind_cols(q502= dat2$q50)
        
-       dat<- dat %>% group_by (stock, scenario, indicator) %>%
-         summarize(Ratio = c(value2[1] / value2[2]))
+       dat <- dat %>% group_by(stock, scenario, indicator) %>% summarize(Ratio = c(q502/q50))
        
        dat <- dat[order(dat$scenario), ]
 
+       #browser()
         } 
       
       dat
@@ -334,7 +349,7 @@ server <- function(input, output, session){
      if (input$yearSP == "radio1"){
     #   browser()
        
-       
+       dt <- dataSP()
   
        ggplot(data=dataSP(), aes(x=scenario, y=value2, col=stock, fill=stock, group=stock))+
          # geom_polygon(alpha=0.2, lwd=1)+
@@ -346,12 +361,13 @@ server <- function(input, output, session){
          theme(text=element_text(size=14),
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
-         ylab("")+
-         ylim(c(0,1))
+         ylab("") +ylim(c(0,max(c(1,dt$value2))))
      }else{
     
      if (input$yearSP == "radio2"){
 
+       dt <- dataSP()
+       
       ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
         # geom_polygon(alpha=0.2, lwd=1)+
         geom_polygon(fill=NA, lwd=1)+
@@ -363,7 +379,7 @@ server <- function(input, output, session){
               strip.text=element_text(size=16),
               title=element_text(size=18,face="bold"))+
         ylab("")+
-        ylim(c(0,1))
+         ylim(c(0,max(c(1,dt$Ratio))))
 
      }
      }
@@ -1175,6 +1191,7 @@ print('three spider')
     }
     
     output$plotP <- renderPlot({
+      browser()
         print(plotPolar())
     }#, height = PlotHeight_sum
     )

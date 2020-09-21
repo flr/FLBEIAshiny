@@ -275,13 +275,47 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   require(dplyr)
   require(scales)
   
-  bio.scaled <- bio %>% group_by(stock, scenario) %>% mutate(value2 = rescale(q50))
+  bio.scaled <- bio %>% group_by(stock, scenario, indicator) %>% mutate(value2 = rescale(q50))
   bio.scaled <- as.data.frame(bio.scaled)
   
   
   flt.scaled <- flt %>% group_by(fleet, scenario) %>% mutate(value2 = rescale(q50))
   flt.scaled <- as.data.frame(flt.scaled)
   
+  
+  # SSB and F time series reescales to Bmsy and Fmsy.
+  # bio.msy = long format
+  # bio.kobe = wide format to be used with Kobe plot.
+  bio.msy   <- bio %>% filter(indicator %in% c('f', 'ssb') & stock %in% RefPts$stock & scenario %in% RefPts$scenario)
+
+#  browser()
+  for(st in unique(RefPts$stock)){
+    for(sc in unique(RefPts$scenario)){
+      
+      bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'f', c('q05', 'q50','q95')] <- 
+            bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'f',  c('q05', 'q50','q95')]/
+            RefPts[RefPts$stock == st & RefPts$scenario == sc & RefPts$refpoint == 'Fmsy', 'value']
+      
+      
+      bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'ssb',  c('q05', 'q50','q95')] <- 
+        bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'ssb',  c('q05', 'q50','q95')]/
+        RefPts[RefPts$stock == st & RefPts$scenario == sc & RefPts$refpoint == 'Bmsy', 'value']
+      
+    }}
+  
+ # browser()
+  
+  bio.msy[bio.msy$indicator == 'f','indicator'] <- 'f2fmsy'
+  bio.msy[bio.msy$indicator == 'ssb','indicator'] <- 'B2Bmsy'
+  
+  bio <- bind_rows(bio, bio.msy)
+  
+   f   <- bio %>% filter(indicator == 'f2fmsy')
+   ssb <- bio %>% filter(indicator == 'B2Bmsy')
+   
+   bio.kobe <- bind_cols(f[, c('scenario', 'stock', 'year','q50')], ssb[,'q50'])
+   names(bio.kobe) <- c('scenario', 'unit', 'year', 'harvest', 'stock')
+
   
   # # # ## *********************************
   # # # ## Reference points for Reference point checkbox plots::
@@ -305,6 +339,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
    assign("bio",        bio,envir = globalenv())
    assign("bioIt",      bioIt,envir = globalenv())
+   assign("bio.kobe",   bio.kobe,envir = globalenv())
    assign("flt",        flt,envir = globalenv())
    assign("fltIt",      fltIt,envir = globalenv())
    assign("fltStk",     fltStk,envir = globalenv())

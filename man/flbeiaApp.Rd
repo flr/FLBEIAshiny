@@ -18,11 +18,13 @@ flbeiaApp(
   risk = NULL,
   years = dimnames(flbeiaObjs[[1]][[1]][[1]]@n)[[2]],
   proj.yr = NULL,
-  calculate_npv = NULL,
+  calculate_npv = FALSE,
   npv = NULL,
   npv.y0 = NULL,
   npv.yrs = NULL,
-  desc = NULL
+  desc = NULL,
+  reduced = FALSE,
+  deploy = FALSE
 )
 }
 \arguments{
@@ -32,11 +34,11 @@ flbeiaApp(
 
 \item{bio}{The output of bioSumQ function.}
 
-\item{bioIt}{The selection withing the output oneItBio.}
+\item{bioIt}{The output of bioSum function. This argument should be included only if aiming to include the results of individual iterationsin the figures.}
 
 \item{flt}{The output of fltSumQ function.}
 
-\item{fltIt}{The selection withing the output oneItFl.}
+\item{fltIt}{The output of bioSum function. This argument should be included only if aiming to include the results of individual iterationsin the figures.}
 
 \item{fltStk}{The output of fltStkSumQ function.}
 
@@ -67,13 +69,14 @@ flbeiaApp(
 \item{deploy}{logical, the deployment into shinyapps.io.}
 }
 \value{
-The function launch a Shiny-App with to analyse the results of FLBEIA in an interactive way.
+The function launches a Shiny-App with to analyse the results of FLBEIA in an interactive way.
 }
 \description{
 FLBEIA Shiny application is an interactive interface to analyze the biological, economic and social indicators obtained through FLBEIA simulation model. It provides lots of graphics at scenario, stock, fleet and metier level to facilitate the analysis of the results and the comparison among scenarios.
 }
 \details{
-If flbeiaObjs is provided the most of the other arguments (from bio,..., risk and npv) are not needed,  they are internally calculated. If it is not provided, it is neccesary to provide the rest arguments.
+If flbeiaObjs is provided the most of the other arguments (bio,..., risk and npv) are not needed, 
+as they are internally calculated. If it is not provided, then it is neccesary to provide the rest of the arguments.
 }
 \examples{
 \dontrun{
@@ -84,7 +87,7 @@ library(FLBEIAShiny)          # required to use the IcesHCR. Not available for w
 # Example with the summary indicators stored in data.frame-s
 #----------------------------------------------------------------
 
-data(FLBEIAShiny)
+data(FLBEIAshiny)
 
 
 flbeiaApp(RefPts = RefPts,bio = bioQ, flt = fltQ, adv = advQ, 
@@ -137,7 +140,7 @@ one_sc2 <- FLBEIA(biols = oneItBio,
 
 scnms <- c('Ftarget_Fmsy', 'Ftarget_0.15')
 stknms <- 'stk1'
-RefPts <- expand.grid(indicator=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
+RefPts <- expand.grid(refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
 RefPts$value <- c(c(800, 0.11, 800, 550, 0.25, 0.50),  c(800, 0.2, 800, 550, 0.25, 0.50))
 
 flbeiaObjs <- list(Ftarget_Fmsy = one_sc1, Ftarget_0.15 = one_sc2)

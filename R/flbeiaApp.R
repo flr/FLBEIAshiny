@@ -6,14 +6,14 @@
 #'
 #' @param flbeiaObjs A named list with a set of FLBEIA outputs, each element of the list corresponding with one scenario. The names of the list will be used to name the scenarios.
 #' @param RefPts A data frame with columns, 'stock', 'scenario', 'indicator', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available NA should be used. If the data.frame is not available in the function call the data frame is created internally with NA for all the cases.   
-#' @param bio The output of bioSumQ function.
-#' @param bioIt The selection withing the output oneItBio.
-#' @param flt The output of fltSumQ function.
-#' @param fltIt The selection withing the output oneItFl.
-#' @param fltStk The output of fltStkSumQ function.
-#' @param mt The output of mtSumQ function.
-#' @param mtStk The output of mtStkSumQ function.
-#' @param adv The output of advSumQ function.
+#' @param bio The output of bioSumQ function (in long format).
+#' @param bioIt The output of bioSum function (in long format). This argument should be included only if aiming to include the results of individual iterationsin the figures.
+#' @param flt The output of fltSumQ function (in long format).
+#' @param fltIt The output of bioSum function (in long format). This argument should be included only if aiming to include the results of individual iterationsin the figures.
+#' @param fltStk The output of fltStkSumQ function (in long format).
+#' @param mt The output of mtSumQ function (in long format).
+#' @param mtStk The output of mtStkSumQ function (in long format).
+#' @param adv The output of advSumQ function (in long format).
 #' @param risk The output of riskSum function.
 #' @param years The years to be included in the application.
 #' @param proj.yr The year in which the projection starts.
@@ -22,12 +22,13 @@
 #' @param npv.y0 The first year in the calculation of net present value (npv).
 #' @param npv.yrs The range of years to be considered in the npv calculation.
 #' @param desc The description of the case study.
-#' @param reduced logical, the version of the FLBEIA shiny app.
+#' @param reduced logical, the version of the FLBEIA shiny app. 
 #' @param deploy logical, the deployment into shinyapps.io.
 #' 
-#' @return The function launch a Shiny-App with to analyse the results of FLBEIA in an interactive way.
+#' @return The function launches a Shiny-App with to analyse the results of FLBEIA in an interactive way.
 #' 
-#' @details If flbeiaObjs is provided the most of the other arguments (from bio,..., risk and npv) are not needed,  they are internally calculated. If it is not provided, it is neccesary to provide the rest arguments.
+#' @details If flbeiaObjs is provided the most of the other arguments (bio,..., risk and npv) are not needed, 
+#' as they are internally calculated. If it is not provided, then it is neccesary to provide the rest of the arguments.
 #' 
 #' @examples
 #'\dontrun{
@@ -38,7 +39,7 @@
 #' # Example with the summary indicators stored in data.frame-s
 #' #----------------------------------------------------------------
 #' 
-#' data(FLBEIAShiny)
+#' data(FLBEIAshiny)
 #' 
 #' 
 #' flbeiaApp(RefPts = RefPts,bio = bioQ, flt = fltQ, adv = advQ, 
@@ -91,7 +92,7 @@
 #' 
 #' scnms <- c('Ftarget_Fmsy', 'Ftarget_0.15')
 #' stknms <- 'stk1'
-#' RefPts <- expand.grid(indicator=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
+#' RefPts <- expand.grid(refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
 #' RefPts$value <- c(c(800, 0.11, 800, 550, 0.25, 0.50),  c(800, 0.2, 800, 550, 0.25, 0.50))
 #' 
 #' flbeiaObjs <- list(Ftarget_Fmsy = one_sc1, Ftarget_0.15 = one_sc2)
@@ -115,13 +116,13 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        risk = NULL, 
                        years = dimnames(flbeiaObjs[[1]][[1]][[1]]@n)[[2]], 
                        proj.yr = NULL,
-                       calculate_npv = NULL, 
+                       calculate_npv = FALSE, 
                        npv = NULL, 
                        npv.y0 = NULL, 
                        npv.yrs = NULL,
                        desc = NULL,
-                       reduced = NULL,
-                       deploy = NULL
+                       reduced = FALSE,
+                       deploy = FALSE
                        ) {
   require(FLBEIA)
   require(kobe)
@@ -181,21 +182,21 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     for(sc in names(flbeiaObjs)){
       print(sc)
       flbeiaObj <- flbeiaObjs[[sc]]
-      aux     <- bioSum(flbeiaObj, scenario = sc, years = years)
+      aux     <- bioSum(flbeiaObj, scenario = sc, years = years, long = TRUE)
       bio     <- rbind(bio,bioSumQ(aux))
       bioIt   <- rbind(bioIt,aux)
-      aux     <- fltSum(flbeiaObj, scenario = sc, years = years)
+      aux     <- fltSum(flbeiaObj, scenario = sc, years = years, long = TRUE)
       flt     <- rbind(flt,fltSumQ(aux))
       fltIt   <- rbind(fltIt,aux)
-      fltStk  <- rbind(fltStk,fltStkSumQ(fltStkSum(flbeiaObj, scenario = sc, years = years)))
-      mt      <- rbind(mt,mtSumQ(mtSum(flbeiaObj, scenario = sc, years = years)))
-      mtStk   <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years)))
-      adv     <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years)))
+      fltStk  <- rbind(fltStk,fltStkSumQ(fltStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
+      mt      <- rbind(mt,mtSumQ(mtSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
+      mtStk   <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
+      adv     <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
 
-      Bpa <- subset(reference_points, indicator=='Bpa' & scenario == sc)[,'value']
-      names(Bpa) <- subset(reference_points, indicator=='Bpa' & scenario == sc)[,'stock']
-      Blim <- subset(reference_points, indicator=='Blim' & scenario == sc)[,'value']
-      names(Blim) <- subset(reference_points, indicator=='Blim' & scenario == sc)[,'stock']
+      Bpa <- subset(reference_points, refpoint=='Bpa' & scenario == sc)[,'value']
+      names(Bpa) <- subset(reference_points, refpoint=='Bpa' & scenario == sc)[,'stock']
+      Blim <- subset(reference_points, refpoint=='Blim' & scenario == sc)[,'value']
+      names(Blim) <- subset(reference_points, refpoint=='Blim' & scenario == sc)[,'stock']
       risk   <- rbind(risk,riskSum(flbeiaObj, scenario = sc, Bpa = Bpa, Blim = Blim, Prflim = 0, years = years))
   
   if(calculate_npv == TRUE) 
@@ -250,7 +251,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
   data <- cbind(t0[,c("stock", "year", "scenario", "q50")], t1[,'q50'])
   names(data) <- c('unit', 'year', 'scenario', 'q50.f', 'q50.ssb')
-  data <- cbind(data, Bmsy = NA,Fmsy = NA)
+  data <- cbind(data, Bmsy = as.numeric(NA), Fmsy = as.numeric(NA))
 
   for(st in unique(data$unit)){
 

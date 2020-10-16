@@ -5,34 +5,35 @@
 #' FLBEIA Shiny application is an interactive interface to analyze the biological, economic and social indicators obtained through FLBEIA simulation model. It provides lots of graphics at scenario, stock, fleet and metier level to facilitate the analysis of the results and the comparison among scenarios.
 #'
 #' @param flbeiaObjs A named list with a set of FLBEIA outputs, each element of the list corresponding with one scenario. The names of the list will be used to name the scenarios.
-#' @param RefPts A data frame with columns, 'stock', 'scenario', 'refpoint', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available NA should be used. If the data.frame is not available in the function call the data frame is created internally with NA for all the cases.   
+#' @param RefPts A data frame with columns, 'stock', 'scenario', 'refpoint', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available, them NA should be used. If the data.frame is not available in the function call, then it is created internally with NA values for all the cases.   
 #' @param bio The output of bioSumQ function (in long format).
-#' @param bioIt The output of bioSum function (in long format). This argument should be included only if aiming to include the results of individual iterationsin the figures.
+#' @param bioIt The output of bioSum function (in long format). This argument should be defined only if aiming to include the results of individual iterations in the figures.
 #' @param flt The output of fltSumQ function (in long format).
-#' @param fltIt The output of bioSum function (in long format). This argument should be included only if aiming to include the results of individual iterationsin the figures.
+#' @param fltIt The output of bioSum function (in long format). This argument should be defined only if aiming to include the results of individual iterations in the figures.
 #' @param fltStk The output of fltStkSumQ function (in long format).
 #' @param mt The output of mtSumQ function (in long format).
 #' @param mtStk The output of mtStkSumQ function (in long format).
 #' @param adv The output of advSumQ function (in long format).
 #' @param risk The output of riskSum function.
-#' @param years The years to be included in the application.
+#' @param years The years we want to be shown in the app.
 #' @param proj.yr The year in which the projection starts.
-#' @param calculate_npv logical, should the npv be calculated?
+#' @param calculate_npv logical (default = FALSE). Should the npv be calculated?
 #' @param npv The output of npvQ function.
 #' @param npv.y0 The first year in the calculation of net present value (npv).
 #' @param npv.yrs The range of years to be considered in the npv calculation.
 #' @param desc The description of the case study.
-#' @param reduced logical, the version of the FLBEIA shiny app. 
-#' @param deploy logical, the deployment into shinyapps.io.
+#' @param reduced logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app. 
+#' @param deploy logical (default = FALSE). The deployment into shinyapps.io.
 #' 
-#' @return The function launches a Shiny-App with to analyse the results of FLBEIA in an interactive way.
+#' @return The function launches a Shiny app to analyse the results of FLBEIA in an interactive way.
 #' 
-#' @details If flbeiaObjs is provided the most of the other arguments (bio,..., risk and npv) are not needed, 
-#' as they are internally calculated. If it is not provided, then it is neccesary to provide the rest of the arguments.
+#' @details If flbeiaObjs is provided some of the other arguments (bio, bioIt, flt, fltIt, fltStk, mt, mtStk, adv and npv) 
+#' are not needed, as they are internally calculated. 
+#' If not, then the follwing arguments are compulsory: bio, flt, fltStk, mt, mtStk, adv and npv.
 #' 
 #' @examples
 #'\dontrun{
-#' library(FLBEIAShiny)          # required to use the IcesHCR. Not available for win64
+#' library(FLBEIAShiny)
 #' 
 #' 
 #' #----------------------------------------------------------------
@@ -51,9 +52,11 @@
 #' 
 #' #----------------------------------------------------------------
 #' # Run FLBEIA first and then use the output to launch flbeiaApp.
-#' # In this case we use the output of FLBEIA directly.
+#' # In this case we use the FLBEIA output directly.
 #' #----------------------------------------------------------------
+#' 
 #' library(FLBEIA)
+#' 
 #' data(oneIt)
 #' 
 #' one_sc1 <- FLBEIA(biols = oneItBio,
@@ -92,13 +95,16 @@
 #' 
 #' scnms <- c('Ftarget_Fmsy', 'Ftarget_0.15')
 #' stknms <- 'stk1'
-#' RefPts <- expand.grid(refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
-#' RefPts$value <- c(c(800, 0.11, 800, 550, 0.25, 0.50),  c(800, 0.2, 800, 550, 0.25, 0.50))
+#' RefPts2 <- expand.grid( refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), 
+#'                         scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
+#' RefPts2$value <- c( c(800, 0.11, 800, 550, 0.25, 0.50),  
+#'                     c(800, 0.2, 800, 550, 0.25, 0.50))
 #' 
-#' flbeiaObjs <- list(Ftarget_Fmsy = one_sc1, Ftarget_0.15 = one_sc2)
+#' flbeiaObjs2 <- list(Ftarget_Fmsy = one_sc1, Ftarget_0.15 = one_sc2)
 #' 
 #' 
-#' flbeiaApp(flbeiaObjs = flbeiaObjs, RefPts = RefPts, years = ac(2000:2025), calculate_npv = TRUE, npv.y0 = '2012', npv.yrs = ac(2013:2025)) 
+#' flbeiaApp( flbeiaObjs = flbeiaObjs2, RefPts = RefPts2, years = ac(2000:2025), 
+#'            calculate_npv = TRUE, npv.y0 = '2012', npv.yrs = ac(2013:2025)) 
 #' 
 #' }   
     
@@ -124,6 +130,13 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        reduced = FALSE,
                        deploy = FALSE
                        ) {
+  
+  # Check: if flbeiaObjs != NULL --> necessarely bio = bioIt = flt = fltIt = fltStk = mt = mtStk = adv = risk = NULL
+  if (!is.null(flbeiaObjs) & (!is.null(bio) | !is.null(bioIt) | !is.null(flt) | !is.null(fltIt) | !is.null(fltStk) | 
+                              !is.null(mt) | !is.null(mtStk) | !is.null(adv) | !is.null(risk)))
+    stop( "When 'flbeiaObjs' is provided as input the following arguments must be NULL: 
+           bio, bioIt, flt, fltIt, fltStk, mt, mtStk, adv, risk")
+  
   require(FLBEIA)
   require(kobe)
   require(ggplot2)
@@ -172,7 +185,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     flt   <- NULL
     fltIt <- NULL
     fltStk <- NULL
-    RefPts <- NULL
+    # RefPts <- NULL
     mt     <- NULL
     mtStk  <- NULL
     adv    <- NULL

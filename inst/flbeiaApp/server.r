@@ -1192,7 +1192,7 @@ print('three spider')
     }
     
     output$plotP <- renderPlot({
-      browser()
+      # browser()
         print(plotPolar())
     }#, height = PlotHeight_sum
     )

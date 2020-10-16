@@ -30,31 +30,31 @@ flbeiaApp(
 \arguments{
 \item{flbeiaObjs}{A named list with a set of FLBEIA outputs, each element of the list corresponding with one scenario. The names of the list will be used to name the scenarios.}
 
-\item{RefPts}{A data frame with columns, 'stock', 'scenario', 'indicator', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available NA should be used. If the data.frame is not available in the function call the data frame is created internally with NA for all the cases.}
+\item{RefPts}{A data frame with columns, 'stock', 'scenario', 'refpoint', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available, them NA should be used. If the data.frame is not available in the function call, then it is created internally with NA values for all the cases.}
 
-\item{bio}{The output of bioSumQ function.}
+\item{bio}{The output of bioSumQ function (in long format).}
 
-\item{bioIt}{The output of bioSum function. This argument should be included only if aiming to include the results of individual iterationsin the figures.}
+\item{bioIt}{The output of bioSum function (in long format). This argument should be defined only if aiming to include the results of individual iterations in the figures.}
 
-\item{flt}{The output of fltSumQ function.}
+\item{flt}{The output of fltSumQ function (in long format).}
 
-\item{fltIt}{The output of bioSum function. This argument should be included only if aiming to include the results of individual iterationsin the figures.}
+\item{fltIt}{The output of bioSum function (in long format). This argument should be defined only if aiming to include the results of individual iterations in the figures.}
 
-\item{fltStk}{The output of fltStkSumQ function.}
+\item{fltStk}{The output of fltStkSumQ function (in long format).}
 
-\item{mt}{The output of mtSumQ function.}
+\item{mt}{The output of mtSumQ function (in long format).}
 
-\item{mtStk}{The output of mtStkSumQ function.}
+\item{mtStk}{The output of mtStkSumQ function (in long format).}
 
-\item{adv}{The output of advSumQ function.}
+\item{adv}{The output of advSumQ function (in long format).}
 
 \item{risk}{The output of riskSum function.}
 
-\item{years}{The years to be included in the application.}
+\item{years}{The years we want to be shown in the app.}
 
 \item{proj.yr}{The year in which the projection starts.}
 
-\item{calculate_npv}{logical, should the npv be calculated?}
+\item{calculate_npv}{logical (default = FALSE). Should the npv be calculated?}
 
 \item{npv}{The output of npvQ function.}
 
@@ -64,23 +64,24 @@ flbeiaApp(
 
 \item{desc}{The description of the case study.}
 
-\item{reduced}{logical, the version of the FLBEIA shiny app.}
+\item{reduced}{logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app.}
 
-\item{deploy}{logical, the deployment into shinyapps.io.}
+\item{deploy}{logical (default = FALSE). The deployment into shinyapps.io.}
 }
 \value{
-The function launches a Shiny-App with to analyse the results of FLBEIA in an interactive way.
+The function launches a Shiny app to analyse the results of FLBEIA in an interactive way.
 }
 \description{
 FLBEIA Shiny application is an interactive interface to analyze the biological, economic and social indicators obtained through FLBEIA simulation model. It provides lots of graphics at scenario, stock, fleet and metier level to facilitate the analysis of the results and the comparison among scenarios.
 }
 \details{
-If flbeiaObjs is provided the most of the other arguments (bio,..., risk and npv) are not needed, 
-as they are internally calculated. If it is not provided, then it is neccesary to provide the rest of the arguments.
+If flbeiaObjs is provided some of the other arguments (bio, bioIt, flt, fltIt, fltStk, mt, mtStk, adv and npv) 
+are not needed, as they are internally calculated. 
+If not, then the follwing arguments are compulsory: bio, flt, fltStk, mt, mtStk, adv and npv.
 }
 \examples{
 \dontrun{
-library(FLBEIAShiny)          # required to use the IcesHCR. Not available for win64
+library(FLBEIAShiny)
 
 
 #----------------------------------------------------------------
@@ -99,9 +100,11 @@ flbeiaApp(RefPts = RefPts,bio = bioQ, flt = fltQ, adv = advQ,
 
 #----------------------------------------------------------------
 # Run FLBEIA first and then use the output to launch flbeiaApp.
-# In this case we use the output of FLBEIA directly.
+# In this case we use the FLBEIA output directly.
 #----------------------------------------------------------------
+
 library(FLBEIA)
+
 data(oneIt)
 
 one_sc1 <- FLBEIA(biols = oneItBio,
@@ -140,13 +143,16 @@ one_sc2 <- FLBEIA(biols = oneItBio,
 
 scnms <- c('Ftarget_Fmsy', 'Ftarget_0.15')
 stknms <- 'stk1'
-RefPts <- expand.grid(refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
-RefPts$value <- c(c(800, 0.11, 800, 550, 0.25, 0.50),  c(800, 0.2, 800, 550, 0.25, 0.50))
+RefPts2 <- expand.grid( refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), 
+                        scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
+RefPts2$value <- c( c(800, 0.11, 800, 550, 0.25, 0.50),  
+                    c(800, 0.2, 800, 550, 0.25, 0.50))
 
-flbeiaObjs <- list(Ftarget_Fmsy = one_sc1, Ftarget_0.15 = one_sc2)
+flbeiaObjs2 <- list(Ftarget_Fmsy = one_sc1, Ftarget_0.15 = one_sc2)
 
 
-flbeiaApp(flbeiaObjs = flbeiaObjs, RefPts = RefPts, years = ac(2000:2025), calculate_npv = TRUE, npv.y0 = '2012', npv.yrs = ac(2013:2025)) 
+flbeiaApp( flbeiaObjs = flbeiaObjs2, RefPts = RefPts2, years = ac(2000:2025), 
+           calculate_npv = TRUE, npv.y0 = '2012', npv.yrs = ac(2013:2025)) 
 
 }   
 }

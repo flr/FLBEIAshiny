@@ -5,7 +5,7 @@
 #' FLBEIA Shiny application is an interactive interface to analyze the biological, economic and social indicators obtained through FLBEIA simulation model. It provides lots of graphics at scenario, stock, fleet and metier level to facilitate the analysis of the results and the comparison among scenarios.
 #'
 #' @param flbeiaObjs A named list with a set of FLBEIA outputs, each element of the list corresponding with one scenario. The names of the list will be used to name the scenarios.
-#' @param RefPts A data frame with columns, 'stock', 'scenario', 'indicator', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available NA should be used. If the data.frame is not available in the function call the data frame is created internally with NA for all the cases.   
+#' @param RefPts A data frame with columns, 'stock', 'scenario', 'refpoint', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available NA should be used. If the data.frame is not available in the function call the data frame is created internally with NA for all the cases.   
 #' @param bio The output of bioSumQ function (in long format).
 #' @param bioIt The output of bioSum function (in long format). This argument should be included only if aiming to include the results of individual iterationsin the figures.
 #' @param flt The output of fltSumQ function (in long format).
@@ -142,23 +142,23 @@ flbeiaApp <- function (flbeiaObjs = NULL,
       stknms <- names(flbeiaObjs[[1]]$biols)
       scnms <- names(flbeiaObjs)
     }
-    reference_points <- data.frame( stock = rep(stknms, each = 6*length(scnms)),
-                                    scenario = rep(rep(scnms, each = 6),length(stknms)),
-                                    indicator = rep(c('Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa', 'Flim'), length(stknms)*length(scnms)),
-                                    value = NA)
+    RefPts <- data.frame( stock = rep(stknms, each = 6*length(scnms)),
+                          scenario = rep(rep(scnms, each = 6),length(stknms)),
+                          indicator = rep(c('Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa', 'Flim'), length(stknms)*length(scnms)),
+                          value = NA)
+    # # # # ## *********************************
+    # # # # ## Reference points for Reference point checkbox plots::
+    # names(reference_points)<- c("stock", "scenario", "refpoint","value")
+    # reference_points$indicator <- NA
+    # reference_points$indicator[reference_points$refpoint =="Bmsy"] <-"ssb"
+    # reference_points$indicator[reference_points$refpoint =="Fmsy"] <-"f"
     # # # ## *********************************
-    # # # ## Reference points for Reference point checkbox plots::
-    names(reference_points)<- c("stock", "scenario", "refpoint","value")
-    reference_points$indicator <- NA
-    reference_points$indicator[reference_points$refpoint =="Bmsy"] <-"ssb"
-    reference_points$indicator[reference_points$refpoint =="Fmsy"] <-"f"
-    # # ## *********************************
     
     }
-  else{
-
-    reference_points <- RefPts
-  }
+  # else{
+  # 
+  #   reference_points <- RefPts
+  # }
 
   if(!is.null(flbeiaObjs)){
     if(is.null(names(flbeiaObjs))){
@@ -193,10 +193,10 @@ flbeiaApp <- function (flbeiaObjs = NULL,
       mtStk   <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
       adv     <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
 
-      Bpa <- subset(reference_points, refpoint=='Bpa' & scenario == sc)[,'value']
-      names(Bpa) <- subset(reference_points, refpoint=='Bpa' & scenario == sc)[,'stock']
-      Blim <- subset(reference_points, refpoint=='Blim' & scenario == sc)[,'value']
-      names(Blim) <- subset(reference_points, refpoint=='Blim' & scenario == sc)[,'stock']
+      Bpa <- subset(RefPts, refpoint=='Bpa' & scenario == sc)[,'value']
+      names(Bpa) <- subset(RefPts, refpoint=='Bpa' & scenario == sc)[,'stock']
+      Blim <- subset(RefPts, refpoint=='Blim' & scenario == sc)[,'value']
+      names(Blim) <- subset(RefPts, refpoint=='Blim' & scenario == sc)[,'stock']
       risk   <- rbind(risk,riskSum(flbeiaObj, scenario = sc, Bpa = Bpa, Blim = Blim, Prflim = 0, years = years))
   
   if(calculate_npv == TRUE) 
@@ -257,8 +257,8 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
     for(sc in unique(data$scenario)){
 
-      bmsy <- subset(reference_points, stock == st & scenario == sc & refpoint == 'Bmsy')
-      fmsy <- subset(reference_points, stock == st & scenario == sc & refpoint == 'Fmsy')
+      bmsy <- subset(RefPts, stock == st & scenario == sc & refpoint == 'Bmsy')
+      fmsy <- subset(RefPts, stock == st & scenario == sc & refpoint == 'Fmsy')
 
       data[data$unit == st & data$scenario == sc, 'Bmsy'] <- bmsy$value
       data[data$unit == st & data$scenario == sc, 'Fmsy'] <- fmsy$value
@@ -323,13 +323,13 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   
    # names(reference_points)<- c("stock", "scenario", "refpoint","value")
    # reference_points$indicator <- NA
-   # reference_points[reference_points$refpoint =="Bmsy"] <-"ssb"
-   # reference_points[reference_points$refpoint =="Fmsy"] <-"f"
+   # reference_points[reference_points$refpoint %in% c("Bmsy","Bpa")]        <-"ssb"
+   # reference_points[reference_points$refpoint %in% c("Fmsy","Fpa","Flim")] <-"f"
 
   # names(RefPts)<- c("stock", "scenario", "refpoint","value")
-  # RefPts$indicator <- NA
-  # RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
-  # RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
+  RefPts$indicator <- NA
+  RefPts$indicator[RefPts$refpoint %in% c("Bmsy","Bpa")]        <-"ssb"
+  RefPts$indicator[RefPts$refpoint %in% c("Fmsy","Fpa","Flim")] <-"f"
   
   
   ## --------------------------------------------------------------------------
@@ -355,7 +355,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("version",    version, envir = globalenv())
    assign("proj.yr",    proj.yr, envir = globalenv())
    assign("data",       data,envir = globalenv())
-   assign("reference_points",  reference_points,envir = globalenv())
+   # assign("reference_points",  reference_points,envir = globalenv())
    assign("bio.scaled",        bio.scaled,envir = globalenv())
    assign("flt.scaled",        flt.scaled,envir = globalenv())
    

@@ -1021,7 +1021,6 @@ print('three spider')
       plotAdvice <- function(){
        p <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
               geom_line(lwd=1)+
-              geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
               ylab("")+ xlab("Year")+
               theme_bw()+
               theme( strip.text=element_text(size=16),

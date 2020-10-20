@@ -22,7 +22,8 @@
 #' @param npv.y0 The first year in the calculation of net present value (npv).
 #' @param npv.yrs The range of years to be considered in the npv calculation.
 #' @param desc The description of the case study.
-#' @param reduced logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app. 
+#' @param reduced logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app 
+#'                (i.e. Fleets, Fleets by stock, Metiers and Metiers by stock tabs are not shown). 
 #' @param deploy logical (default = FALSE). The deployment into shinyapps.io.
 #' 
 #' @return The function launches a Shiny app to analyse the results of FLBEIA in an interactive way.
@@ -366,11 +367,11 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("npv",        npv2,envir = globalenv())
    assign("proj.yr",    proj.yr,envir = globalenv())
    assign("version",    version, envir = globalenv())
-   assign("proj.yr",    proj.yr, envir = globalenv())
    assign("data",       data,envir = globalenv())
+   assign("desc",       desc, envir = globalenv())
    # assign("reference_points",  reference_points,envir = globalenv())
-   assign("bio.scaled",        bio.scaled,envir = globalenv())
-   assign("flt.scaled",        flt.scaled,envir = globalenv())
+   assign("bio.scaled", bio.scaled,envir = globalenv())
+   assign("flt.scaled", flt.scaled,envir = globalenv())
    
    ## --------------------------------------------------------------------------
 

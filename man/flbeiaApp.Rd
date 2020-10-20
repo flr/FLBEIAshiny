@@ -64,7 +64,8 @@ flbeiaApp(
 
 \item{desc}{The description of the case study.}
 
-\item{reduced}{logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app.}
+\item{reduced}{logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app 
+(i.e. Fleets, Fleets by stock, Metiers and Metiers by stock tabs are not shown).}
 
 \item{deploy}{logical (default = FALSE). The deployment into shinyapps.io.}
 }

@@ -1,4 +1,6 @@
 
+# Change the size of the plot area: https://groups.google.com/g/shiny-discuss/c/dkZxTvfHOvo?pli=1
+
 source ("global.R") # radar plot function
 
 server <- function(input, output, session){
@@ -94,7 +96,6 @@ server <- function(input, output, session){
       
       p <-ggplot()+
         geom_line(data = dataS(), aes(x=year, y=q50, color=scenario), lwd = 1) +
-        geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         ylab("")+xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
@@ -107,11 +108,16 @@ server <- function(input, output, session){
            scale_linetype_manual(values = c(2:6))
        }
 
+      if(!is.null(proj.yr)){
+        p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+      }
+      
       # Refence points
         if (input$refpointS == TRUE ){
           validate (
             need(nrow(datarpS())>0, "Please check if reference points are loaded or adequate indicator selected"))
           p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
+          #! MK: debes cambiar para que acepte mas de un pto de referencia (poner distintos tipos de linea)
           }
       
       # Confidence intervals
@@ -172,24 +178,35 @@ server <- function(input, output, session){
    dataK<-reactive({
         req(input$stockK)
   
-    data[data$year>=input$rangeK[1] & data$year<=input$rangeK[2] 
-        & data$unit%in%input$stockK
-        & data$scenario%in%input$scenarioK,]
-  })
+    res <- bio.kobe[bio.kobe$year>=input$rangeK[1] & bio.kobe$year<=input$rangeK[2] 
+        & bio.kobe$unit%in%input$stockK
+        & bio.kobe$scenario%in%input$scenarioK,]
+
+    res
+    }
+  )
 
   
   plotKobe <- function(){
-      kobePhase(dataK())+
-      geom_point(aes(stock,harvest, group=unit, col=scenario))+
-      geom_text(data=dataK(),aes(stock,harvest, col=scenario, group=unit, label=year))+
-      geom_path(aes(stock, harvest, group=unit, col=scenario), data=dataK())+
-      facet_wrap(~unit)+
+
+    dd <- dataK()
+    dy0 <- subset(dd, year == unique(dd$year)[1])
+    dy1 <- subset(dd, year == unique(dd$year)[length(unique(dd$year))])
+    
+    kobePhase(dataK(), ylim = c(0, max(dataK()$harvest)), xlim = c(0, max(dataK()$stock))) + 
+      geom_point(aes(stock,harvest, group = scenario, col = scenario)) + 
+      geom_path( aes(stock,harvest, group = scenario, col = scenario)) + 
+      geom_text(aes(stock, harvest, label = year), data = dy0, pch = 16, col = 1) +
+      geom_text(aes(stock, harvest, label = year), data = dy1, pch = 4, col = 1) +
+      facet_wrap(~unit) +
       theme(text=element_text(size=16),
             title=element_text(size=16),
-            strip.text=element_text(size=16))
+            strip.text=element_text(size=16)) #+
+  #    labs(caption = 'First year = black dot & Final year = black cross')
   }
   
   output$plotK <- renderPlot({
+ #   browser()
     if (is.null(dataK())) return()
     plotKobe()
   })
@@ -235,9 +252,9 @@ server <- function(input, output, session){
   
   
   plotSR <- function(){
-    ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
+    p <- ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
       geom_line(aes(color=scenario), lwd = 1)+
-      geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
+       # projection starting year 
       facet_grid(indicator~unit)+
       theme_bw()+
       theme(text=element_text(size=16),
@@ -246,7 +263,17 @@ server <- function(input, output, session){
             #axis.text.x = element_text(angle = 90, hjust = 1)
             )+
       xlab("Year")+ ylab("Probability")
+    
+    if(!is.null(proj.yr)){
+      p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)
+    }
+    
+    p
+    
   }
+  
+ 
+  
   
   output$plotR<-renderPlot({
     plotSR()
@@ -288,23 +315,29 @@ server <- function(input, output, session){
       if (input$yearSP == "radio1"){
         req(input$stockSP)
       
-      dat<-bio.scaled[bio.scaled$year == input$yearSP0
-          & bio.scaled$stock%in%input$stockSP
-          & bio.scaled$indicator%in%input$indicatorSP
-          & bio.scaled$scenario%in%input$scenarioSP,]
+      dat <- bio[bio$year == input$yearSP0 & bio$stock %in% input$stockSP & 
+               bio$indicator %in% input$indicatorSP & bio$scenario %in% input$scenarioSP,]
+      
+      dat <- dat %>% group_by(stock, indicator)  %>% mutate(value2 = q50/max(q50))
+      dat <- dat[order(dat$scenario), ]
+      
+   #   browser()
       
       }else{
 
       if (input$yearSP == "radio2"){
           req(input$stockSP)
-       dat <- bio.scaled[bio.scaled$year%in%c(input$yearSP1,input$yearSP2)
-          & bio.scaled$stock%in%input$stockSP
-          & bio.scaled$indicator%in%input$indicatorSP
-          & bio.scaled$scenario%in%input$scenarioSP,]
+       dat1 <- bio[bio$year %in% c(input$yearSP1) & bio$stock %in% input$stockSP & 
+                  bio$indicator %in% input$indicatorSP & bio$scenario%in%input$scenarioSP,]
+       dat2 <- bio[bio$year %in% c(input$yearSP2) & bio$stock %in% input$stockSP & 
+                     bio$indicator %in% input$indicatorSP & bio$scenario%in%input$scenarioSP,]
+       dat <- dat1 %>% bind_cols(q502= dat2$q50)
        
-       dat<- dat %>% group_by (stock, scenario, indicator) %>%
-         summarize(Ratio = c(value2[1] / value2[2]))
+       dat <- dat %>% group_by(stock, scenario, indicator) %>% summarize(Ratio = c(q502/q50))
+       
+       dat <- dat[order(dat$scenario), ]
 
+       #browser()
         } 
       
       dat
@@ -315,6 +348,9 @@ server <- function(input, output, session){
   output$plotSP<-renderPlot({
 
      if (input$yearSP == "radio1"){
+    #   browser()
+       
+       dt <- dataSP()
   
        ggplot(data=dataSP(), aes(x=scenario, y=value2, col=stock, fill=stock, group=stock))+
          # geom_polygon(alpha=0.2, lwd=1)+
@@ -326,12 +362,13 @@ server <- function(input, output, session){
          theme(text=element_text(size=14),
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
-         ylab("")+
-         ylim(c(0,1))
+         ylab("") +ylim(c(0,max(c(1,dt$value2))))
      }else{
     
      if (input$yearSP == "radio2"){
 
+       dt <- dataSP()
+       
       ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
         # geom_polygon(alpha=0.2, lwd=1)+
         geom_polygon(fill=NA, lwd=1)+
@@ -343,7 +380,7 @@ server <- function(input, output, session){
               strip.text=element_text(size=16),
               title=element_text(size=18,face="bold"))+
         ylab("")+
-        ylim(c(0,1))
+         ylim(c(0,max(c(1,dt$Ratio))))
 
      }
      }
@@ -413,7 +450,6 @@ print('three spider')
       
       p <- ggplot()+
                 geom_line(data= dataF(), aes(x=year, y=q50, color=scenario),lwd=1)+
-                geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+ xlab("Year")+
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
@@ -426,6 +462,13 @@ print('three spider')
         p <- p + geom_line(data = dataFI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1)+
           scale_linetype_manual(values = c(2:6))
       }
+      
+      
+      if(!is.null(proj.yr)){
+        p <- p + geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
+      }
+      
       
       # With Conf Int.
       if (input$fitCIF == TRUE){
@@ -540,15 +583,21 @@ print('three spider')
 
       
     plotFLRisk <- function(){
-        ggplot(dataE(), aes(x=year, y=value, color=scenario))+
+        p <- ggplot(dataE(), aes(x=year, y=value, color=scenario))+
         geom_line(aes(color=scenario),lwd=1)+
-        geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
         facet_wrap(~unit, scales="free")+
         ylab("")+ xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
                title=element_text(size=16),
                text=element_text(size=16))
+      
+        if(!is.null(proj.yr)){
+            p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+        
+        }
+      
+        p
       }
       
     output$plotFR <-renderPlot({
@@ -708,7 +757,6 @@ print('three spider')
     plotMetier <- function(){
         p <-ggplot(dataM(), aes(x=as.numeric(year), y=q50, color=scenario))+
                   geom_line(aes(color=scenario),lwd=1)+
-                  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                   ylab("")+xlab("Year")+
                   theme_bw()+
                   theme( strip.text=element_text(size=16),
@@ -716,6 +764,11 @@ print('three spider')
                         text=element_text(size=16))+
                   scale_x_continuous(limits = c(input$rangeM[1], input$rangeM[2]))
       
+        if(!is.null(proj.yr)){
+         p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
+        }
+        
         if(input$fitCIM == TRUE)
             p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
         
@@ -795,7 +848,6 @@ print('three spider')
             
         p <- ggplotFby<-ggplot(dataFby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -805,6 +857,12 @@ print('three spider')
         
         if(input$fitCIFby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+        }
+        
+        
+        if(!is.null(proj.yr)){
+          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
         }
         
         if(input$fitFby == FALSE){
@@ -886,7 +944,6 @@ print('three spider')
     plotMetierby <- function(){
         p <- ggplot(dataMby(), aes(x=as.numeric(year), y=q50, color=scenario))+
                 geom_line(aes(color=scenario),lwd=1)+
-                geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -899,6 +956,10 @@ print('three spider')
         } 
         if(input$fitMby==TRUE){
           p <- p + facet_wrap(metier*stock ~ indicator, ncol=length(input$metierMby), scales="free_y")
+        }
+        if(!is.null(proj.yr)){
+          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
         }
         else{
           p <- p + facet_grid(metier*stock ~ indicator)
@@ -958,14 +1019,19 @@ print('three spider')
       
       
       plotAdvice <- function(){
-        p <- ggplotA <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
+       p <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
               geom_line(lwd=1)+
-              geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)+ # projection starting year 
               ylab("")+ xlab("Year")+
               theme_bw()+
               theme( strip.text=element_text(size=16),
                       title=element_text(size=16),
                       text=element_text(size=16))
+        
+        if(!is.null(proj.yr)){
+          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+          
+        }
+        
         
         if (input$fitCIA == TRUE){
           p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -1125,6 +1191,7 @@ print('three spider')
     }
     
     output$plotP <- renderPlot({
+      # browser()
         print(plotPolar())
     }#, height = PlotHeight_sum
     )

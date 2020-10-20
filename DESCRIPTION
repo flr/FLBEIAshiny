@@ -12,4 +12,4 @@ Depends:
 Additional_repositories: http://flr-project.org/R
 License: GPL-2
 VignetteBuilder: R.rsp
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1

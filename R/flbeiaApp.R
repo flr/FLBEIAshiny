@@ -342,8 +342,11 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
   # names(RefPts)<- c("stock", "scenario", "refpoint","value")
   RefPts$indicator <- NA
-  RefPts$indicator[RefPts$refpoint %in% c("Bmsy","Bpa")]        <-"ssb"
-  RefPts$indicator[RefPts$refpoint %in% c("Fmsy","Fpa","Flim")] <-"f"
+  RefPts$indicator[RefPts$refpoint %in% c("Bmsy","Bpa", "Blim")]  <-"ssb"
+  RefPts$indicator[RefPts$refpoint %in% c("Fmsy","Fpa","Flim")]   <-"f"
+  RefPts$refpt_type[RefPts$refpoint %in% c("Fmsy","Bmsy")]   <-"MSY"
+  RefPts$refpt_type[RefPts$refpoint %in% c("Fpa","Bpa")]     <-"PA"
+  RefPts$refpt_type[RefPts$refpoint %in% c("Flim","Blim")]   <-"LIM"
   
   
   ## --------------------------------------------------------------------------

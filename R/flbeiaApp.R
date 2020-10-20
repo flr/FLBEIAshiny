@@ -215,7 +215,11 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   
   if(calculate_npv == TRUE) 
     npv2    <- rbind(npv2,npvQ(npv(flbeiaObj, scenario = sc, y0 = npv.y0, years = npv.yrs )))
-    }}
+    }
+    
+    bioIt$iter <- as.factor(bioIt$iter)
+    
+    }
   if(calculate_npv == FALSE & !is.null(npv)) npv2 <- npv
  
  ## --------------------------------------------------------------------------

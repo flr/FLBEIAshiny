@@ -104,7 +104,7 @@ server <- function(input, output, session){
       
       # Iteraction
        if(!is.null(input$iterS)){
-         p <- p + geom_line(data = dataSI(), aes(x=year, y=q50, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1)+
+         p <- p + geom_line(data = dataSI(), aes(x=year, y=value, group = interaction(scenario, iter), color = scenario,  linetype = iter), lwd=1)+
            scale_linetype_manual(values = c(2:6))
        }
 

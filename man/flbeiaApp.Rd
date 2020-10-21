@@ -82,7 +82,7 @@ If not, then the follwing arguments are compulsory: bio, flt, fltStk, mt, mtStk,
 }
 \examples{
 \dontrun{
-library(FLBEIAShiny)
+library(FLBEIAshiny)
 
 
 #----------------------------------------------------------------

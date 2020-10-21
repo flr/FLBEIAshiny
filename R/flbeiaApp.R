@@ -34,7 +34,7 @@
 #' 
 #' @examples
 #'\dontrun{
-#' library(FLBEIAShiny)
+#' library(FLBEIAshiny)
 #' 
 #' 
 #' #----------------------------------------------------------------
@@ -387,7 +387,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    
    if (deploy == FALSE)
 
-    shiny::runApp(system.file('flbeiaApp', package='FLBEIAShiny'), launch.browser = TRUE)
+    shiny::runApp(system.file('flbeiaApp', package='FLBEIAshiny'), launch.browser = TRUE)
    
    if (deploy == TRUE)
      

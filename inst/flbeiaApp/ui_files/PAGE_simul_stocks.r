@@ -2,9 +2,9 @@
 
 tabsetPanel(type = "tabs",
             
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # TIME SERIES window
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tabPanel( 
               title = "Time series",
               fluidRow(
@@ -39,9 +39,41 @@ tabsetPanel(type = "tabs",
                 ))),
             
             
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            #  Area plot
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            tabPanel(
+              title = "Area plot",
+              fluidRow(
+                br(),
+                column(3,
+                       shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
+                       shinyBS::bsCollapsePanel("Stock and Indicator",
+                                                        sliderInput("rangeSA", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
+                                                        selectizeInput("stockSA", label=h4("Stock"), levels(as.factor(bio$stock)), selected=levels(as.factor(bio$stock)),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                                                        selectizeInput("indicatorSA", label=h4("Indicators"), c('ssb', 'biomass', 'catch', 'landings', 'discards'),selected='catch',multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                                                        selectizeInput("scenarioSA", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                                                        checkboxInput("percSA", h5("Percentage"), FALSE),
+                                                        checkboxInput("fitSA", "Free scales", FALSE)
+                                                                              #hr(),
+                                           ),
+                       shinyBS::bsCollapsePanel("Download",  # Options for file downloading
+                                                      textInput('filenmSA', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+                                                      numericInput('fileWSA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+                                                      numericInput('fileHSA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+                                                      numericInput('fileScSA', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+                                                      selectInput(inputId = "fileTypeSA", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+                                                      downloadButton(outputId = "downSA", label = "Download the plot")
+                                           ))),
+
+                column(9,
+                       plotOutput("plotSA", height = "600px", width = "900px")
+                ))),
+            
+            
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             #  KOBE PLOT
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tabPanel(
               title = "Kobe plot",
               fluidRow(
@@ -69,9 +101,9 @@ tabsetPanel(type = "tabs",
               ))),
             
             
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             #  BIOLOGICAL RISK
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tabPanel(
               title = "Biological risk", 
               fluidRow(
@@ -98,9 +130,9 @@ tabsetPanel(type = "tabs",
                   plotOutput("plotR", height = "600px", width = "900px")
                 ))), 
             
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # SPIDER PLOTS
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tabPanel( 
               title = "Spider",
               fluidRow(

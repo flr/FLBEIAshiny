@@ -95,7 +95,7 @@ server <- function(input, output, session){
     plotStock <- function(){
       
       p <-ggplot()+
-        geom_line(data = dataS(), aes(x=year, y=q50, color=scenario), lwd = 1) +
+        geom_line(data = dataS(), aes(x=year, y=q50, color=scenario), size = input$lwdS) +
         ylab("")+xlab("Year")+
         theme_bw()+
         theme( strip.text=element_text(size=16),
@@ -111,6 +111,8 @@ server <- function(input, output, session){
       if(!is.null(proj.yr)){
         p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
       }
+      
+      if(input$dotLineS == TRUE) p <- p +  geom_point(data = dataS(), aes(x=year, y=q50, color=scenario), size = input$dszS)
       
       # Refence points
         if (input$refpointS == TRUE ){
@@ -217,7 +219,7 @@ server <- function(input, output, session){
       if(!is.null(proj.yr)){
         p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
       }
-
+      
       if(input$fitSA == FALSE){
         p <- p + facet_grid(scenario~indicator)
       }

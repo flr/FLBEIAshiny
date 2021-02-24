@@ -2,8 +2,8 @@
 # # ## Reference points for Reference point checkbox plots::
 # names(RefPts)<- c("stock", "scenario", "refpoint","value")
 # RefPts$indicator <- NA
-# RefPts$indicator[RefPts$refpoint =="Bmsy"] <-"ssb"
-# RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
+# RefPts$indicator[RefPts$indicator =="Bmsy"] <-"ssb"
+# RefPts$indicator[RefPts$indicator =="Fmsy"] <-"f"
 # ## *********************************
 
   

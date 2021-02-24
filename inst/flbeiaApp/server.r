@@ -1024,6 +1024,7 @@ print('three spider')
           group_by(year, scenario, indicator, fleet) %>%
           mutate(p = q50/sum(q50)) %>% mutate(q50=p)
       }
+      print(fltStk[1:10,])
       return(fltStk)
     })
     
@@ -1042,10 +1043,10 @@ print('three spider')
       }
       
       if(input$fitbyA == FALSE){
-        p <- p + facet_grid(scenario~indicator*fleet)
+        p <- p + facet_grid(scenario~indicator)
       }
       else{
-        p <- p + facet_wrap(scenario~indicator*fleet, scale = 'free_y')
+        p <- p + facet_wrap(scenario~indicator, scale = 'free_y')
       }
       
     }

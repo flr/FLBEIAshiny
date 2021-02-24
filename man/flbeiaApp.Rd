@@ -30,7 +30,7 @@ flbeiaApp(
 \arguments{
 \item{flbeiaObjs}{A named list with a set of FLBEIA outputs, each element of the list corresponding with one scenario. The names of the list will be used to name the scenarios.}
 
-\item{RefPts}{A data frame with columns, 'stock', 'scenario', 'refpoint', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available, them NA should be used. If the data.frame is not available in the function call, then it is created internally with NA values for all the cases.}
+\item{RefPts}{A data frame with columns, 'stock', 'scenario', 'indicator', and 'value', with the values of 'Bmsy','Fmsy', 'Bpa', 'Blim', 'Fpa' and 'Flim' per stock and scenario. If the value for certain stock and/or scenario is not available, them NA should be used. If the data.frame is not available in the function call, then it is created internally with NA values for all the cases.}
 
 \item{bio}{The output of bioSumQ function (in long format).}
 
@@ -144,7 +144,7 @@ one_sc2 <- FLBEIA(biols = oneItBio,
 
 scnms <- c('Ftarget_Fmsy', 'Ftarget_0.15')
 stknms <- 'stk1'
-RefPts2 <- expand.grid( refpoint=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), 
+RefPts2 <- expand.grid( indicator=c("Bmsy", "Fmsy", "Bpa", "Blim", "Fpa", "Flim"), 
                         scenario=scnms, stock=stknms, value=NA)[,c(3,2,1,4)]
 RefPts2$value <- c( c(800, 0.11, 800, 550, 0.25, 0.50),  
                     c(800, 0.2, 800, 550, 0.25, 0.50))

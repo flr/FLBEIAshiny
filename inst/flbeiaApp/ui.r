@@ -6,7 +6,7 @@
 # RefPts$indicator[RefPts$refpoint =="Fmsy"] <-"f"
 # ## *********************************
 
-
+  
 ui <- tagList(
   shinyjs::useShinyjs(),
   includeCSS("css/lumen.css"),
@@ -36,11 +36,11 @@ ui <- tagList(
                         source("ui_files/PAGE_simul_stocks.r",local =TRUE)$value),
                tabPanel(id="Fleets","Fleets",
                         source("ui_files/PAGE_simul_fleets.r",local =TRUE)$value),
-               tabPanel("Fleets by stock",
+               tabPanel("Fleets and stocks",
                         source("ui_files/PAGE_simul_fleetsby.r",local =TRUE)$value),
-               tabPanel("Metiers",
+               tabPanel("Fleets and metiers",
                         source("ui_files/PAGE_simul_metiers.r",local =TRUE)$value),
-               tabPanel("Metiers by stock",
+               tabPanel("Fleets, metiers and stocks",
                         source("ui_files/PAGE_simul_metiersby.r",local =TRUE)$value),
                tabPanel("Summary",
                         source("ui_files/PAGE_simul_summary.r",local =TRUE)$value),

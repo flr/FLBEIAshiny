@@ -1,6 +1,12 @@
-
 # # ## *********************************
 
+
+# load(file.path(getwd(), 'inst/flbeiaApp/deploy.RData'))
+# if(deploy == TRUE){ 
+#   load("App.RData")
+#   library(ggplot2)
+#   library(schoolmath)
+# }
 ## radar coordinate system for spider plots::
 
 coord_radar <- function (theta = "x", start = 0, direction = 1) {

@@ -179,8 +179,7 @@ server <- function(input, output, session){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation STOCK AREA  ####
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
   
   # PlotHeight_stk <- reactive({
   #   
@@ -202,7 +201,8 @@ server <- function(input, output, session){
          group_by(year, scenario, indicator) %>%
         mutate(p = q50/sum(q50)) %>% mutate(q50=p)
       
-    }
+      }
+      print(bio[1:5,])
     return(bio)
       })
 
@@ -928,11 +928,10 @@ print('three spider')
 
   observe ({
       dataFby<-reactive({
-        req(input$fleetFby)
-          fltStk[fltStk$year>=input$rangeFby[1]         & fltStk$year<=input$rangeFby[2]
-               & fltStk$stock%in%input$stockFby         & fltStk$fleet%in%input$fleetFby
-               & fltStk$indicator%in%input$indicatorFby & fltStk$scenario%in%input$scenarioFby,]
-      })
+          fltStk <- fltStk %>% filter(year %in% input$rangeFby[1]:input$rangeFby[2],
+                                      stock %in% input$stockFby, fleet %in% input$fleetFby,
+                                      indicator %in% input$indicatorFby, scenario %in% input$scenarioFby)
+          })
       
    #   browser()
 
@@ -942,7 +941,7 @@ print('three spider')
       plotFleetby <- function(){
             
         p <- ggplotFby<-ggplot(dataFby(), aes(x=as.numeric(year), y=q50, color=scenario))+
-                geom_line(aes(color=scenario),lwd=1)+
+                geom_line(aes(color=scenario),size = input$lwdFby)+
                 ylab("")+
                 xlab("Year")+
                 theme_bw()+
@@ -954,6 +953,7 @@ print('three spider')
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
         }
         
+        if(input$dotLineFby == TRUE) p <- p +  geom_point(data = dataFby(), aes(x=year, y=q50, color=scenario), size = input$dszFby)
         
         if(!is.null(proj.yr)){
           p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
@@ -998,8 +998,92 @@ print('three spider')
         } 
       )
 })
-    
   print('eight')
+
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
+  #### PAGE_simulation FLEET-STOCK AREA  ####
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+  
+  # PlotHeight_stk <- reactive({
+  #   
+  #   nids <- length(input$stockS)
+  #   
+  #   return(300*nids)})
+  # # 
+  # 
+  observe ({
+    databyA<-reactive({
+      fltStk <- fltStk %>% filter(year %in%  input$rangebyA[1]:input$rangebyA[2],
+                                  stock %in% input$stockbyA,
+                                  fleet %in% input$fleetbyA,
+                                  indicator %in% input$indicatorbyA,
+                                  scenario %in% input$scenariobyA)
+      if(input$percbyA == TRUE){
+        fltStk <- fltStk  %>% ungroup() %>%  
+          group_by(year, scenario, indicator, fleet) %>%
+          mutate(p = q50/sum(q50)) %>% mutate(q50=p)
+      }
+      return(fltStk)
+    })
+    
+    plotFleetStockArea <- function(){
+      
+      p <-ggplot(data = databyA())+
+        geom_area(aes(x=year, y=q50, fill=stock), size=0.5, colour="grey") +
+        ylab("")+xlab("Year")+
+        theme_bw()+
+        theme(strip.text=element_text(size=16),
+              title=element_text(size=16),
+              text=element_text(size=16))
+      
+      if(!is.null(proj.yr)){
+        p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
+      }
+      
+      if(input$fitbyA == FALSE){
+        p <- p + facet_grid(scenario~indicator*fleet)
+      }
+      else{
+        p <- p + facet_wrap(scenario~indicator*fleet, scale = 'free_y')
+      }
+      
+    }
+    
+    
+    output$plotFSbyA <-renderPlot({
+      
+      print(plotFleetStockArea())
+    } #, height = PlotHeight_stk
+    )
+    
+    
+    # Code to download the plot
+    getWbyA <- function(){
+      return(input$fileWbyA)
+    }
+    
+    getHbyA <- function(){
+      return(input$fileHbyA)
+    }
+    
+    getSbyA <- function(){
+      return(input$fileScbyA)
+    }
+    
+    # Download the plot
+    output$downbyA <- downloadHandler(
+      filename =  function() {
+        paste(input$filenmbyA, input$fileTypebyA, sep=".")
+      },
+      # content is a function with argument file. content writes the plot to the device
+      content = function(file) {
+        ggsave(file, plotFleetStockArea(), width = getWbyA(), height = getHbyA(), units = 'cm', scale = getSbyA())
+      }
+    )
+    
+  })# end of the observe stock
+  
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation METIER BY_Times series  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  

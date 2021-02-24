@@ -129,7 +129,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        npv.yrs = NULL,
                        desc = NULL,
                        reduced = FALSE,
-                       deploy = FALSE
+                       deploy = FALSE,
+                       appName = paste('flbeiaApp', sample(1e12,1), sep = ""),
+                       appTitle = appName
                        ) {
   
   # Check: if flbeiaObjs != NULL --> necessarely bio = bioIt = flt = fltIt = fltStk = mt = mtStk = adv = risk = NULL
@@ -142,6 +144,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   require(kobe)
   require(ggplot2)
   require(schoolmath)
+  require(dplyr)
+  require(scales)
+  
 
   
  npv2 <- npv
@@ -291,9 +296,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   
   ## rescale all the coordinates within 0 and 1 and 
   ## melt the dataset in order to plot it easily with ggplot.
-  require(dplyr)
-  require(scales)
-  
+
   bio.scaled <- bio %>% group_by(stock, scenario, indicator) %>% mutate(value2 = rescale(q50))
   bio.scaled <- as.data.frame(bio.scaled)
   
@@ -384,22 +387,30 @@ flbeiaApp <- function (flbeiaObjs = NULL,
 
  # load('FLBEIAApp.Rdata')
    
+   print('before deploy')
    
-   if (deploy == FALSE)
+   save(deploy, file='inst/flbeiaApp/deploy.RData')
+   
+   print('after deploy')
+   
+   if (deploy == FALSE){
 
     shiny::runApp(system.file('flbeiaApp', package='FLBEIAshiny'), launch.browser = TRUE)
-   
-   if (deploy == TRUE)
+   }
+   else{
      
+      save.image(file='inst/flbeiaApp/App.RData')
+
       appDir <- file.path(getwd(), "inst/flbeiaApp")
-      
+   
       rsconnect::deployApp(
-        appDir = appDir #,
-        #appName = appName,
+        appDir = appDir, #,
+        appName = appName,
+        appTitle = appTitle
         #account = account,
         #lint = TRUE
       )
-      
+   }
    
   }
 

@@ -69,8 +69,7 @@ tabsetPanel(type = "tabs",
                                                       downloadButton(outputId = "downSA", label = "Download the plot")
                                            ))),
 
-                column(9,
-                       plotOutput("plotSA", height = "600px", width = "900px")
+                column(9, plotOutput("plotSA", height = "600px", width = "900px")
                 ))),
             
             

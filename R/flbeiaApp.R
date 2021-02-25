@@ -140,12 +140,12 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     stop( "When 'flbeiaObjs' is provided as input the following arguments must be NULL: 
            bio, bioIt, flt, fltIt, fltStk, mt, mtStk, adv, risk")
   
-  require(FLBEIA)
-  require(kobe)
-  require(ggplot2)
-  require(schoolmath)
-  require(dplyr)
-  require(scales)
+  library(FLBEIA)
+  library(kobe)
+  library(ggplot2)
+  library(schoolmath)
+  library(dplyr)
+  library(scales)
   
 
   

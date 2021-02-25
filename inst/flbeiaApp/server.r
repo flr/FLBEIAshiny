@@ -928,9 +928,9 @@ print('three spider')
 
   observe ({
       dataFby<-reactive({
-          fltStk <- fltStk %>% filter(year %in% input$rangeFby[1]:input$rangeFby[2],
-                                      stock %in% input$stockFby, fleet %in% input$fleetFby,
-                                      indicator %in% input$indicatorFby, scenario %in% input$scenarioFby)
+          fltStk <- subset(fltStk, year %in% input$rangeFby[1]:input$rangeFby[2] &
+                                   fleet %in% input$fleetFby & stock %in% input$stockFby &
+                                   indicator %in% input$indicatorFby & scenario %in% input$scenarioFby)
           })
       
    #   browser()
@@ -960,12 +960,12 @@ print('three spider')
           
         }
         
-        if(input$fitFby == FALSE){
-          p <- p + facet_grid(fleet*stock ~ indicator)
-        }
-        else{
-          p <- p + facet_wrap(fleet*stock ~ indicator, ncol=length(input$stockFby), scales="free_y")
-        }
+         if(input$fitFby == FALSE){
+           p <- p + facet_grid(fleet*stock ~ indicator)
+         }
+         else{
+           p <- p + facet_wrap(fleet*stock ~ indicator, ncol=length(input$stockFby), scales="free_y")
+         }
         return(p)}
       
       

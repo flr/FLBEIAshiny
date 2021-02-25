@@ -44,7 +44,7 @@ ui <- tagList(
                         source("ui_files/PAGE_simul_metiersby.r",local =TRUE)$value),
                tabPanel("Summary",
                         source("ui_files/PAGE_simul_summary.r",local =TRUE)$value),
-               tabPanel("Advice",
+                tabPanel("Advice",
                         source("ui_files/PAGE_simul_advice.r",local =TRUE)$value)
     ),
     

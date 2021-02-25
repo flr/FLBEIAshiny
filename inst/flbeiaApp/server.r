@@ -923,7 +923,7 @@ print('three spider')
     
     updateSelectInput(session, inputId  = "stockFby", 
                                choices  = unique(fltStk[fltStk$fleet %in% input$fleetFby, 'stock']), 
-                               selected = unique(fltStk[fltStk$fleet %in% input$fleetFby, 'stock'])[1])#, server = TRUE)#,
+                               selected = unique(fltStk[fltStk$fleet %in% input$fleetFby, 'stock']))#, server = TRUE)#,
     })    
 
   observe ({
@@ -1014,17 +1014,15 @@ print('three spider')
   # 
   observe ({
     databyA<-reactive({
-      fltStk <- fltStk %>% filter(year %in%  input$rangebyA[1]:input$rangebyA[2],
-                                  stock %in% input$stockbyA,
-                                  fleet %in% input$fleetbyA,
-                                  indicator %in% input$indicatorbyA,
-                                  scenario %in% input$scenariobyA)
+      fltStk <- subset(fltStk, year %in% input$rangebyA[1]:input$rangebyA[2] &
+                         fleet %in% input$fleetbyA & stock %in% input$stockbyA &
+                         indicator %in% input$indicatorbyA & scenario %in% input$scenariobyA)
+
       if(input$percbyA == TRUE){
         fltStk <- fltStk  %>% ungroup() %>%  
           group_by(year, scenario, indicator, fleet) %>%
           mutate(p = q50/sum(q50)) %>% mutate(q50=p)
       }
-      print(fltStk[1:10,])
       return(fltStk)
     })
     
@@ -1043,10 +1041,10 @@ print('three spider')
       }
       
       if(input$fitbyA == FALSE){
-        p <- p + facet_grid(scenario~indicator)
+        p <- p + facet_grid(fleet*scenario~indicator)
       }
       else{
-        p <- p + facet_wrap(scenario~indicator, scale = 'free_y')
+        p <- p + facet_wrap(fleet*scenario~indicator, scale = 'free_y')
       }
       
     }

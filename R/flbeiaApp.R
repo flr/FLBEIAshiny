@@ -32,6 +32,16 @@
 #' are not needed, as they are internally calculated. 
 #' If not, then the follwing arguments are compulsory: bio, flt, fltStk, mt, mtStk, adv and npv.
 #' 
+#' The call to the flbeiaApp creates the folders 'inst/flbeiaApp' in the working directory. This is necessary to save the necessary 
+#' objects to deploy the application to an external server. Even if deploy = FALSE the folders need to be created because the 'deploy.RData'
+#' file needs to be created.
+#' 
+#' When deploy = TRUE the shiny application is published in the external server linked to the local computer. Shiny makes a copy of the 
+#' local R session and replicates it in the server. For that, it installs the R libraries needed directly from CRAN. Github libraries need 
+#' to be installed in the local compute using 'devtools::install_github'. Furthermore, in this case the call to 
+#' 'flbeiaApp' must be done from a FLBEIAShiny directory where the raw code of the code is located.
+#' 
+#' 
 #' @examples
 #'\dontrun{
 #' library(FLBEIAshiny)

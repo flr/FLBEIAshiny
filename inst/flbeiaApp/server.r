@@ -922,8 +922,8 @@ print('three spider')
   observe ({
     
     updateSelectInput(session, inputId  = "stockFby", 
-                               choices  = unique(fltStk[fltStk$fleet %in% input$fleetFby, 'stock']), 
-                               selected = unique(fltStk[fltStk$fleet %in% input$fleetFby, 'stock']))#, server = TRUE)#,
+                               choices  = unique(subset(fltStk, fleet %in% input$fleetFby)$stock), 
+                               selected = unique(subset(fltStk, fleet %in% input$fleetFby)$stock)[1]) #, server = TRUE)#,
     })    
 
   observe ({
@@ -1012,6 +1012,15 @@ print('three spider')
   #   return(300*nids)})
   # # 
   # 
+  
+  # Make choices and selection in 'stockFby' dependent on the context of fleetbyA
+  observe ({
+    updateSelectInput(session, inputId  = "stockbyA", 
+                      choices  = unique(subset(fltStk, fleet %in% input$fleetbyA)$stock), 
+                      selected = unique(subset(fltStk, fleet %in% input$fleetbyA)$stock)) #, server = TRUE)#,
+  })  
+  
+  
   observe ({
     databyA<-reactive({
       fltStk <- subset(fltStk, year %in% input$rangebyA[1]:input$rangebyA[2] &

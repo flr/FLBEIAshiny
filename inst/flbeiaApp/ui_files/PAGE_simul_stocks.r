@@ -106,31 +106,31 @@ tabsetPanel(type = "tabs",
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             #  BIOLOGICAL RISK
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            tabPanel(
-              title = "Biological risk", 
-              fluidRow(
-                br(),
-                column(3,
-                  shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
-                  shinyBS::bsCollapsePanel("Select variables",
-                  sliderInput("rangeR", label=h4("Years"), min(as.numeric(risk$year)), max(as.numeric(risk$year)), value=range(as.numeric(risk$year)),step = 1),
-                  selectizeInput("stockR", label=h4("Stock"), choices= unique((RefPts$stock)), selected=unique((RefPts$stock))[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioR", label=h4("Scenarios"), levels(as.factor(risk$scenario)), selected= unique((risk$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("brpR", label=h4("Biological reference point"), choices=c("pBlim", "pBpa"),selected="pBlim", multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
-                       ),
-                  shinyBS::bsCollapsePanel("Download",
-                  # Options for file downloading
-                  textInput('filenmSR', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                  numericInput('fileWSR', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-                  numericInput('fileHSR', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-                  numericInput('fileScSR', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-                  selectInput(inputId = "fileTypeSR", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                  downloadButton(outputId = "downSR", label = "Download the plot")
-                  ))),
-                
-                column(9,
-                  plotOutput("plotR", height = "600px", width = "900px")
-                ))), 
+            # tabPanel(
+            #   title = "Biological risk", 
+            #   fluidRow(
+            #     br(),
+            #     column(3,
+            #       shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
+            #       shinyBS::bsCollapsePanel("Select variables",
+            #       sliderInput("rangeR", label=h4("Years"), min(as.numeric(risk$year)), max(as.numeric(risk$year)), value=range(as.numeric(risk$year)),step = 1),
+            #       selectizeInput("stockR", label=h4("Stock"), choices= unique((RefPts$stock)), selected=unique((RefPts$stock))[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+            #       selectizeInput("scenarioR", label=h4("Scenarios"), levels(as.factor(risk$scenario)), selected= unique((risk$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+            #       selectizeInput("brpR", label=h4("Biological reference point"), choices=c("pBlim", "pBpa"),selected="pBlim", multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+            #            ),
+            #       shinyBS::bsCollapsePanel("Download",
+            #       # Options for file downloading
+            #       textInput('filenmSR', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+            #       numericInput('fileWSR', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+            #       numericInput('fileHSR', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+            #       numericInput('fileScSR', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+            #       selectInput(inputId = "fileTypeSR", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+            #       downloadButton(outputId = "downSR", label = "Download the plot")
+            #       ))),
+            #     
+            #     column(9,
+            #       plotOutput("plotR", height = "600px", width = "900px")
+            #     ))), 
             
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # SPIDER PLOTS
@@ -142,25 +142,24 @@ tabsetPanel(type = "tabs",
                 column(3,
                    shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                    shinyBS::bsCollapsePanel("Select variables",
-                     radioButtons("yearSP", label=h4("Year"),  c("Year" = "radio1","Years ratio" = "radio2")),
+                     radioButtons("baseSP", label=h4("Base"),  c("Year" = "radio1","Scenario" = "radio2")),
                      
-                     # Only show this panel if the radio1 is selected
-                     conditionalPanel(
-                       condition = "input.yearSP == 'radio1'",
-                       div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP0", "Year",levels(as.factor(bio$year)), 
-                                                                          selected = unique(bio$indicator)[length(unique(bio$indicator))], multiple = FALSE))
-                       ),
-                       
-                       # Only show this panel if radio2 is selected
-                       conditionalPanel(
-                         condition = "input.yearSP == 'radio2'",
-                         div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP1", "Year 1",levels(as.factor(bio$year)), selected=unique(bio$indicator)[length(unique(bio$indicator))], multiple = FALSE)),
-                         div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearSP2", "Year 2", levels(as.factor(bio$year)), selected=unique(bio$indicator)[length(unique(bio$indicator))][1], multiple = FALSE))
-                         ),
-                     
-                     selectizeInput("stockSP", label=h4("Stock"), levels(as.factor(bio$stock)), selected=unique(bio$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                     selectizeInput("indicatorSP", label=h4("Indicators"), levels(as.factor(bio$indicator)),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                     selectizeInput("scenarioSP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                   #  Only show this panel if the radio1 is selected
+                   conditionalPanel(
+                     condition = "input.baseSP == 'radio1'",
+                     div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseSP1", "Base Year", unique(bio$year), selected=min(bio$year), multiple = FALSE)),
+                     div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseSP2", "Year",     unique(bio$year), selected=max(bio$year), multiple = FALSE))
+                   ),
+
+                  # Only show this panel if radio2 is selected
+                  conditionalPanel(
+                     condition = "input.baseSP == 'radio2'",
+                     div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseSP3", "Base Scenario", unique(bio$scenario), selected= unique(bio$scenario)[1], multiple = FALSE)),
+                     div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseSP4", "Year",          unique(bio$year),     selected= max(bio$year), multiple = FALSE))
+                   ),
+                     selectizeInput("stockSP", label=h4("Stock"),          unique(bio$stock),    selected=unique(bio$stock),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                     selectizeInput("indicatorSP", label=h4("Indicators"), unique(bio$indicator),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                     selectizeInput("scenarioSP", label=h4("Scenarios"),   unique(bio$scenario), selected=unique(bio$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                      #hr(),
                      ),
                    shinyBS::bsCollapsePanel("Download",

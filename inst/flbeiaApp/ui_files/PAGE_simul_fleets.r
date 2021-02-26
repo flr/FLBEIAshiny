@@ -65,30 +65,30 @@ tabsetPanel(type = "tabs",
             #--------------------------------
             # RISK
             #--------------------------------
-            tabPanel(
-              title = "Economic risk", #change dataframe
-              fluidRow(
-                br(),
-                column(3,
-                  shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
-                  shinyBS::bsCollapsePanel("Fleet and Economic indicator",
-                  sliderInput("rangeE",       label = h4("Years"),    min(as.numeric(risk$year)), max(as.numeric(risk$year)), value=range(as.numeric(risk$year)),step = 1),
-                  selectizeInput("fleetE",    label = h4("Fleet"),    unique(risk[risk$indicator=="pPrflim",]$unit), selected=unique(flt$fleet)[1],    multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioE", label = h4("Scenario"), unique(flt$scenario), selected=unique(flt$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
-                  ),
-                  shinyBS::bsCollapsePanel("Download",
-                  # Options for file downloading
-                  textInput('filenmFR', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                  numericInput('fileWFR', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-                  numericInput('fileHFR', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-                  numericInput('fileScFR', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-                  selectInput(inputId = "fileTypeFR", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                  downloadButton(outputId = "downFR", label = "Download the plot")
-                  ))),
-  
-                column(9,
-                  plotOutput("plotFR", height = "600px", width = "900px")
-                ))), 
+            # tabPanel(
+            #   title = "Economic risk", #change dataframe
+            #   fluidRow(
+            #     br(),
+            #     column(3,
+            #       shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
+            #       shinyBS::bsCollapsePanel("Fleet and Economic indicator",
+            #       sliderInput("rangeE",       label = h4("Years"),    min(as.numeric(risk$year)), max(as.numeric(risk$year)), value=range(as.numeric(risk$year)),step = 1),
+            #       selectizeInput("fleetE",    label = h4("Fleet"),    unique(risk[risk$indicator=="pPrflim",]$unit), selected=unique(flt$fleet)[1],    multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+            #       selectizeInput("scenarioE", label = h4("Scenario"), unique(flt$scenario), selected=unique(flt$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+            #       ),
+            #       shinyBS::bsCollapsePanel("Download",
+            #       # Options for file downloading
+            #       textInput('filenmFR', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+            #       numericInput('fileWFR', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+            #       numericInput('fileHFR', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+            #       numericInput('fileScFR', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+            #       selectInput(inputId = "fileTypeFR", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+            #       downloadButton(outputId = "downFR", label = "Download the plot")
+            #       ))),
+            # 
+            #     column(9,
+            #       plotOutput("plotFR", height = "600px", width = "900px")
+            #     ))), 
             #------------------------------------
             # SPIDER PLOTS
             #------------------------------------

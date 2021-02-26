@@ -306,13 +306,14 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   ## rescale all the coordinates within 0 and 1 and 
   ## melt the dataset in order to plot it easily with ggplot.
 
-  bio.scaled <- bio %>% group_by(stock, scenario, indicator) %>% mutate(value2 = rescale(q50))
-  bio.scaled <- as.data.frame(bio.scaled)
-  
-  
-  flt.scaled <- flt %>% group_by(fleet, scenario) %>% mutate(value2 = rescale(q50))
-  flt.scaled <- as.data.frame(flt.scaled)
-  
+  # bio.scaled <- bio %>% group_by(stock, scenario, indicator) %>% mutate(value2 = rescale(q50))
+  # bio.scaled <- as.data.frame(bio.scaled)
+  # 
+  # 
+  # 
+  # flt.scaled <- flt %>% group_by(fleet, scenario) %>% mutate(value2 = rescale(q50))
+  # flt.scaled <- as.data.frame(flt.scaled)
+  # 
   
   # SSB and F time series reescales to Bmsy and Fmsy.
   # bio.msy = long format
@@ -357,9 +358,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    # reference_points[reference_points$indicator %in% c("Fmsy","Fpa","Flim")] <-"f"
 
   # names(RefPts)<- c("stock", "scenario", "indicator","value")
-  RefPts$indicator <- NA
-  RefPts$indicator[RefPts$indicator %in% c("Bmsy","Bpa", "Blim")]  <-"ssb"
-  RefPts$indicator[RefPts$indicator %in% c("Fmsy","Fpa","Flim")]   <-"f"
+  RefPts$ind_type <- NA
+  RefPts$ind_type[RefPts$ind_type %in% c("Bmsy","Bpa", "Blim")]  <-"ssb"
+  RefPts$ind_type[RefPts$ind_type %in% c("Fmsy","Fpa","Flim")]   <-"f"
   RefPts$refpt_type[RefPts$indicator %in% c("Fmsy","Bmsy")]   <-"MSY"
   RefPts$refpt_type[RefPts$indicator %in% c("Fpa","Bpa")]     <-"PA"
   RefPts$refpt_type[RefPts$indicator %in% c("Flim","Blim")]   <-"LIM"
@@ -389,9 +390,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    assign("data",       data,envir = globalenv())
    assign("desc",       desc, envir = globalenv())
    # assign("reference_points",  reference_points,envir = globalenv())
-   assign("bio.scaled", bio.scaled,envir = globalenv())
-   assign("flt.scaled", flt.scaled,envir = globalenv())
-   
+   # assign("bio.scaled", bio.scaled,envir = globalenv())
+   # assign("flt.scaled", flt.scaled,envir = globalenv())
+   # 
    ## --------------------------------------------------------------------------
 
  # load('FLBEIAApp.Rdata')

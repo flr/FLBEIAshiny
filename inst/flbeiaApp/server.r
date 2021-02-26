@@ -91,7 +91,14 @@ server <- function(input, output, session){
                 & RefPts$scenario%in%input$scenarioS,]
       })
     
-    
+      # dataSH <-reactive({
+      #   req(input$stockS)
+      #   bio[bio$year>=input$rangeS[1] & bio$year<=input$rangeS[2] 
+      #       & bio$stock%in%input$stockS
+      #       & bio$indicator%in% c('f2Fmsy', 'B2Bmsy', 'ssb2Bmsy')
+      #       & bio$scenario%in%input$scenarioS,]
+      # })
+      
     plotStock <- function(){
       
       p <-ggplot()+
@@ -109,7 +116,7 @@ server <- function(input, output, session){
        }
 
       if(!is.null(proj.yr)){
-        p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+        p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dashed", lwd =1) # projection starting year 
       }
       
       if(input$dotLineS == TRUE) p <- p +  geom_point(data = dataS(), aes(x=year, y=q50, color=scenario), size = input$dszS)
@@ -137,9 +144,17 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y')
       }
       
-      if(indicator %in% c('f2Fmsy', 'B2Bmsy', 'ssb2Bmsy')) + geom_hline(yintercept = 1, linetype = 'dashed')
       
-      }
+      p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
+                           aes(yintercept = 1), linetype = 'dashed')
+
+
+       # if(any(input$indicatorS %in% c('F2Fmsy', 'f2Fmsy', 'B2Bmsy', 'ssb2Bmsy'))){
+       #   p <-  p + geom_hline(data=  dataS() %>% filter(indicator %in% c('ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
+       #                        yintercept = 1, linetype = 'dashed')
+       # }
+      
+       }
     
     
     output$plotS<-renderPlot({
@@ -197,9 +212,7 @@ server <- function(input, output, session){
                             indicator %in% input$indicatorSA,
                             scenario %in% input$scenarioSA)
       if(input$percSA == TRUE){
-      bio <- bio  %>% #group_by(year, stock, scenario, indicator) %>%
-        #summarise(n = sum(q50)) 
-         ungroup() %>%  
+      bio <- bio  %>%  ungroup() %>%  
          group_by(year, scenario, indicator) %>%
         mutate(p = q50/sum(q50)) %>% mutate(q50=p)
       
@@ -408,48 +421,54 @@ server <- function(input, output, session){
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   
     dataSP<-reactive({
-      
-      if (input$yearSP == "radio1"){
-        req(input$stockSP)
-      
-      dat <- bio[bio$year == input$yearSP0 & bio$stock %in% input$stockSP & 
-               bio$indicator %in% input$indicatorSP & bio$scenario %in% input$scenarioSP,]
-      
-      dat <- dat %>% group_by(stock, indicator)  %>% mutate(value2 = q50/max(q50))
-      dat <- dat[order(dat$scenario), ]
-      
-   #   browser()
-      
-      }else{
+      req(input$baseSP)
 
-      if (input$yearSP == "radio2"){
+      if (input$baseSP == "radio1"){
           req(input$stockSP)
-       dat1 <- bio[bio$year %in% c(input$yearSP1) & bio$stock %in% input$stockSP & 
-                  bio$indicator %in% input$indicatorSP & bio$scenario%in%input$scenarioSP,]
-       dat2 <- bio[bio$year %in% c(input$yearSP2) & bio$stock %in% input$stockSP & 
-                     bio$indicator %in% input$indicatorSP & bio$scenario%in%input$scenarioSP,]
-       dat <- dat1 %>% bind_cols(q502= dat2$q50)
+       dat1 <- subset(bio, year == input$baseSP2 & stock %in% input$stockSP & 
+                           indicator %in% input$indicatorSP & scenario%in%input$scenarioSP)
+       dat2 <- subset(bio, year == input$baseSP1 & stock %in% input$stockSP & 
+                           indicator %in% input$indicatorSP & scenario%in%input$scenarioSP)
        
-       dat <- dat %>% group_by(stock, scenario, indicator) %>% summarize(Ratio = c(q502/q50))
+       dat1 <- dat1 %>% group_by(stock, indicator, scenario)
+       dat2 <- dat2 %>% group_by(stock, indicator, scenario)
        
-       dat <- dat[order(dat$scenario), ]
-
-       #browser()
-        } 
+       dat2 <- dat2[, c('scenario', 'stock', 'indicator', 'q50')]
+       names(dat2)[4] <- 'q502' 
+      }
+         
+      if (input$baseSP == "radio2"){ # base1 is scenario and base2 is year
+        req(input$stockSP)
+        # data frame with all the scenarios and the selected year
+        dat1 <- subset(bio, year == input$baseSP4 & stock %in% input$stockSP & 
+                         indicator %in% input$indicatorSP & scenario%in%input$scenarioSP)
+        # data frame with Base scenario and the selected year
+        dat2 <- subset(bio, year == input$baseSP2 & stock %in% input$stockSP & 
+                         indicator %in% input$indicatorSP & scenario == input$baseSP3)
+        
+        dat1 <- dat1 %>% group_by(stock, indicator, scenario)
+        dat2 <- dat2 %>% group_by(stock, indicator)
+     
+        dat2 <- dat2[, c('stock', 'indicator', 'q50')]
+        names(dat2)[3] <- 'q502' 
+      }
+      
+        dat <- dat1 %>% left_join(dat2)
+        
+        dat <- dat %>% mutate(Ratio = q50/q502)
+        
+        dat <- dat[order(dat$scenario), ]
       
       dat
-      }
-    })
+      })
 
     
   output$plotSP<-renderPlot({
 
-     if (input$yearSP == "radio1"){
-    #   browser()
-       
+
        dt <- dataSP()
   
-       ggplot(data=dataSP(), aes(x=scenario, y=value2, col=stock, fill=stock, group=stock))+
+       ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
          # geom_polygon(alpha=0.2, lwd=1)+
          geom_polygon(fill=NA, lwd=1)+
          geom_point(cex=1.5)+
@@ -459,28 +478,8 @@ server <- function(input, output, session){
          theme(text=element_text(size=14),
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
-         ylab("") +ylim(c(0,max(c(1,dt$value2))))
-     }else{
+         ylab("") +ylim(c(0,max(c(1,dt$Ratio))))
     
-     if (input$yearSP == "radio2"){
-
-       dt <- dataSP()
-       
-      ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
-        # geom_polygon(alpha=0.2, lwd=1)+
-        geom_polygon(fill=NA, lwd=1)+
-        geom_point(cex=1.5)+
-        facet_grid (. ~ indicator)+
-        coord_radar()+
-        theme_bw()+
-        theme(text=element_text(size=16),
-              strip.text=element_text(size=16),
-              title=element_text(size=18,face="bold"))+
-        ylab("")+
-         ylim(c(0,max(c(1,dt$Ratio))))
-
-     }
-     }
       
     })
   

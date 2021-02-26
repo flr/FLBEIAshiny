@@ -14,7 +14,6 @@
 #' @param mt The output of mtSumQ function (in long format).
 #' @param mtStk The output of mtStkSumQ function (in long format).
 #' @param adv The output of advSumQ function (in long format).
-#' @param risk The output of riskSum function.
 #' @param years The years we want to be shown in the app.
 #' @param proj.yr The year in which the projection starts.
 #' @param calculate_npv logical (default = FALSE). Should the npv be calculated?
@@ -55,7 +54,7 @@
 #' 
 #' 
 #' flbeiaApp(RefPts = RefPts,bio = bioQ, flt = fltQ, adv = advQ, 
-#'           fltStk = fltStkQ, mt = mtQ, mtStk = mtStkQ, risk = risk,
+#'           fltStk = fltStkQ, mt = mtQ, mtStk = mtStkQ, 
 #'           years = as.character(2010:2024), 
 #'           calculate_npv = FALSE, npv =  NULL, npv.y0 = NULL, npv.yrs = NULL) 
 #' 

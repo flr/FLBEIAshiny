@@ -137,6 +137,8 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y')
       }
       
+      if(indicator %in% c('f2Fmsy', 'B2Bmsy', 'ssb2Bmsy')) + geom_hline(yintercept = 1, linetype = 'dashed')
+      
       }
     
     
@@ -334,72 +336,72 @@ server <- function(input, output, session){
   
   print('two')
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  #### PAGE_simulation STOCK_Biological risk  ####
+#### PAGE_simulation STOCK_Biological risk  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   
-  dataR<-reactive({
-    req(input$stockR)
-    risk[risk$year>=input$rangeR[1] & risk$year<=input$rangeR[2] 
-         & risk$unit%in%input$stockR
-         & risk$scenario%in%input$scenarioR
-         & risk$indicator%in%input$brpR,]
-  })
+  # dataR<-reactive({
+  #   req(input$stockR)
+  #   risk[risk$year>=input$rangeR[1] & risk$year<=input$rangeR[2] 
+  #        & risk$unit%in%input$stockR
+  #        & risk$scenario%in%input$scenarioR
+  #        & risk$indicator%in%input$brpR,]
+  # })
+  # 
+  # 
+  # plotSR <- function(){
+  #   p <- ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
+  #     geom_line(aes(color=scenario), lwd = 1)+
+  #      # projection starting year 
+  #     facet_grid(indicator~unit)+
+  #     theme_bw()+
+  #     theme(text=element_text(size=16),
+  #           title=element_text(size=16),
+  #           strip.text=element_text(size=16)#,
+  #           #axis.text.x = element_text(angle = 90, hjust = 1)
+  #           )+
+  #     xlab("Year")+ ylab("Probability")
+  #   
+  #   if(!is.null(proj.yr)){
+  #     p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)
+  #   }
+  #   
+  #   p
+  #   
+  # }
+  # 
+  # 
+  # 
+  # 
+  # output$plotR<-renderPlot({
+  #   plotSR()
+  # })
   
   
-  plotSR <- function(){
-    p <- ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
-      geom_line(aes(color=scenario), lwd = 1)+
-       # projection starting year 
-      facet_grid(indicator~unit)+
-      theme_bw()+
-      theme(text=element_text(size=16),
-            title=element_text(size=16),
-            strip.text=element_text(size=16)#,
-            #axis.text.x = element_text(angle = 90, hjust = 1)
-            )+
-      xlab("Year")+ ylab("Probability")
-    
-    if(!is.null(proj.yr)){
-      p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)
-    }
-    
-    p
-    
-  }
-  
- 
-  
-  
-  output$plotR<-renderPlot({
-    plotSR()
-  })
-  
-  
-  # Code to download the plot
-  getWSR <- function(){
-    return(input$fileWSR)
-  }
-  
-  getHSR <- function(){
-    return(input$fileHSR)
-  }
-  
-  getSSR <- function(){
-    return(input$fileScSR)
-  }
-  
-  # Download the plot
-  output$downSR <- downloadHandler(
-    filename =  function() {
-      paste(input$filenmSR, input$fileTypeSR, sep=".")
-    },
-    # content is a function with argument file. content writes the plot to the device
-    content = function(file) {
-      ggsave(file, plotSR(), width = getWSR(), height = getHSR(), units = 'cm', scale = getSSR())
-    } 
-  )
-  
-  print('three') 
+  # # Code to download the plot
+  # getWSR <- function(){
+  #   return(input$fileWSR)
+  # }
+  # 
+  # getHSR <- function(){
+  #   return(input$fileHSR)
+  # }
+  # 
+  # getSSR <- function(){
+  #   return(input$fileScSR)
+  # }
+  # 
+  # # Download the plot
+  # output$downSR <- downloadHandler(
+  #   filename =  function() {
+  #     paste(input$filenmSR, input$fileTypeSR, sep=".")
+  #   },
+  #   # content is a function with argument file. content writes the plot to the device
+  #   content = function(file) {
+  #     ggsave(file, plotSR(), width = getWSR(), height = getHSR(), units = 'cm', scale = getSSR())
+  #   } 
+  # )
+  # 
+  # print('three') 
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation STOCK_Spider plot  ####
@@ -669,61 +671,61 @@ print('three spider')
   
       print('five')  
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-      #### PAGE_simulation FLEET_Risk  ####
+    #### PAGE_simulation FLEET_Risk  ####
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
   
-    dataE<-reactive({
-          req(input$fleetE)
-          risk[risk$unit%in%input$fleetE & risk$scenario%in%input$scenarioE & risk$indicator=="pPrflim",]})
-
-      
-    plotFLRisk <- function(){
-        p <- ggplot(dataE(), aes(x=year, y=value, color=scenario))+
-        geom_line(aes(color=scenario),lwd=1)+
-        facet_wrap(~unit, scales="free")+
-        ylab("")+ xlab("Year")+
-        theme_bw()+
-        theme( strip.text=element_text(size=16),
-               title=element_text(size=16),
-               text=element_text(size=16))
-      
-        if(!is.null(proj.yr)){
-            p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
-        
-        }
-      
-        p
-      }
-      
-    output$plotFR <-renderPlot({
-            plotFLRisk()
-    })
-    
-    
-    # Code to download the plot
-    getFRW <- function(){
-      return(input$fileWFR)
-    }
-    
-    getFRH <- function(){
-      return(input$fileHFR)
-    }
-    
-    getFRS <- function(){
-      return(input$fileScFR)
-    }
-    
-    # Download the plot
-    output$downFR <- downloadHandler(
-      filename =  function() {
-        paste(input$filenmFR, input$fileTypeFR, sep=".")
-      },
-      # content is a function with argument file. content writes the plot to the device
-      content = function(file) {
-        ggsave(file, plotFLRisk(), width = getFRW(), height = getFRH(), units = 'cm', scale = getFRS())
-      } 
-    )
-    print('six')
+    # dataE<-reactive({
+    #       req(input$fleetE)
+    #       risk[risk$unit%in%input$fleetE & risk$scenario%in%input$scenarioE & risk$indicator=="pPrflim",]})
+    # 
+    #   
+    # plotFLRisk <- function(){
+    #     p <- ggplot(dataE(), aes(x=year, y=value, color=scenario))+
+    #     geom_line(aes(color=scenario),lwd=1)+
+    #     facet_wrap(~unit, scales="free")+
+    #     ylab("")+ xlab("Year")+
+    #     theme_bw()+
+    #     theme( strip.text=element_text(size=16),
+    #            title=element_text(size=16),
+    #            text=element_text(size=16))
+    #   
+    #     if(!is.null(proj.yr)){
+    #         p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+    #     
+    #     }
+    #   
+    #     p
+    #   }
+    #   
+    # output$plotFR <-renderPlot({
+    #         plotFLRisk()
+    # })
+    # 
+    # 
+    # # Code to download the plot
+    # getFRW <- function(){
+    #   return(input$fileWFR)
+    # }
+    # 
+    # getFRH <- function(){
+    #   return(input$fileHFR)
+    # }
+    # 
+    # getFRS <- function(){
+    #   return(input$fileScFR)
+    # }
+    # 
+    # # Download the plot
+    # output$downFR <- downloadHandler(
+    #   filename =  function() {
+    #     paste(input$filenmFR, input$fileTypeFR, sep=".")
+    #   },
+    #   # content is a function with argument file. content writes the plot to the device
+    #   content = function(file) {
+    #     ggsave(file, plotFLRisk(), width = getFRW(), height = getFRH(), units = 'cm', scale = getFRS())
+    #   } 
+    # )
+    # print('six')
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #### PAGE_simulation FLEET_Spider plot  ####

@@ -303,18 +303,6 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   
   ## --------------------------------------------------------------------------
   
-  ## rescale all the coordinates within 0 and 1 and 
-  ## melt the dataset in order to plot it easily with ggplot.
-
-  # bio.scaled <- bio %>% group_by(stock, scenario, indicator) %>% mutate(value2 = rescale(q50))
-  # bio.scaled <- as.data.frame(bio.scaled)
-  # 
-  # 
-  # 
-  # flt.scaled <- flt %>% group_by(fleet, scenario) %>% mutate(value2 = rescale(q50))
-  # flt.scaled <- as.data.frame(flt.scaled)
-  # 
-  
   # SSB and F time series reescales to Bmsy and Fmsy.
   # bio.msy = long format
   # bio.kobe = wide format to be used with Kobe plot.

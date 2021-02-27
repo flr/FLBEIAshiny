@@ -157,10 +157,10 @@ tabsetPanel(type = "tabs",
                      div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseSP3", "Base Scenario", unique(bio$scenario), selected= unique(bio$scenario)[1], multiple = FALSE)),
                      div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseSP4", "Year",          unique(bio$year),     selected= max(bio$year), multiple = FALSE))
                    ),
+                     radioButtons("GrpPanSP", label=h4("Group"),  c("Stock" = "stock","Scenario" = "scenario")),
                      selectizeInput("stockSP", label=h4("Stock"),          unique(bio$stock),    selected=unique(bio$stock),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("indicatorSP", label=h4("Indicators"), unique(bio$indicator),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                     selectizeInput("scenarioSP", label=h4("Scenarios"),   unique(bio$scenario), selected=unique(bio$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
-                     #hr(),
+                     selectizeInput("scenarioSP", label=h4("Scenarios"),   unique(bio$scenario), selected=unique(bio$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop")))              #hr(),
                      ),
                    shinyBS::bsCollapsePanel("Download",
                      # Options for file downloading

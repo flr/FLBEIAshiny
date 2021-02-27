@@ -465,21 +465,38 @@ server <- function(input, output, session){
     
   output$plotSP<-renderPlot({
 
-
        dt <- dataSP()
-  
-       ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
+      
+       lines <- input$GrpPanSP
+      
+       if(lines == 'stock'){
+        p <-  ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
          # geom_polygon(alpha=0.2, lwd=1)+
          geom_polygon(fill=NA, lwd=1)+
          geom_point(cex=1.5)+
-         facet_grid (. ~ indicator)+
          coord_radar()+
          theme_bw()+
          theme(text=element_text(size=14),
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
-         ylab("") +ylim(c(0,max(c(1,dt$Ratio))))
-    
+         ylab("") +ylim(c(0,max(c(1,dt$Ratio)))) +
+         facet_grid(.~indicator)
+        
+        }
+       else{ #lines == indicator
+         p <-  ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=indicator, fill=indicator, group=indicator))+
+           # geom_polygon(alpha=0.2, lwd=1)+
+           geom_polygon(fill=NA, lwd=1)+
+           geom_point(cex=1.5)+
+           coord_radar()+
+           theme_bw()+
+           theme(text=element_text(size=14),
+                 strip.text=element_text(size=14),
+                 title=element_text(size=18,face="bold"))+
+           ylab("") +ylim(c(0,max(c(1,dt$Ratio)))) +
+           facet_grid(.~stock)
+       }
+      return(p)
       
     })
   

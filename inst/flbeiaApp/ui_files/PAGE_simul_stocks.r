@@ -38,9 +38,9 @@ tabsetPanel(type = "tabs",
                   ))),
                 
                 column(9,
-                  plotOutput("plotS", height = "600px", width = "900px")
+                  uiOutput("plotS", inline =TRUE) #height = "600px", width = "900px"
                 ))),
-            
+
             
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             #  Area plot
@@ -102,36 +102,7 @@ tabsetPanel(type = "tabs",
               
               ))),
             
-            
-            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            #  BIOLOGICAL RISK
-            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            # tabPanel(
-            #   title = "Biological risk", 
-            #   fluidRow(
-            #     br(),
-            #     column(3,
-            #       shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
-            #       shinyBS::bsCollapsePanel("Select variables",
-            #       sliderInput("rangeR", label=h4("Years"), min(as.numeric(risk$year)), max(as.numeric(risk$year)), value=range(as.numeric(risk$year)),step = 1),
-            #       selectizeInput("stockR", label=h4("Stock"), choices= unique((RefPts$stock)), selected=unique((RefPts$stock))[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-            #       selectizeInput("scenarioR", label=h4("Scenarios"), levels(as.factor(risk$scenario)), selected= unique((risk$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-            #       selectizeInput("brpR", label=h4("Biological reference point"), choices=c("pBlim", "pBpa"),selected="pBlim", multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
-            #            ),
-            #       shinyBS::bsCollapsePanel("Download",
-            #       # Options for file downloading
-            #       textInput('filenmSR', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-            #       numericInput('fileWSR', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-            #       numericInput('fileHSR', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-            #       numericInput('fileScSR', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-            #       selectInput(inputId = "fileTypeSR", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-            #       downloadButton(outputId = "downSR", label = "Download the plot")
-            #       ))),
-            #     
-            #     column(9,
-            #       plotOutput("plotR", height = "600px", width = "900px")
-            #     ))), 
-            
+
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # SPIDER PLOTS
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

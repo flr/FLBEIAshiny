@@ -144,9 +144,11 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y')
       }
       
+      cond <- any(grepl('msy', input$indicatorS))
       
-      p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
-                           aes(yintercept = 1), linetype = 'dashed')
+      if(cond){  p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
+                           aes(yintercept = 1), linetype = 'dashed')}
+      else{p}
 
 
        # if(any(input$indicatorS %in% c('F2Fmsy', 'f2Fmsy', 'B2Bmsy', 'ssb2Bmsy'))){
@@ -154,14 +156,36 @@ server <- function(input, output, session){
        #                        yintercept = 1, linetype = 'dashed')
        # }
       
-       }
+    }
     
     
-    output$plotS<-renderPlot({
+    
+    output$plotSs<-renderPlot({
 
       print(plotStock())
     } #, height = PlotHeight_stk
     )
+    
+    # Case dependent plot size.
+    #     https://stackoverflow.com/questions/30422849/how-to-make-height-argument-dynamic-in-renderplot-in-shiny-r-package
+    # this function defines a height of the plot
+    values <- reactiveValues()
+    plot_height <- function() {
+      # calculate values$facetCount
+      values$facetsRows <- ifelse(length(input$stockS) == 1, 600, ifelse(length(input$stockS) == 2, 800, ifelse(length(input$stockS) == 3, 900, 200*length(input$stockS))))
+      return(values$facetsRows)
+    }
+    plot_width <- function() {
+      # calculate values$facetCount
+      values$facetsCols <- ifelse(length(input$indicatorS)==1, 900, 1500)
+      return(values$facetsCols)
+    }
+    
+    # wrap plotOutput in renderUI
+    output$plotS <- renderUI({
+      plotOutput("plotSs", height = plot_height(), width = plot_width())
+    })
+    
     
     
     # Code to download the plot
@@ -348,74 +372,7 @@ server <- function(input, output, session){
  })
   
   print('two')
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-#### PAGE_simulation STOCK_Biological risk  ####
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
-  # dataR<-reactive({
-  #   req(input$stockR)
-  #   risk[risk$year>=input$rangeR[1] & risk$year<=input$rangeR[2] 
-  #        & risk$unit%in%input$stockR
-  #        & risk$scenario%in%input$scenarioR
-  #        & risk$indicator%in%input$brpR,]
-  # })
-  # 
-  # 
-  # plotSR <- function(){
-  #   p <- ggplot(dataR(), aes(x=year, y=value, group=scenario, color=scenario))+
-  #     geom_line(aes(color=scenario), lwd = 1)+
-  #      # projection starting year 
-  #     facet_grid(indicator~unit)+
-  #     theme_bw()+
-  #     theme(text=element_text(size=16),
-  #           title=element_text(size=16),
-  #           strip.text=element_text(size=16)#,
-  #           #axis.text.x = element_text(angle = 90, hjust = 1)
-  #           )+
-  #     xlab("Year")+ ylab("Probability")
-  #   
-  #   if(!is.null(proj.yr)){
-  #     p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)
-  #   }
-  #   
-  #   p
-  #   
-  # }
-  # 
-  # 
-  # 
-  # 
-  # output$plotR<-renderPlot({
-  #   plotSR()
-  # })
-  
-  
-  # # Code to download the plot
-  # getWSR <- function(){
-  #   return(input$fileWSR)
-  # }
-  # 
-  # getHSR <- function(){
-  #   return(input$fileHSR)
-  # }
-  # 
-  # getSSR <- function(){
-  #   return(input$fileScSR)
-  # }
-  # 
-  # # Download the plot
-  # output$downSR <- downloadHandler(
-  #   filename =  function() {
-  #     paste(input$filenmSR, input$fileTypeSR, sep=".")
-  #   },
-  #   # content is a function with argument file. content writes the plot to the device
-  #   content = function(file) {
-  #     ggsave(file, plotSR(), width = getWSR(), height = getHSR(), units = 'cm', scale = getSSR())
-  #   } 
-  # )
-  # 
-  # print('three') 
-  
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation STOCK_Spider plot  ####
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
@@ -480,7 +437,7 @@ server <- function(input, output, session){
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
          ylab("") +ylim(c(0,max(c(1,dt$Ratio)))) +
-         facet_grid(.~indicator)
+         facet_grid(indicator~.)
         
         }
        else{ #lines == indicator
@@ -494,7 +451,7 @@ server <- function(input, output, session){
                  strip.text=element_text(size=14),
                  title=element_text(size=18,face="bold"))+
            ylab("") +ylim(c(0,max(c(1,dt$Ratio)))) +
-           facet_grid(.~stock)
+           facet_grid(stock~.)
        }
       return(p)
       

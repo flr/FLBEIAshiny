@@ -69,7 +69,7 @@ tabsetPanel(type = "tabs",
                                                       downloadButton(outputId = "downSA", label = "Download the plot")
                                            ))),
 
-                column(9, plotOutput("plotSA", height = "600px", width = "900px")
+                column(9, uiOutput("plotSA", inline =TRUE) 
                 ))),
             
             
@@ -96,10 +96,7 @@ tabsetPanel(type = "tabs",
                   selectInput(inputId = "fileTypeSK", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
                   downloadButton(outputId = "downSK", label = "Download the plot")
                   ))),
-                
-              column(9,
-                  plotOutput("plotK", height = "600px", width = "900px")
-              
+                column(9, uiOutput("plotK", inline =TRUE) 
               ))),
             
 
@@ -143,8 +140,7 @@ tabsetPanel(type = "tabs",
                       downloadButton(outputId = "downSP", label = "Download the plot")
                     ))),
                 
-                column(9,
-                    plotOutput("plotSP", height = "600px", width = "900px")
+                       column(9, uiOutput("plotSP", inline =TRUE) 
                 )))
             
 )#end of tabsetPanel

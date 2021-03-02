@@ -269,12 +269,33 @@ server <- function(input, output, session){
     }
 
 
-    output$plotSA <-renderPlot({
+    output$plotSAs <-renderPlot({
 
       print(plotStockArea())
     } #, height = PlotHeight_stk
     )
 
+    
+    # Case dependent plot size.
+    #     https://stackoverflow.com/questions/30422849/how-to-make-height-argument-dynamic-in-renderplot-in-shiny-r-package
+    # this function defines a height of the plot
+    values <- reactiveValues()
+    plot_height <- function() {
+      # calculate values$facetCount
+      values$facetsRows <- ifelse(length(input$scenarioSA) == 1, 600, ifelse(length(input$scenarioSA) == 2, 800, ifelse(length(input$scenarioSA) == 3, 900, 200*length(input$scenarioSA))))
+      return(values$facetsRows)
+    }
+    plot_width <- function() {
+      # calculate values$facetCount
+      values$facetsCols <- ifelse(length(input$indicatorSA)==1, 900, 1500)
+      return(values$facetsCols)
+    }
+    
+    # wrap plotOutput in renderUI
+    output$plotSA <- renderUI({
+      plotOutput("plotSAs", height = plot_height(), width = plot_width())
+    })
+    
 
     # Code to download the plot
     getWSA <- function(){
@@ -332,17 +353,36 @@ server <- function(input, output, session){
       geom_path( aes(stock,harvest, group = scenario, col = scenario)) + 
       geom_text(aes(stock, harvest, label = year), data = dy0, pch = 16, col = 1) +
       geom_text(aes(stock, harvest, label = year), data = dy1, pch = 4, col = 1) +
-      facet_wrap(~unit) +
+      facet_wrap(~unit, ncol = 2) +
       theme(text=element_text(size=16),
             title=element_text(size=16),
             strip.text=element_text(size=16)) #+
   #    labs(caption = 'First year = black dot & Final year = black cross')
   }
   
-  output$plotK <- renderPlot({
+  output$plotKs <- renderPlot({
  #   browser()
     if (is.null(dataK())) return()
     plotKobe()
+  })
+  
+  # Case dependent plot size.
+  values <- reactiveValues()
+  plot_height <- function() {
+    # calculate values$facetCount
+    values$facetsRows <- ifelse(length(input$stockK) <=2, 400, ifelse(length(input$stockK) <= 4, 600, 
+                                      ifelse(length(input$stockK) <= 6, 800, 250*ceiling(length(input$stockK)/2))))
+    return(values$facetsRows)
+  }
+  plot_width <- function() {
+    # calculate values$facetCount
+    values$facetsCols <- ifelse(length(input$stockK)==1, 600, 900)
+    return(values$facetsCols)
+  }
+  
+  # wrap plotOutput in renderUI
+  output$plotK <- renderUI({
+    plotOutput("plotKs", height = plot_height(), width = plot_width())
   })
   
   # Code to download the plot
@@ -412,7 +452,7 @@ server <- function(input, output, session){
       
         dat <- dat1 %>% left_join(dat2)
         
-        dat <- dat %>% mutate(Ratio = q50/q502)
+        dat <- dat %>% mutate(Ratio = (q50-q502)/q502)
         
         dat <- dat[order(dat$scenario), ]
       
@@ -420,9 +460,12 @@ server <- function(input, output, session){
       })
 
     
-  output$plotSP<-renderPlot({
+  plotSpider <-function(){
 
        dt <- dataSP()
+       
+       dt0 <- dt
+       dt0$Ratio <- 0
       
        lines <- input$GrpPanSP
       
@@ -431,13 +474,14 @@ server <- function(input, output, session){
          # geom_polygon(alpha=0.2, lwd=1)+
          geom_polygon(fill=NA, lwd=1)+
          geom_point(cex=1.5)+
+         geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
          coord_radar()+
          theme_bw()+
          theme(text=element_text(size=14),
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
-         ylab("") +ylim(c(0,max(c(1,dt$Ratio)))) +
-         facet_grid(indicator~.)
+         ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+          facet_wrap(indicator~., ncol = 2)
         
         }
        else{ #lines == indicator
@@ -445,17 +489,53 @@ server <- function(input, output, session){
            # geom_polygon(alpha=0.2, lwd=1)+
            geom_polygon(fill=NA, lwd=1)+
            geom_point(cex=1.5)+
+           geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
+  #         geom_hline(aes(yintercept=0), lwd=1, lty=2) +
            coord_radar()+
            theme_bw()+
            theme(text=element_text(size=14),
                  strip.text=element_text(size=14),
                  title=element_text(size=18,face="bold"))+
-           ylab("") +ylim(c(0,max(c(1,dt$Ratio)))) +
-           facet_grid(stock~.)
+           ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+           facet_wrap(stock~., ncol = 2)
        }
       return(p)
       
-    })
+    }
+  
+  output$plotSPs <- renderPlot({
+    #   browser()
+    if (is.null(dataSP())) return()
+    plotSpider()
+  })
+  
+  # Case dependent plot size.
+  values <- reactiveValues()
+  plot_height <- function() {
+    lines <- input$GrpPanSP
+    if(lines == 'stock'){ facets <- input$indicatorSP} 
+    else{ facets <- input$stockSP}
+    
+    # calculate values$facetCount
+    values$facetsRows <- ifelse(length(facets) <=2, 400, ifelse(length(facets) <= 4, 600, 
+                                                                      ifelse(length(facets) <= 6, 800, 250*ceiling(length(facets)/2))))
+    return(values$facetsRows)
+  }
+  plot_width <- function() {
+    lines <- input$GrpPanSP
+    if(lines == 'stock'){ facets <- input$indicatorSP} 
+    else{ facets <- input$stockSP}
+    # calculate values$facetCount
+    values$facetsCols <- ifelse(length(input$stockK)==1, 600, 900)
+    return(values$facetsCols)
+  }
+
+  
+  # wrap plotOutput in renderUI
+  output$plotSP<- renderUI({
+    plotOutput("plotSPs", height = plot_height(), width =plot_width())
+  })
+  
   
   # Code to download the plot
   getWSP <- function(){

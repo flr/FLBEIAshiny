@@ -144,9 +144,11 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y')
       }
       
-      cond <- any(grepl('msy', input$indicatorS))
+      cond <- any(c(grepl('msy', input$indicatorS), grepl('pa', input$indicatorS), grepl('lim', input$indicatorS)))
       
-      if(cond){  p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
+      if(cond){  p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('Flim','Fpa','Fmsy',
+                                                                                'Blim','Bpa','Bmsy', 
+                                                                                'ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
                            aes(yintercept = 1), linetype = 'dashed')}
       else{p}
 

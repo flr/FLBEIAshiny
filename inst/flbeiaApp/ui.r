@@ -15,6 +15,7 @@ ui <- tagList(
     title="FLBEIA SHINY",
     fluid=FALSE, # TRUE Layout izateko fluid baina FALSE ikonoa jarri ahal izateko
     inverse=TRUE,
+    
 
     #### 1.HOME ####
     tabPanel(
@@ -57,7 +58,10 @@ ui <- tagList(
                 color: #000000;
                 #font-family: Arial;
                 font-size: 30px;
+                color:#fdde03;
                 }'
+
+    
                 
     )
     ) # end navbarPage

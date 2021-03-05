@@ -95,7 +95,7 @@ server <- function(input, output, session){
       #   req(input$stockS)
       #   bio[bio$year>=input$rangeS[1] & bio$year<=input$rangeS[2] 
       #       & bio$stock%in%input$stockS
-      #       & bio$indicator%in% c('f2Fmsy', 'B2Bmsy', 'ssb2Bmsy')
+      #       & bio$indicator%in% c('f2Ftarget', 'B2Btarget', 'ssb2Btarget')
       #       & bio$scenario%in%input$scenarioS,]
       # })
       
@@ -144,13 +144,21 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y')
       }
       
-      cond <- any(c(grepl('msy', input$indicatorS), grepl('pa', input$indicatorS), grepl('lim', input$indicatorS)))
+      cond1   <- any(c(grepl('target', input$indicatorS), grepl('pa', input$indicatorS), grepl('lim', input$indicatorS)))
+      cond2   <- any(c(grepl('pa', input$indicatorS), grepl('lim', input$indicatorS)))
       
-      if(cond){  p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('Flim','Fpa','Fmsy',
-                                                                                'Blim','Bpa','Bmsy', 
-                                                                                'ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
-                           aes(yintercept = 1), linetype = 'dashed')}
-      else{p}
+        
+      if(cond1){  
+        yvalue <- 
+        p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('pFlim','pFpa','pFtarget',
+                                                                       'pBlim','pBpa','pBtarget')),
+                           aes(yintercept = 0.05), linetype = 'dashed')}
+      else{
+        if(cond2){
+          p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Btarget', 'f2Ftarget')),
+                               aes(yintercept = 1), linetype = 'dashed')}
+        else{p}
+      }
 
 
        # if(any(input$indicatorS %in% c('F2Fmsy', 'f2Fmsy', 'B2Bmsy', 'ssb2Bmsy'))){

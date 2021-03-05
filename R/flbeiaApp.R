@@ -391,13 +391,15 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    
    save(deploy, file='inst/flbeiaApp/deploy.RData')
    
-   print('after deploy')
    
    if (deploy == FALSE){
 
+     print('deploy = FALSE: local application')
+     
     shiny::runApp(system.file('flbeiaApp', package='FLBEIAshiny'), launch.browser = TRUE)
    }
    else{
+     print('deploy = TRUE: publish the application in an external server')
      
       save.image(file='inst/flbeiaApp/App.RData')
 

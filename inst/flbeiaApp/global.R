@@ -3,6 +3,7 @@
 
 #load(file.path(getwd(), 'inst/flbeiaApp/deploy.RData'))
 load('deploy.RData')
+print(getwd())
 if(deploy == TRUE){
   load("App.RData")
     library(ggplot2)

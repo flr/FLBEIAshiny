@@ -387,9 +387,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    
    print('before deploy')
    
-   dir.create(file.path(getwd(), 'inst/flbeiaApp'))
+  # dir.create(file.path(getwd(), 'inst/flbeiaApp'))
    
-   save(deploy, file='inst/flbeiaApp/deploy.RData')
+   save(deploy, file= file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/deploy.RData"))
    
    
    if (deploy == FALSE){
@@ -401,7 +401,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    else{
      print('deploy = TRUE: publish the application in an external server')
      
-      save.image(file='inst/flbeiaApp/App.RData')
+      save.image(file=file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/App.RData"))
 
       appDir <- file.path(getwd(), "inst/flbeiaApp")
    

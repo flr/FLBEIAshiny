@@ -144,8 +144,8 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y')
       }
       
-      cond1   <- any(c(grepl('target', input$indicatorS), grepl('pa', input$indicatorS), grepl('lim', input$indicatorS)))
-      cond2   <- any(c(grepl('pa', input$indicatorS), grepl('lim', input$indicatorS)))
+      cond1   <- any(sapply(c('pFlim','pFpa','pFtarget', 'pBlim','pBpa','pBtarget'), function(x) any(grepl(x, input$indicatorS))))
+      cond2   <- any(sapply(c('ssb2Btarget', 'f2Ftarget'), function(x) any(grepl(x, input$indicatorS))))
       
         
       if(cond1){  

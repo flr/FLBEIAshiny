@@ -20,8 +20,8 @@ tabsetPanel(type = "tabs",
     			                                 numericInput('lwdFby', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
     			                                 numericInput('dszFby', h5("Dot size"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
     			                                 checkboxInput("fitCIFby", "Confident interval", FALSE),
-    			                                 checkboxInput("fitFby", "Free scales", FALSE)
-    			        ),
+    			                                 checkboxInput("fitFby", "Free scales", FALSE),
+    			                                 numericInput('nColFby', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)),
     			        shinyBS::bsCollapsePanel("Download",
     			        # Options for file downloading
     			        textInput('filenmFby', h5("File Name"), value = "", width = NULL, placeholder = NULL),
@@ -51,7 +51,9 @@ tabsetPanel(type = "tabs",
                                                                        selected = intersect(unique(fltStk$indicator), c('catch', 'landings', 'discards', 'quota'))[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                 selectizeInput("scenariobyA",  label=h4("Scenarios"),  unique(fltStk$scenario), selected=unique(fltStk$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                 checkboxInput("percbyA", h5("Percentage"), FALSE),
-                checkboxInput("fitbyA", "Free scales", FALSE)                                          #hr(),
+                checkboxInput("fitbyA", "Free scales", FALSE),
+                numericInput('nColbyA', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
+                #hr(),
                 ),
                 shinyBS::bsCollapsePanel("Download",  # Options for file downloading
                 textInput('filenmbyA', h5("File Name"), value = "", width = NULL, placeholder = NULL),

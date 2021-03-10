@@ -16,7 +16,8 @@ tabsetPanel(type = "tabs",
                   ),
                   shinyBS::bsCollapsePanel("Graphs",
                   checkboxInput("fitCIM", h5("Confident intervals"), FALSE),
-                  checkboxInput("fitM", h5("Free scalse"), FALSE)
+                  checkboxInput("fitM", h5("Free scalse"), FALSE),
+                  numericInput('nColM', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
                   ),
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading

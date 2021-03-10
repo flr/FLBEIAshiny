@@ -139,7 +139,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        desc = NULL,
                        reduced = FALSE,
                        deploy = FALSE,
-                       appName = paste('flbeiaApp', sample(1e12,1), sep = ""),
+                       appName = paste('flbeiaApp', sample(1,1), sep = ""),
                        appTitle = appName
                        ) {
   
@@ -328,10 +328,10 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   bio.msy[bio.msy$indicator == 'f','indicator'] <- 'f2fmsy'
   bio.msy[bio.msy$indicator == 'ssb','indicator'] <- 'B2Bmsy'
   
-  bio <- bind_rows(bio, bio.msy)
+  bio.msy <- bind_rows(bio, bio.msy)
   
-   f   <- bio %>% filter(indicator == 'f2fmsy')
-   ssb <- bio %>% filter(indicator == 'B2Bmsy')
+   f   <- bio.msy  %>% filter(indicator == 'f2fmsy')
+   ssb <- bio.msy  %>% filter(indicator == 'B2Bmsy')
    
    bio.kobe <- bind_cols(f[, c('scenario', 'stock', 'year','q50')], ssb[,'q50'])
    names(bio.kobe) <- c('scenario', 'unit', 'year', 'harvest', 'stock')
@@ -387,10 +387,11 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    
    print('before deploy')
    
-  # dir.create(file.path(getwd(), 'inst/flbeiaApp'))
+   dir.create(file.path(getwd(), 'inst/flbeiaApp/data')) 
+   save(deploy, file= "inst/flbeiaApp/data/deploy.RData")
+   save(deploy, file=file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/data/deploy.RData"))
    
-   save(deploy, file= file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/deploy.RData"))
-   
+    
    
    if (deploy == FALSE){
 
@@ -401,14 +402,18 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    else{
      print('deploy = TRUE: publish the application in an external server')
      
-      save.image(file=file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/App.RData"))
-
+     save.image(file= "inst/flbeiaApp/data/App.RData")
+     save.image(file=file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/data/App.RData"))
+     
       appDir <- file.path(getwd(), "inst/flbeiaApp")
+      
+      print(appDir)
    
       rsconnect::deployApp(
         appDir = appDir, #,
         appName = appName,
         appTitle = appTitle
+      # usng appFiles = c('ui.R', 'server.',,,) it seems it works but then it does not found the             
         #account = account,
         #lint = TRUE
       )

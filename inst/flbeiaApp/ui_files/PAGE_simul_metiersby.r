@@ -16,7 +16,8 @@ tabsetPanel(type = "tabs",
                  ),
                  shinyBS::bsCollapsePanel("Graphs",
                   checkboxInput("fitCIMby", h5("Confident interval"), FALSE),
-                  checkboxInput("fitMby", h5("Free scales"), FALSE)
+                  checkboxInput("fitMby", h5("Free scales"), FALSE),
+                  numericInput('nColMby', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
                   ),
                  shinyBS::bsCollapsePanel("Download",
                  # Options for file downloading

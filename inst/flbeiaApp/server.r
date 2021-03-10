@@ -141,23 +141,29 @@ server <- function(input, output, session){
           p <- p + facet_grid(stock~indicator)
       }
       else{
-          p <- p + facet_wrap(stock~indicator, scale = 'free_y')
+          p <- p + facet_wrap(stock~indicator, scale = 'free_y', ncol = input$nColS)
       }
       
+   #   browser()
       cond1   <- any(sapply(c('pFlim','pFpa','pFtarget', 'pBlim','pBpa','pBtarget'), function(x) any(grepl(x, input$indicatorS))))
       cond2   <- any(sapply(c('ssb2Btarget', 'f2Ftarget'), function(x) any(grepl(x, input$indicatorS))))
       
         
       if(cond1){  
-        yvalue <- 
         p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('pFlim','pFpa','pFtarget',
                                                                        'pBlim','pBpa','pBtarget')),
-                           aes(yintercept = 0.05), linetype = 'dashed')}
-      else{
-        if(cond2){
+                           aes(yintercept = 0.05), linetype = 'dashed')
+        if(cond2){ # cond1 + cond2
           p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Btarget', 'f2Ftarget')),
                                aes(yintercept = 1), linetype = 'dashed')}
-        else{p}
+        else{p} # only cond1
+      }
+      else{ 
+        if(cond2){ # only cond2
+        #  browser()
+          p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Btarget', 'f2Ftarget')),
+                               aes(yintercept = 1), linetype = 'dashed')}
+        else{p} # nor cond1 or cond1
       }
 
 
@@ -273,7 +279,7 @@ server <- function(input, output, session){
         p <- p + facet_grid(scenario~indicator)
       }
       else{
-        p <- p + facet_wrap(scenario~indicator, scale = 'free_y')
+        p <- p + facet_wrap(scenario~indicator, scale = 'free_y', ncol = input$nColSA)
       }
       
     }
@@ -363,7 +369,7 @@ server <- function(input, output, session){
       geom_path( aes(stock,harvest, group = scenario, col = scenario)) + 
       geom_text(aes(stock, harvest, label = year), data = dy0, pch = 16, col = 1) +
       geom_text(aes(stock, harvest, label = year), data = dy1, pch = 4, col = 1) +
-      facet_wrap(~unit, ncol = 2) +
+      facet_wrap(~unit, ncol = input$nColK) +
       theme(text=element_text(size=16),
             title=element_text(size=16),
             strip.text=element_text(size=16)) #+
@@ -491,7 +497,7 @@ server <- function(input, output, session){
                strip.text=element_text(size=14),
                title=element_text(size=18,face="bold"))+
          ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
-          facet_wrap(indicator~., ncol = 2)
+          facet_wrap(indicator~., ncol = input$nColSP)
         
         }
        else{ #lines == indicator
@@ -507,7 +513,7 @@ server <- function(input, output, session){
                  strip.text=element_text(size=14),
                  title=element_text(size=18,face="bold"))+
            ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
-           facet_wrap(stock~., ncol = 2)
+           facet_wrap(stock~.,  ncol = input$nColSP)
        }
       return(p)
       
@@ -637,7 +643,7 @@ print('three spider')
       }
       
       if(input$fitF==TRUE){
-        p <- p + facet_wrap(fleet ~ indicator, ncol=length(input$fleetF), scales="free_y")
+        p <- p + facet_wrap(fleet ~ indicator, ncol = input$nColF, scales="free_y")
       }
       else{
         p <- p + facet_grid(fleet ~ indicator)  
@@ -693,7 +699,7 @@ print('three spider')
         geom_point(aes(color=fleet),cex=2)+
         geom_errorbar(aes(ymin=q05, ymax=q95, color=fleet), lwd=1)+
         theme_bw()+
-        facet_wrap(~scenario)+
+        facet_wrap(~scenario, ncol = input$nColNPV)+
         theme(text=element_text(size=16),
               title=element_text(size=16),
               strip.text=element_text(size=16),
@@ -933,7 +939,7 @@ print('three spider')
             p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
         
         if(input$fitM==TRUE){
-          p <- p + facet_wrap(metier ~ indicator, scale = 'free_y')
+          p <- p + facet_wrap(metier ~ indicator, scale = 'free_y',  ncol = input$nColM)
         }
         else{
           p <- p + facet_grid(metier ~ indicator)
@@ -1029,7 +1035,7 @@ print('three spider')
            p <- p + facet_grid(fleet*stock ~ indicator)
          }
          else{
-           p <- p + facet_wrap(fleet*stock ~ indicator, ncol=length(input$stockFby), scales="free_y")
+           p <- p + facet_wrap(fleet*stock ~ indicator, ncol = input$nColFby, scales="free_y")
          }
         return(p)}
       
@@ -1118,7 +1124,7 @@ print('three spider')
         p <- p + facet_grid(fleet*scenario~indicator)
       }
       else{
-        p <- p + facet_wrap(fleet*scenario~indicator, scale = 'free_y')
+        p <- p + facet_wrap(fleet*scenario~indicator, ncol = input$nColbyA, scale = 'free_y')
       }
       
     }
@@ -1207,7 +1213,7 @@ print('three spider')
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
         } 
         if(input$fitMby==TRUE){
-          p <- p + facet_wrap(metier*stock ~ indicator, ncol=length(input$metierMby), scales="free_y")
+          p <- p + facet_wrap(metier*stock ~ indicator, ncol = input$nColMby, scales="free_y")
         }
         if(!is.null(proj.yr)){
           p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
@@ -1289,7 +1295,7 @@ print('three spider')
           p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
         }
         if(input$fitA==TRUE){
-          p <- p + facet_wrap(indicator~stock, scales="free_y",ncol=length(input$stockA))
+          p <- p + facet_wrap(indicator~stock, scales="free_y",ncol = input$nColA)
         }
         else{
           p <- p + facet_grid(indicator~stock)

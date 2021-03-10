@@ -19,8 +19,8 @@ tabsetPanel(type = "tabs",
                        ),
                   shinyBS::bsCollapsePanel("Graphs",
                   checkboxInput("fitCIF", h5("Confident intervals"), FALSE),
-                  checkboxInput("fitF", h5("Free scales"), FALSE)
-                  ),
+                  checkboxInput("fitF", h5("Free scales"), FALSE),
+                  numericInput('nColF', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)),
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmF', h5("File Name"), value = "", width = NULL, placeholder = NULL),
@@ -46,8 +46,8 @@ tabsetPanel(type = "tabs",
                   shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                   shinyBS::bsCollapsePanel("Fleet and Scenario",
                   selectizeInput("fleetN",    label=h4("Fleet"),    unique(npv$fleet),    selected = unique(npv$fleet)[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  selectizeInput("scenarioN", label=h4("Scenario"), unique(npv$scenario), selected = unique(npv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
-                  ),
+                  selectizeInput("scenarioN", label=h4("Scenario"), unique(npv$scenario), selected = unique(npv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                  numericInput('nColNPV', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100) ),
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmFN', h5("File Name"), value = "", width = NULL, placeholder = NULL),
@@ -90,7 +90,8 @@ tabsetPanel(type = "tabs",
                                                   
                     selectizeInput("fleetFP",   label=h4("Fleet"),      unique(flt$fleet),         selected= unique((flt$fleet))[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                     selectizeInput("scenarioFP", label=h4("Scenarios"),  unique(flt$scenario),      selected= unique((flt$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                    selectizeInput("indicatorFP", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+                    selectizeInput("indicatorFP", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop"))), 
+                    numericInput('nColFP', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
                                ),
                     shinyBS::bsCollapsePanel("Download",
                              # Options for file downloading

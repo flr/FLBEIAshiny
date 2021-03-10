@@ -2,14 +2,25 @@
 
 
 #load(file.path(getwd(), 'inst/flbeiaApp/deploy.RData'))
-load('deploy.RData')
-print(getwd())
+# global application
+
+# deploy <- FALSE
+# 
+# dep <- 'deploy.RData' %in%  dir(file.path(getwd(), 'inst/flbeiaApp/'))
+# data/
+# if(dep){ load(file.path(getwd(), "inst/flbeiaApp/deploy.RData"))}
+#if(dep2){ load(file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/deploy.RData"))}
+
+# Here, the application takes the files 
+load("data/deploy.RData")
+
+
 if(deploy == TRUE){
-  load("App.RData")
+    load("data/App.RData")
     library(ggplot2)
-  library(dplyr)
+    library(dplyr)
     library(schoolmath)
-   library(kobe)
+    library(kobe)
  }
 # radar coordinate system for spider plots::
 

@@ -27,7 +27,7 @@ tabsetPanel(type = "tabs",
                   checkboxInput("dotLineS", "Dot & Lines", FALSE),
                   numericInput('lwdS', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
                   numericInput('dszS', h5("Dot size"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
-                  numericInput('nColS', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100),
+                  numericInput('nColS', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100),
                   checkboxInput("fitCIS", "Confident interval", FALSE),
                   checkboxInput("fitS", "Free scales", FALSE)
                   ),
@@ -64,7 +64,7 @@ tabsetPanel(type = "tabs",
                                                         selectizeInput("scenarioSA", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                                                         checkboxInput("percSA", h5("Percentage"), FALSE),
                                                         checkboxInput("fitSA", "Free scales", FALSE),
-                                                        numericInput('nColSA', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
+                                                        numericInput('nColSA', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
                                                                               #hr(),
                                            ),
                        shinyBS::bsCollapsePanel("Download",  # Options for file downloading
@@ -95,7 +95,7 @@ tabsetPanel(type = "tabs",
                   sliderInput("rangeK", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
                   selectizeInput("stockK", label=h4("Stock"), unique(RefPts$stock),  selected=unique(RefPts$stock)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(RefPts$scenario)), selected=unique(RefPts$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  numericInput('nColK', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
+                  numericInput('nColK', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
                        ),
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
@@ -141,7 +141,7 @@ tabsetPanel(type = "tabs",
                      selectizeInput("stockSP", label=h4("Stock"),          unique(bio$stock),    selected=unique(bio$stock),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("indicatorSP", label=h4("Indicators"), unique(bio$indicator),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("scenarioSP", label=h4("Scenarios"),   unique(bio$scenario), selected=unique(bio$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                     numericInput('nColSP', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)#hr(),
+                     numericInput('nColSP', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)#hr(),
                      ),
                    shinyBS::bsCollapsePanel("Download",
                      # Options for file downloading

@@ -7,7 +7,10 @@
       shinyBS::bsCollapsePanel("Projection",
       selectInput("yearP", label=h4("Reference year"), levels(as.factor(bio$year)), selected=max(bio$year)-1),
       sliderInput("rangeP", label=h4("Projection years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
-      selectizeInput("scenarioP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
+      selectizeInput("fleetP", label=h4("Fleets"),       unique(flt$fleet), selected = unique(flt$fleet),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+      selectizeInput("stockP",     label=h4("Stocks"),   unique(bio$stock), selected = unique(bio$stock), multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+      selectizeInput("scenarioP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+      numericInput('nColP', h5("N.Col in facets"), value = 1, min = 1, max = 10, step = 1, width = 100)
       ),
       shinyBS::bsCollapsePanel("Download",
       # Options for file downloading
@@ -18,8 +21,8 @@
       selectInput(inputId = "fileTypeP", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
       downloadButton(outputId = "downP", label = "Download the plot")
       ))),
-      column(9,
-      plotOutput("plotP", height = "600px", width = "900px")
+    
+    column(9, uiOutput("plotP", inline =TRUE) 
       )
    )
 

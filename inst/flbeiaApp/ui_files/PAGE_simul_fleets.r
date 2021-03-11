@@ -20,7 +20,7 @@ tabsetPanel(type = "tabs",
                   shinyBS::bsCollapsePanel("Graphs",
                   checkboxInput("fitCIF", h5("Confident intervals"), FALSE),
                   checkboxInput("fitF", h5("Free scales"), FALSE),
-                  numericInput('nColF', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)),
+                  numericInput('nColF', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)),
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmF', h5("File Name"), value = "", width = NULL, placeholder = NULL),
@@ -47,7 +47,7 @@ tabsetPanel(type = "tabs",
                   shinyBS::bsCollapsePanel("Fleet and Scenario",
                   selectizeInput("fleetN",    label=h4("Fleet"),    unique(npv$fleet),    selected = unique(npv$fleet)[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioN", label=h4("Scenario"), unique(npv$scenario), selected = unique(npv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  numericInput('nColNPV', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100) ),
+                  numericInput('nColNPV', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100) ),
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
                   textInput('filenmFN', h5("File Name"), value = "", width = NULL, placeholder = NULL),
@@ -61,49 +61,49 @@ tabsetPanel(type = "tabs",
                 column(9,
                   plotOutput("plotFN", height = "600px", width = "900px")
                 ))),
-            
-       
-            #------------------------------------
+      
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # SPIDER PLOTS
-            #------------------------------------
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tabPanel( 
               title = "Spider",
               fluidRow(
                 br(),
+                column(12, 
+                       includeHTML("data/SpiderPlot.txt")), 
                 column(3,
-                    shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
-                    shinyBS::bsCollapsePanel("Fleet and Indicator",
-                    radioButtons("yearFP", label=h4("Year"),  c("Year" = "radioF1","Years ratio" = "radioF2")),
-                       
-                     # Only show this panel if the radio1 is selected
-                     conditionalPanel(
-                        condition = "input.yearFP == 'radioF1'",
-                           div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearFP0", "Year",levels(as.factor(flt$year)), selected = 2015, multiple = FALSE))
-                            ),
-                                                  
-                     # Only show this panel if radio2 is selected
+                       shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
+                       shinyBS::bsCollapsePanel("Select variables",
+                       radioButtons("baseFSP", label=h4("Base"),  c("Year" = "radio1F","Scenario" = "radio2F")),
+                                                                    
+                       #  Only show this panel if the radio1 is selected
+                       conditionalPanel(
+                       condition = "input.baseFSP == 'radio1F'",
+                       div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseFSP1", "Base Year", unique(flt$year), selected=min(flt$year), multiple = FALSE)),
+                       div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseFSP2", "Year",     unique(flt$year), selected=max(flt$year), multiple = FALSE))
+                       ),
+                                                                    
+                                                                    # Only show this panel if radio2 is selected
                       conditionalPanel(
-                        condition = "input.yearFP == 'radioF2'",
-                            div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearFP1", "Year 1",levels(as.factor(flt$year)), selected=2015, multiple = FALSE)),
-                            div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("yearFP2", "Year 2", levels(as.factor(flt$year)), selected=2013, multiple = FALSE))
-                             ),
-                                                  
-                    selectizeInput("fleetFP",   label=h4("Fleet"),      unique(flt$fleet),         selected= unique((flt$fleet))[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                    selectizeInput("scenarioFP", label=h4("Scenarios"),  unique(flt$scenario),      selected= unique((flt$scenario))[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                    selectizeInput("indicatorFP", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop"))), 
-                    numericInput('nColFP', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100)
-                               ),
-                    shinyBS::bsCollapsePanel("Download",
-                             # Options for file downloading
-                     textInput('filenmFP', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                     numericInput('fileWFP', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-                     numericInput('fileHFP', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-                     numericInput('fileScFP', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-                     selectInput(inputId = "fileTypeFP", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                     downloadButton(outputId = "downFP", label = "Download the plot")
-                     ))),
-                
-                column(9,
-                       plotOutput("plotFP", height = "600px", width = "900px")
+                        condition = "input.baseFSP == 'radio2F'",
+                        div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseFSP3", "Base Scenario", unique(flt$scenario), selected= unique(flt$scenario)[1], multiple = FALSE)),
+                        div(style="display: inline-block;vertical-align:top; width: 100px;",selectInput("baseFSP4", "Year",          unique(flt$year),     selected= max(flt$year), multiple = FALSE))
+                                                                    ),
+                        radioButtons("GrpPanFSP", label=h4("Group"),  c("Fleet" = "fleet","Scenario" = "scenario")),
+                        selectizeInput("fleetFSP", label=h4("Fleets"),          unique(flt$fleet),    selected=unique(flt$fleet),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                        selectizeInput("indicatorFSP", label=h4("Indicators"), unique(flt$indicator),selected=unique(flt$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                        selectizeInput("scenarioFSP", label=h4("Scenarios"),   unique(flt$scenario), selected=unique(flt$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                        numericInput('nColFSP', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)#hr(),
+                                           ),
+                        shinyBS::bsCollapsePanel("Download",
+                                                                    # Options for file downloading
+                                    textInput('filenmFSP', h5("File Name"), value = "", width = NULL, placeholder = NULL),
+                                    numericInput('fileWFSP', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
+                                    numericInput('fileHFSP', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
+                                    numericInput('fileScFSP', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
+                                    selectInput(inputId = "fileTypeFSP", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
+                                    downloadButton(outputId = "downFSP", label = "Download the plot")
+                                           ))),
+                column(9, uiOutput("plotFSP", inline =TRUE) 
                 )))
 )#end of the tabsetPanel

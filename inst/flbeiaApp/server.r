@@ -1,3 +1,38 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CASE SPECIFIC SIZE IN PLOT
+# These 4 pieces of code are needed
+#
+# plotPolar = the code with all the code of ggplot...
+# plotP = the name we used in ui to call the plot.
+# 
+#
+# plot_height <- function() {
+#     facets <- length(input$scenario)
+#     values$facetsRows <- ifelse(facets/input$nColP == 1, 600, ifelse(facets/input$nColP == 2, 800, 
+#                                                                  ifelse(facets/input$nColP == 3, 100, 300*ceiling(facets/input$nColP))))
+#     return(values$facetsRows)
+# }
+# 
+# plot_width <- function() {
+#   
+#   values$facetsCols <- ifelse(input$nColP == 1, 600, ifelse(input$nColP <= 2, 900, 1200))
+#   return(values$facetsCols)
+# }
+
+# output$plotPs<-renderPlot({
+#   
+#   print(plotPolar())
+# } #, height = PlotHeight_stk
+# )
+# 
+# # wrap plotOutput in renderUI
+# output$plotP <- renderUI({
+#   plotOutput("plotPs", height = plot_height(), width = plot_width())
+# })
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 
 # Change the size of the plot area: https://groups.google.com/g/shiny-discuss/c/dkZxTvfHOvo?pli=1
 
@@ -165,22 +200,8 @@ server <- function(input, output, session){
                                aes(yintercept = 1), linetype = 'dashed')}
         else{p} # nor cond1 or cond1
       }
-
-
-       # if(any(input$indicatorS %in% c('F2Fmsy', 'f2Fmsy', 'B2Bmsy', 'ssb2Bmsy'))){
-       #   p <-  p + geom_hline(data=  dataS() %>% filter(indicator %in% c('ssb2Fmsy', 'f2fmsy','f2Fmsy', 'B2Bmsy')),
-       #                        yintercept = 1, linetype = 'dashed')
-       # }
-      
     }
-    
-    
-    
-    output$plotSs<-renderPlot({
 
-      print(plotStock())
-    } #, height = PlotHeight_stk
-    )
     
     # Case dependent plot size.
     #     https://stackoverflow.com/questions/30422849/how-to-make-height-argument-dynamic-in-renderplot-in-shiny-r-package
@@ -196,6 +217,12 @@ server <- function(input, output, session){
       values$facetsCols <- ifelse(length(input$indicatorS)==1, 900, 1500)
       return(values$facetsCols)
     }
+    
+    output$plotSs<-renderPlot({
+      
+      print(plotStock())
+    } #, height = PlotHeight_stk
+    )
     
     # wrap plotOutput in renderUI
     output$plotS <- renderUI({
@@ -739,158 +766,156 @@ print('three spider')
   
   
       print('five')  
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-    #### PAGE_simulation FLEET_Risk  ####
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-  
-    # dataE<-reactive({
-    #       req(input$fleetE)
-    #       risk[risk$unit%in%input$fleetE & risk$scenario%in%input$scenarioE & risk$indicator=="pPrflim",]})
-    # 
-    #   
-    # plotFLRisk <- function(){
-    #     p <- ggplot(dataE(), aes(x=year, y=value, color=scenario))+
-    #     geom_line(aes(color=scenario),lwd=1)+
-    #     facet_wrap(~unit, scales="free")+
-    #     ylab("")+ xlab("Year")+
-    #     theme_bw()+
-    #     theme( strip.text=element_text(size=16),
-    #            title=element_text(size=16),
-    #            text=element_text(size=16))
-    #   
-    #     if(!is.null(proj.yr)){
-    #         p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
-    #     
-    #     }
-    #   
-    #     p
-    #   }
-    #   
-    # output$plotFR <-renderPlot({
-    #         plotFLRisk()
-    # })
-    # 
-    # 
-    # # Code to download the plot
-    # getFRW <- function(){
-    #   return(input$fileWFR)
-    # }
-    # 
-    # getFRH <- function(){
-    #   return(input$fileHFR)
-    # }
-    # 
-    # getFRS <- function(){
-    #   return(input$fileScFR)
-    # }
-    # 
-    # # Download the plot
-    # output$downFR <- downloadHandler(
-    #   filename =  function() {
-    #     paste(input$filenmFR, input$fileTypeFR, sep=".")
-    #   },
-    #   # content is a function with argument file. content writes the plot to the device
-    #   content = function(file) {
-    #     ggsave(file, plotFLRisk(), width = getFRW(), height = getFRH(), units = 'cm', scale = getFRS())
-    #   } 
-    # )
-    # print('six')
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #### PAGE_simulation FLEET_Spider plot  ####
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    dataFP<-reactive({
-      
-      if (input$yearFP == "radioF1"){
-        req(input$fleetFP)
+      dataFSP<-reactive({
+        req(input$baseFSP)
         
-        dat<-flt.scaled[flt.scaled$year == input$yearFP0
-                        & flt.scaled$fleet%in%input$fleetFP
-                        & flt.scaled$indicator%in%input$indicatorFP
-                        & flt.scaled$scenario%in%input$scenarioFP,]
-        
-      }else{
-        
-        if (input$yearFP == "radioF2"){
-          req(input$fleetFP)
-          dat <- flt.scaled[flt.scaled$year%in%c(input$yearFP1,input$yearFP2)
-                            & flt.scaled$fleet%in%input$fleetFP
-                            & flt.scaled$indicator%in%input$indicatorFP
-                            & flt.scaled$scenario%in%input$scenarioFP,]
+        if (input$baseFSP == "radio1F"){
+          req(input$fleetFSP)
+          dat1 <- subset(flt, year == input$baseFSP2 & fleet %in% input$fleetFSP & 
+                           indicator %in% input$indicatorFSP & scenario%in%input$scenarioFSP)
+          dat2 <- subset(flt, year == input$baseFSP1 & fleet %in% input$fleetFSP & 
+                           indicator %in% input$indicatorFSP & scenario%in%input$scenarioFSP)
           
-          dat<- dat %>% group_by (fleet, scenario, indicator) %>%
-            summarize(Ratio = c(value2[1] / value2[2]))
+          dat1 <- dat1 %>% group_by(fleet, indicator, scenario)
+          dat2 <- dat2 %>% group_by(fleet, indicator, scenario)
           
-        } 
+          dat2 <- dat2[, c('scenario', 'fleet', 'indicator', 'q50')]
+          names(dat2)[4] <- 'q502' 
+        }
+        
+        if (input$baseFSP == "radio2F"){ # base1 is scenario and base2 is year
+          req(input$fleetFSP)
+          # data frame with all the scenarios and the selected year
+          dat1 <- subset(flt, year == input$baseFSP4 & fleet %in% input$fleetFSP & 
+                           indicator %in% input$indicatorFSP & scenario%in%input$scenarioFSP)
+          # data frame with Base scenario and the selected year
+          dat2 <- subset(flt, year == input$baseFSP2 & fleet %in% input$fleetFSP & 
+                           indicator %in% input$indicatorFSP & scenario == input$baseFSP3)
+          
+          dat1 <- dat1 %>% group_by(fleet, indicator, scenario)
+          dat2 <- dat2 %>% group_by(fleet, indicator)
+          
+          dat2 <- dat2[, c('fleet', 'indicator', 'q50')]
+          names(dat2)[3] <- 'q502' 
+        }
+        
+        dat <- dat1 %>% left_join(dat2)
+        
+        dat <- dat %>% mutate(Ratio = (q50-q502)/q502)
+        
+        dat <- dat[order(dat$scenario), ]
         
         dat
-      }
-    })
-    
-    
-    output$plotFP<-renderPlot({
+      })
       
-      if (input$yearFP == "radioF1"){
+      
+      plotFSpider <-function(){
         
-        ggplot(data=dataFP(), aes(x=scenario, y=value2, col=fleet, fill=fleet, group=fleet))+
-          # geom_polygon(alpha=0.2, lwd=1)+
-          geom_polygon(fill=NA, lwd=1)+
-          geom_point(cex=1.5)+
-          facet_grid (. ~ indicator)+
-          coord_radar()+
-          theme_bw()+
-          theme(text=element_text(size=14),
-                strip.text=element_text(size=14),
-                title=element_text(size=18,face="bold"))+
-          ylab("")+
-          ylim(c(0,1))
-      }else{
+        dt <- dataFSP()
         
-        if (input$yearFP == "radioF2"){
-          
-          ggplot(data=dataFP(), aes(x=scenario, y=Ratio, col=fleet, fill=fleet, group=fleet))+
+        dt0 <- dt
+        dt0$Ratio <- 0
+        
+        lines <- input$GrpPanFSP
+        
+        if(lines == 'fleet'){
+          p <-  ggplot(data=dataFSP(), aes(x=scenario, y=Ratio, col=fleet, fill=fleet, group=fleet))+
             # geom_polygon(alpha=0.2, lwd=1)+
             geom_polygon(fill=NA, lwd=1)+
             geom_point(cex=1.5)+
-            facet_grid (. ~ indicator)+
+            geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
             coord_radar()+
             theme_bw()+
-            theme(text=element_text(size=16),
-                  strip.text=element_text(size=16),
+            theme(text=element_text(size=14),
+                  strip.text=element_text(size=14),
                   title=element_text(size=18,face="bold"))+
-            ylab("")+
-            ylim(c(0,1))
+            ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+            facet_wrap(indicator~., ncol = input$nColFSP)
           
         }
+        else{ #lines == indicator
+          p <-  ggplot(data=dataFSP(), aes(x=scenario, y=Ratio, col=indicator, fill=indicator, group=indicator))+
+            # geom_polygon(alpha=0.2, lwd=1)+
+            geom_polygon(fill=NA, lwd=1)+
+            geom_point(cex=1.5)+
+            geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
+            #         geom_hline(aes(yintercept=0), lwd=1, lty=2) +
+            coord_radar()+
+            theme_bw()+
+            theme(text=element_text(size=14),
+                  strip.text=element_text(size=14),
+                  title=element_text(size=18,face="bold"))+
+            ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+            facet_wrap(fleet~.,  ncol = input$nColFSP)
+        }
+        return(p)
+        
       }
       
-    })
-    
-    # Code to download the plot
-    getWFP <- function(){
-      return(input$fileWFP)
-    }
-    
-    getHFP <- function(){
-      return(input$fileHFP)
-    }
-    
-    getScFP <- function(){
-      return(input$fileScFP)
-    }
-    
-    # Download the plot
-    output$downFP <- downloadHandler(
-      filename =  function() {
-        paste(input$filenmFP, input$fileTypeFP, sep=".")
-      },
-      # content is a function with argument file. content writes the plot to the device
-      content = function(file) {
-        ggsave(file, plotFP(), width = getWFP(), height = getHFP(), units = 'cm', scale = getScFP())
-      } 
-    )
-    
+      output$plotFSPs <- renderPlot({
+        #   browser()
+        if (is.null(dataFSP())) return()
+        plotFSpider()
+      })
+      
+      # Case dependent plot size.
+      values <- reactiveValues()
+      plot_height <- function() {
+        lines <- input$GrpPanFSP
+        if(lines == 'stock'){ facets <- input$indicatorFSP} 
+        else{ facets <- input$fleetFSP}
+        
+        # calculate values$facetCount
+        values$facetsRows <- ifelse(length(facets) <=2, 400, ifelse(length(facets) <= 4, 600, 
+                                                                    ifelse(length(facets) <= 6, 800, 250*ceiling(length(facets)/2))))
+        return(values$facetsRows)
+      }
+      plot_width <- function() {
+        lines <- input$GrpPanFSP
+        if(lines == 'fleet'){ facets <- input$indicatorFSP} 
+        else{ facets <- input$fleetFSP}
+        # calculate values$facetCount
+        values$facetsCols <- ifelse(length(input$fleetFSP)==1, 600, 900)
+        return(values$facetsCols)
+      }
+      
+      
+      # wrap plotOutput in renderUI
+      output$plotFSP<- renderUI({
+        plotOutput("plotFSPs", height = plot_height(), width =plot_width())
+      })
+      
+      
+      # Code to download the plot
+      getWSP <- function(){
+        return(input$fileWFSP)
+      }
+      
+      getHSP <- function(){
+        return(input$fileHFSP)
+      }
+      
+      getScSP <- function(){
+        return(input$fileScFSP)
+      }
+      
+      # Download the plot
+      output$downFSP <- downloadHandler(
+        filename =  function() {
+          paste(input$filenmFSP, input$fileTypeFSP, sep=".")
+        },
+        # content is a function with argument file. content writes the plot to the device
+        content = function(file) {
+          ggsave(file, plotFSP(), width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
+        } 
+      )
+      
+      
     print('six spider')
     
   
@@ -1075,15 +1100,7 @@ print('three spider')
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation FLEET-STOCK AREA  ####
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-  
-  # PlotHeight_stk <- reactive({
-  #   
-  #   nids <- length(input$stockS)
-  #   
-  #   return(300*nids)})
-  # # 
-  # 
-  
+
   # Make choices and selection in 'stockFby' dependent on the context of fleetbyA
   observe ({
     updateSelectInput(session, inputId  = "stockbyA", 
@@ -1162,6 +1179,280 @@ print('three spider')
     )
     
   })# end of the observe stock
+  
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #### PAGE_simulation FLEET_STOCK_Spider plot  ####
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  observe ({
+    updateSelectInput(session, inputId  = "stockFSPby", 
+                      choices  = unique(subset(fltStk, fleet %in% input$fleetFSPby)$stock), 
+                      selected = unique(subset(fltStk, fleet %in% input$fleetFSPby)$stock)) #, server = TRUE)#,
+  })  
+  
+  dataFSPby<-reactive({
+    req(input$baseFSPby)
+    
+    if (input$baseFSPby == "radio1Fby"){
+      req(input$fleetFSPby)
+      dat1 <- subset(fltStk, year == input$baseFSPby2 & fleet %in% input$fleetFSPby & stock %in% input$stockFSPby & 
+                       indicator %in% input$indicatorFSPby & scenario%in%input$scenarioFSPby)
+      dat2 <- subset(fltStk, year == input$baseFSPby1 & fleet %in% input$fleetFSPby & stock %in% input$stockFSPby & 
+                       indicator %in% input$indicatorFSPby & scenario%in%input$scenarioFSPby)
+      
+      dat1 <- dat1 %>% group_by(fleet, indicator, scenario, stock)
+      dat2 <- dat2 %>% group_by(fleet, indicator, scenario, stock)
+      
+      dat2 <- dat2[, c('scenario', 'fleet', 'stock', 'indicator', 'q50')]
+      names(dat2)[5] <- 'q502' 
+    }
+    
+    
+    if (input$baseFSPby == "radio2Fby"){ # base1 is scenario and base2 is year
+      req(input$fleetFSPby)
+      # data frame with all the scenarios and the selected year
+      dat1 <- subset(fltStk, year == input$baseFSPby4 & fleet %in% input$fleetFSPby & stock %in% input$stockFSPby & 
+                       indicator %in% input$indicatorFSPby & scenario%in%input$scenarioFSPby)
+      # data frame with Base scenario and the selected year
+      dat2 <- subset(fltStk, year == input$baseFSPby2 & fleet %in% input$fleetFSPby & stock %in% input$stockFSPby & 
+                       indicator %in% input$indicatorFSPby & scenario == input$baseFSPby3)
+      
+      dat1 <- dat1 %>% group_by(fleet, indicator, scenario, stock)
+      dat2 <- dat2 %>% group_by(fleet, indicator, stock)
+      
+      dat2 <- dat2[, c('fleet', 'stock', 'indicator', 'q50')]
+      names(dat2)[4] <- 'q502' 
+    }
+    
+    dat <- dat1 %>% left_join(dat2)
+    
+    dat <- dat %>% mutate(Ratio = (q50-q502)/q502)
+    
+    dat <- dat[order(dat$scenario), ]
+    
+    dat
+  })
+  
+  
+  plotFbySpider <-function(){
+    
+    dt <- dataFSPby()
+    
+    dt0 <- dt
+    dt0$Ratio <- 0
+    
+    lines <- input$GrpPanFSPby
+    
+    a <- dataFSPby()
+    
+    print(dt0)
+    
+    if(lines == 'fleet'){
+      p <-  ggplot(data=dataFSPby(), aes(x=scenario, y=Ratio, col=fleet, fill=fleet, group=fleet))+
+        # geom_polygon(alpha=0.2, lwd=1)+
+        geom_polygon(fill=NA, lwd=1)+
+        geom_point(cex=1.5)+
+        geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
+        coord_radar()+
+        theme_bw()+
+        theme(text=element_text(size=14),
+              strip.text=element_text(size=14),
+              title=element_text(size=18,face="bold"))+
+        ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+        facet_wrap(indicator~stock, ncol = input$nColFSPby)
+      
+    }
+    else{ #lines == indicator
+      if(lines == 'stock'){
+          p <-  ggplot(data=dataFSPby(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
+          # geom_polygon(alpha=0.2, lwd=1)+
+            geom_polygon(fill=NA, lwd=1)+
+            geom_point(cex=1.5)+
+            geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
+            #         geom_hline(aes(yintercept=0), lwd=1, lty=2) +
+            coord_radar()+
+            theme_bw()+
+            theme(text=element_text(size=14),
+                strip.text=element_text(size=14),
+                title=element_text(size=18,face="bold"))+
+            ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+          facet_wrap(fleet~indicator,  ncol = input$nColFSPby)
+      }
+      else{ # lines indicator
+        p <-  ggplot(data=dataFSPby(), aes(x=scenario, y=Ratio, col=indicator, fill=indicator, group=indicator))+
+          # geom_polygon(alpha=0.2, lwd=1)+
+          geom_polygon(fill=NA, lwd=1)+
+          geom_point(cex=1.5)+
+          geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
+          #         geom_hline(aes(yintercept=0), lwd=1, lty=2) +
+          coord_radar()+
+          theme_bw()+
+          theme(text=element_text(size=14),
+                strip.text=element_text(size=14),
+                title=element_text(size=18,face="bold"))+
+          ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
+          facet_wrap(fleet~stock,  ncol = input$nColFSPby)
+      }
+    }
+    return(p)
+    
+  }
+  
+  output$plotFSPbys <- renderPlot({
+    #   browser()
+    if (is.null(dataFSPby())) return()
+    plotFbySpider()
+  })
+  
+  # Case dependent plot size.
+  values <- reactiveValues()
+  plot_height <- function() {
+    lines <- input$GrpPanFSPby
+    if(lines == 'stock'){ facets <- length(input$indicatorFSPby)*length(input$fleetFSPby)} 
+    else{ 
+      if(lines == 'fleet'){facets <- length(input$indicatorFSPby)*length(input$stockFSPby)} 
+      else{facets <- length(input$fleetFSPby)*length(input$stockFSPby)}
+    }
+    
+    # calculate values$facetCount
+    values$facetsRows <- ifelse(facets/input$nColFSPby == 1, 600, ifelse(facets/input$nColFSPby == 2, 800, 
+                                                                ifelse(facets/input$nColFSPby == 3, 100, 300*ceiling(facets/input$nColFSPby))))
+    return(values$facetsRows)
+  }
+  
+  plot_width <- function() {
+    
+    lines <- input$GrpPanFSPby
+    if(lines == 'stock'){ facets <- length(input$indicatorFSPby)*length(input$fleetFSPby)} 
+    else{ 
+      if(lines == 'fleet'){facets <- length(input$indicatorFSPby)*length(input$stockFSPby)} 
+      else{facets <- length(input$fleetFSPby)*length(input$stockFSPby)}
+    }
+    
+
+    values$facetsCols <- ifelse(input$nColFSPby == 1, 600, ifelse(input$nColFSPby <= 2, 900, 1200))
+    return(values$facetsCols)
+  }
+  
+  
+  # wrap plotOutput in renderUI
+  output$plotFSPby<- renderUI({
+    plotOutput("plotFSPbys", height = plot_height(), width =plot_width())
+  })
+  
+  
+  # Code to download the plot
+  getWSP <- function(){
+    return(input$fileWFSPby)
+  }
+  
+  getHSP <- function(){
+    return(input$fileHFSPby)
+  }
+  
+  getScSP <- function(){
+    return(input$fileScFSPby)
+  }
+  
+  # Download the plot
+  output$downFSPby <- downloadHandler(
+    filename =  function() {
+      paste(input$filenmFSPby, input$fileTypeFSPby, sep=".")
+    },
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      ggsave(file, plotFSPby(), width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
+    } 
+  )
+  
+  
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
+  #### PAGE_simulation METIER AREA  ####
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+
+  observe ({
+    updateSelectInput(session, inputId  = "metierMA", 
+                      choices  = unique(subset(mt, fleet %in% input$fleetMA)$metier), 
+                      selected = unique(subset(mt, fleet %in% input$fleetMA)$metier)) #, server = TRUE)#,
+  })  
+  
+  
+  observe ({
+    dataMA<-reactive({
+      mt <- subset(mt, year %in% input$rangeMA[1]:input$rangeMA[2] &
+                         fleet %in% input$fleetMA & metier %in% input$metierMA &
+                         indicator %in% input$indicatorMA & scenario %in% input$scenarioMA)
+      
+      if(input$percMA == TRUE){
+        mt <- mt  %>% ungroup() %>%  
+          group_by(year, scenario, indicator, fleet) %>%
+          mutate(p = q50/sum(q50)) %>% mutate(q50=p)
+      }
+   
+      
+      return(mt)
+    })
+    
+    plotFleetMetierArea <- function(){
+      
+      
+      p <-ggplot(data = dataMA())+
+        geom_area(aes(x=year, y=q50, fill=metier), size=0.5, colour="grey") +
+        ylab("")+xlab("Year")+
+        theme_bw()+
+        theme(strip.text=element_text(size=16),
+              title=element_text(size=16),
+              text=element_text(size=16))
+      
+      if(!is.null(proj.yr)){
+        p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
+      }
+      
+      if(input$fitMA == FALSE){
+        p <- p + facet_grid(fleet*scenario~indicator)
+      }
+      else{
+        p <- p + facet_wrap(fleet*scenario~indicator, ncol = input$nColMA, scale = 'free_y')
+      }
+      
+    }
+    
+    
+    output$plotFSMA <-renderPlot({
+      
+      print(plotFleetMetierArea())
+    } #, height = PlotHeight_stk
+    )
+    
+    
+    # Code to download the plot
+    getWMA <- function(){
+      return(input$fileWMA)
+    }
+    
+    getHMA <- function(){
+      return(input$fileHMA)
+    }
+    
+    getSMA <- function(){
+      return(input$fileScMA)
+    }
+    
+    # Download the plot
+    output$downMA <- downloadHandler(
+      filename =  function() {
+        paste(input$filenmMA, input$fileTypeMA, sep=".")
+      },
+      # content is a function with argument file. content writes the plot to the device
+      content = function(file) {
+        ggsave(file, plotFleetMetierArea(), width = getWMA(), height = getHMA(), units = 'cm', scale = getSMA())
+      }
+    )
+    
+  })# end of the observe metier
+  
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation METIER BY_Times series  ####
@@ -1257,6 +1548,96 @@ print('three spider')
 })
          
   print('nine')
+  
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
+  #### PAGE_simulation FLEET-METIER-STOCK AREA  ####
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+  
+  # Make choices and selection in 'stockFby' dependent on the context of fleetMbyA
+  observe ({
+    updateSelectInput(session, inputId  = "metierMbyA", 
+                      choices  = unique(subset(mtStk, fleet %in% input$fleetMbyA)$metier), 
+                      selected = unique(subset(mtStk, fleet %in% input$fleetMbyA)$metier)) #, server = TRUE)#,
+  })  
+  
+  observe ({
+    updateSelectInput(session, inputId  = "stockMbyA", 
+                      choices  = unique(subset(mtStk, fleet %in% input$fleetMbyA & metier %in% input$metierMbyA)$stock), 
+                      selected = unique(subset(mtStk, fleet %in% input$fleetMbyA & metier %in% input$metierMbyA)$stock)) #, server = TRUE)#,
+  })  
+  
+  observe ({
+    dataMbyA<-reactive({
+      mtStk <- subset(mtStk, year %in% input$rangeMbyA[1]:input$rangeMbyA[2] &
+                             fleet %in% input$fleetMbyA & metier %in% input$metierMbyA & stock %in% input$stockMbyA &
+                             indicator %in% input$indicatorMbyA & scenario %in% input$scenarioMbyA)
+      
+      if(input$percMbyA == TRUE){
+        mtStk <- mtStk  %>% ungroup() %>%  
+          group_by(year, scenario, indicator, fleet, metier) %>%
+          mutate(p = q50/sum(q50)) %>% mutate(q50=p)
+      }
+      return(mtStk)
+    })
+    
+    plotFleetStockArea <- function(){
+      
+      p <-ggplot(data = dataMbyA())+
+        geom_area(aes(x=year, y=q50, fill=stock), size=0.5, colour="grey") +
+        ylab("")+xlab("Year")+
+        theme_bw()+
+        theme(strip.text=element_text(size=16),
+              title=element_text(size=16),
+              text=element_text(size=16))
+      
+      if(!is.null(proj.yr)){
+        p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
+      }
+      
+      if(input$fitMbyA == FALSE){
+        p <- p + facet_grid(metier*scenario~indicator)
+      }
+      else{
+        p <- p + facet_wrap(meiter*scenario~indicator, ncol = input$nColMbyA, scale = 'free_y')
+      }
+      
+    }
+    
+    
+    output$plotFSMbyA <-renderPlot({
+      
+      print(plotFleetStockArea())
+    } #, height = PlotHeight_stk
+    )
+    
+    
+    # Code to download the plot
+    getWMbyA <- function(){
+      return(input$fileWMbyA)
+    }
+    
+    getHMbyA <- function(){
+      return(input$fileHMbyA)
+    }
+    
+    getSMbyA <- function(){
+      return(input$fileScMbyA)
+    }
+    
+    # Download the plot
+    output$downMbyA <- downloadHandler(
+      filename =  function() {
+        paste(input$filenmMbyA, input$fileTypeMbyA, sep=".")
+      },
+      # content is a function with argument file. content writes the plot to the device
+      content = function(file) {
+        ggsave(file, plotFleetStockArea(), width = getWMbyA(), height = getHMbyA(), units = 'cm', scale = getSMbyA())
+      }
+    )
+    
+  })# end of the observe stock
+  
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation ADVICE_Times series  ####
@@ -1351,14 +1732,14 @@ print('three spider')
     
     # print('caracola09')   
     #reactive: ssb and f
-    st1 <- reactive({bio[bio$scenario %in% input$scenarioP & (bio$indicator=="ssb" | bio$indicator=="f") & bio$year==input$yearP, c("stock","year","indicator", "scenario", "q50")]})
-    st2 <- reactive({bio[bio$scenario %in% input$scenarioP & (bio$indicator=="ssb" | bio$indicator=="f") & (bio$year>=input$rangeP[1] & bio$year<=input$rangeP[2]), c("stock","year","indicator", "scenario", "q50")]})
-     
+    st1 <- reactive({subset(bio, scenario %in% input$scenarioP & indicator %in% c("ssb", "f") & stock %in% input$stockP & year==input$yearP)[,c("stock","year","indicator", "scenario", "q50")]})
+    st2 <- reactive({subset(bio, scenario %in% input$scenarioP & indicator %in% c("ssb", "f") & stock %in% input$stockP & year %in% input$rangeP)[,c("stock","year","indicator", "scenario", "q50")]})  
+         
     #reactive: profits and capacity
-    fl1 <- reactive({flt[flt$scenario %in% input$scenarioP & (flt$indicator=="grossSurplus" | flt$indicator=="capacity") & flt$year==input$yearP, c("fleet","year","indicator", "scenario", "q50")]})
-    fl2 <- reactive({flt[flt$scenario %in% input$scenarioP & (flt$indicator=="grossSurplus" | flt$indicator=="capacity") & (flt$year>=input$rangeP[1] & flt$year<=input$rangeP[2]), c("fleet","year","indicator", "scenario", "q50")]})
-    
-    
+    fl1 <- reactive({subset(flt, scenario %in% input$scenarioP & indicator %in% c("grossSurplus", "capacity") & fleet %in% input$fleetP & year==input$yearP)[,c("fleet","year","indicator", "scenario", "q50")]})
+    fl2 <- reactive({subset(flt, scenario %in% input$scenarioP & indicator %in% c("grossSurplus", "capacity") & fleet %in% input$fleetP & year==input$yearP)[,c("fleet","year","indicator", "scenario", "q50")]})
+
+
     plotPolar <- function(){
       # New data entry
       dat.stpolar <- NULL
@@ -1404,11 +1785,8 @@ print('three spider')
       
       # Palettes for fleet and stock (alphabetic order 1:fleet and 2:stock)
       # Add more tones to this palette :
-      palfl <- RColorBrewer::brewer.pal(9 , "Pastel1") 
-      palst <- RColorBrewer::brewer.pal(9, "Set1") 
-      
-      palfl <- colorRampPalette(palfl)(nfl)
-      palst <- colorRampPalette(palst)(nst)
+      palfl <- pals::glasbey()[length(glasbey()):1][1:nfl]
+      palst <- pals::glasbey()[1:nfl]
       
       pal <- c(palfl, palst) # it will sort the categories in alphabetic order
 
@@ -1422,7 +1800,7 @@ print('three spider')
         geom_bar(data=dat.flpolar, aes(x=ind, y=ratio, fill=fleet), stat="identity", position="dodge", width=wfl)+
         scale_fill_manual(values = pal)+
         theme_bw()+
-        facet_wrap(scenario~., ncol = 1)+
+        facet_wrap(scenario~., ncol = input$nColP)+
         coord_polar(start=-pi/2)+
         theme(axis.ticks.x = element_blank(),
               axis.text.x = element_blank(),
@@ -1453,6 +1831,39 @@ print('three spider')
         print(plotPolar())
     }#, height = PlotHeight_sum
     )
+    
+    
+    # Case dependent plot size.
+    values <- reactiveValues()
+    plot_height <- function() {
+      
+      facets <- length(input$scenarioP)
+      
+      values$facetsRows <- ifelse(facets/input$nColP == 1, 600, ifelse(facets/input$nColP == 2, 800, 
+                                                                           ifelse(facets/input$nColP == 3, 100, 300*ceiling(facets/input$nColP))))
+      return(values$facetsRows)
+    }
+    
+    plot_width <- function() {
+
+      values$facetsCols <- ifelse(input$nColP == 1, 600, ifelse(input$nColP <= 2, 900, 1200))
+      return(values$facetsCols)
+    }
+    
+    
+    output$plotPs<-renderPlot({
+      
+      print(plotPolar())
+    } #, height = PlotHeight_stk
+    )
+    
+    # wrap plotOutput in renderUI
+    output$plotP <- renderUI({
+      plotOutput("plotPs", height = plot_height(), width = plot_width())
+    })
+    
+    
+    
     
     # Code to download the plot
     getPW <- function(){

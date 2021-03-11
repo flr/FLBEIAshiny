@@ -14,7 +14,7 @@ tabsetPanel(type = "tabs",
                   selectizeInput("scenarioA", label=h4("Scenarios"), levels(as.factor(adv$scenario)), selected=unique(adv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                   ),
                   shinyBS::bsCollapsePanel("Graphs",
-                  numericInput('nColA', h5("N.Col in facets"), value = 2, min = 0, max = 10, step = 1, width = 100),
+                  numericInput('nColA', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100),
                   checkboxInput("fitCIA", h5("Confident intervals"), FALSE),
                   checkboxInput("fitA", h5("Free scales"), FALSE)
                   ),

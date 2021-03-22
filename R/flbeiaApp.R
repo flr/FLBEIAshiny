@@ -21,9 +21,10 @@
 #' @param npv.y0 The first year in the calculation of net present value (npv).
 #' @param npv.yrs The range of years to be considered in the npv calculation.
 #' @param desc The description of the case study.
-#' @param reduced logical (default = FALSE). Allows using a reduced version of the FLBEIA Shiny app 
-#'                (i.e. Fleets, Fleets by stock, Metiers and Metiers by stock tabs are not shown). 
-#' @param deploy logical (default = FALSE). The deployment into shinyapps.io.
+#' @param version c('all', 'stock', 'fleet'), the default is 'all'. Allows using a reduced version of the FLBEIA Shiny app 
+#'                (if 'all' , all the pages are shown, if 'stock' only the 'Stocks' and 'Advice' pages are shown and if 'fleet' 
+#'                 'Stock', 'Advice', 'Fleets', 'Fleets and Stock' and 'Summary' pages are shown.). 
+#' @param deploy logical (default = FALSE). The application is deployed in the external shiny server (shinyapps.io) configured in the computer.
 #' 
 #' @return The function launches a Shiny app to analyse the results of FLBEIA in an interactive way.
 #' 
@@ -36,9 +37,9 @@
 #' file needs to be created.
 #' 
 #' When deploy = TRUE the shiny application is published in the external server linked to the local computer. Shiny makes a copy of the 
-#' local R session and replicates it in the server. For that, it installs the R libraries needed directly from CRAN. Github libraries need 
-#' to be installed in the local compute using 'devtools::install_github'. Furthermore, in this case the call to 
-#' 'flbeiaApp' must be done from a FLBEIAShiny directory where the raw code of the code is located.
+#' local R session and replicates it in the server. For that, it installs the R libraries needed directly from CRAN. The libraries that are not in CRAN, 
+#' must be Github libraries, and they need to be installed in the local computer using the command 'devtools::install_github'. 
+#' Furthermore, in this case the call to  flbeiaApp' must be done from a FLBEIAShiny directory where the raw code of the library is located.
 #' 
 #' 
 #' @examples
@@ -137,7 +138,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        npv.y0 = NULL, 
                        npv.yrs = NULL,
                        desc = NULL,
-                       reduced = FALSE,
+                       version = 'all',
                        deploy = FALSE,
                        appName = paste('flbeiaApp', sample(1,1), sep = ""),
                        appTitle = appName
@@ -243,11 +244,11 @@ flbeiaApp <- function (flbeiaObjs = NULL,
  
  # Reduced version ::
  
- if (reduced == FALSE)
-   version <- 1
- if (reduced == TRUE)
-   version <- 2
- 
+ # if (reduced == FALSE)
+ #   version <- 1
+ # if (reduced == TRUE)
+ #   version <- 2
+ # 
  ## --------------------------------------------------------------------------
  
  ## --------------------------------------------------------------------------

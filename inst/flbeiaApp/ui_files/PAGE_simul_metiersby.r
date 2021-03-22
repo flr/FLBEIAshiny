@@ -2,8 +2,9 @@
 tabsetPanel(type = "tabs",
             tabPanel(
               title = "Time series",
+              br(),
+              column(12, includeHTML("data/TimeSeriesPlot.txt")),
               fluidRow(
-                br(),
                 column(3,
                   shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                   shinyBS::bsCollapsePanel("Metier and stock",
@@ -40,6 +41,7 @@ tabsetPanel(type = "tabs",
               title = "Area plot",
               fluidRow(
                 br(),
+                column(12, includeHTML("data/AreaPlot.txt")),
                 column(3,
                        shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                                 shinyBS::bsCollapsePanel("Select variables",

@@ -4,8 +4,9 @@
 tabsetPanel(type = "tabs",
             tabPanel(
               title = "Time series",
+              br(),
+              column(12, includeHTML("data/TimeSeriesPlot.txt")),
               fluidRow(
-                br(),
                 column(3,
                   shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                   shinyBS::bsCollapsePanel("Select Variables",
@@ -39,8 +40,9 @@ tabsetPanel(type = "tabs",
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      tabPanel(
        title = "Area plot",
+       br(),
+       column(12, includeHTML("data/AreaPlot.txt")), 
        fluidRow(
-         br(),
          column(3,
                 shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                 shinyBS::bsCollapsePanel("Select variables",
@@ -72,9 +74,9 @@ tabsetPanel(type = "tabs",
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     tabPanel( 
         title = "Spider",
+        br(),
+        column(12, includeHTML("data/SpiderPlot.txt")), 
         fluidRow(
-            br(),
-            column(12, includeHTML("data/SpiderPlot.txt")), 
             column(3,
                   shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                   shinyBS::bsCollapsePanel("Select variables",

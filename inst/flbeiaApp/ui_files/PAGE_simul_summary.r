@@ -2,6 +2,7 @@
 
   fluidRow(
     br(),
+    column(12, includeHTML("data/SummaryPlot.txt")),
     column(3,
       shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
       shinyBS::bsCollapsePanel("Projection",

@@ -50,11 +50,10 @@ tabsetPanel(type = "tabs",
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tabPanel(
               title = "Area plot",
+              br(),
+              column(12, includeHTML("data/AreaPlot.txt")), 
               fluidRow(
-                br(),
-                column(12, 
-                       includeHTML("data/AreaPlot.txt")), 
-                column(3,
+                 column(3,
                        shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                        shinyBS::bsCollapsePanel("Select variables",
                                           sliderInput("rangeSA", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),

@@ -5,27 +5,49 @@ source ("global.R") # radar plot function
 
 server <- function(input, output, session){
 
-  
   observe({
-    
-    if (version == 1){ 
-      
-      #shinyjs::show(id = "Fleets")
-      showTab(inputId = "tabs", target = "Fleets")
-      showTab(inputId = "tabs", target = "Fleets by stock")
-      showTab(inputId = "tabs", target = "Metiers")
-      showTab(inputId = "tabs", target = "Metiers by stock")
 
       
-      }else {
+      # By default stock and advice are always there.
       
-      hideTab(inputId = "tabs", target = "Fleets")
-      hideTab(inputId = "tabs", target = "Fleets by stock")
-      hideTab(inputId = "tabs", target = "Metiers")
-      hideTab(inputId = "tabs", target = "Metiers by stock")
-    }
+      # Version fleet => default + fleet ones  + summary
+      # Version Metier => fleet + metier
+      
+      if (version == 'all'){ 
+        
+        #shinyjs::show(id = "Fleets")
+        showTab(inputId = "tabs", target = "Stocks")
+        showTab(inputId = "tabs", target = "Advice")
+        showTab(inputId = "tabs", target = "Fleets")
+        showTab(inputId = "tabs", target = "Fleets and stocks")
+        showTab(inputId = "tabs", target = "Fleets and metiers")
+        showTab(inputId = "tabs", target = "Fleets, metiers and stocks")
+        showTab(inputId = "tabs", target = "Summary")
+        
+      }else {
+        
+        if(version == 'stock'){
+          showTab(inputId = "tabs", target = "Stocks")
+          showTab(inputId = "tabs", target = "Advice")
+          hideTab(inputId = "tabs", target = "Fleets")
+          hideTab(inputId = "tabs", target = "Fleets and stocks")
+          hideTab(inputId = "tabs", target = "Summary")
+          hideTab(inputId = "tabs", target = "Fleets and metiers")
+          hideTab(inputId = "tabs", target = "Fleets, metiers and stocks")
+        }
+        else{
+          showTab(inputId = "tabs", target = "Stocks")
+          showTab(inputId = "tabs", target = "Advice")
+          showTab(inputId = "tabs", target = "Fleets")
+          showTab(inputId = "tabs", target = "Fleets and stocks")
+          showTab(inputId = "tabs", target = "Summary")
+          hideTab(inputId = "tabs", target = "Fleets and metiers")
+          hideTab(inputId = "tabs", target = "Fleets, metiers and stocks")
+        }
+      }
+      
     })
-  
+
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
 #### PAGE_about  ####

@@ -23,13 +23,14 @@ tabsetPanel(type = "tabs",
                       ),
                   # Options for graphics.
                   shinyBS::bsCollapsePanel("Graphical options",
-                    checkboxInput("dotLineS", "Dot & Lines", FALSE),
-                    numericInput('lwdS', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
-                    numericInput('dszS', h5("Dot size"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
-                    numericInput('nColS', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100),
-                    checkboxInput("fitCIS", "Confident interval", FALSE),
-                    checkboxInput("fitS", "Free scales", FALSE)
+                       checkboxInput("fitCIS", "Confident interval", FALSE),
+                       fluidRow(column(3,checkboxInput("fitS", "Free scales", FALSE)),
+                                column(3,numericInput('nColS', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200))),
+                       fluidRow(column(3,checkboxInput("dotLineS", "Dot & Lines", FALSE)),
+                                column(3,numericInput('lwdS', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100)),
+                                column(3,numericInput('dszS', h5("Dot size"), value = 3, min = 0, max = 5, step = 0.1, width = 100)))
                    ), 
+                  
                   shinyBS::bsCollapsePanel("Download",
                       #  Options for file downloading
                       fluidRow(column(8,textInput('filenmS', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
@@ -56,14 +57,13 @@ tabsetPanel(type = "tabs",
                 column(3,
                        shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
                        shinyBS::bsCollapsePanel("Select variables",
-                                                        sliderInput("rangeSA", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
-                                                        selectizeInput("stockSA", label=h4("Stock"), levels(as.factor(bio$stock)), selected=levels(as.factor(bio$stock)),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                                                        selectizeInput("indicatorSA", label=h4("Indicators"), c('ssb', 'biomass', 'catch', 'landings', 'discards'),selected='catch',multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                                                        selectizeInput("scenarioSA", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                                                        checkboxInput("percSA", h5("Percentage"), FALSE),
-                                                        checkboxInput("fitSA", "Free scales", FALSE),
-                                                        numericInput('nColSA', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
-                                                                              #hr(),
+                                          sliderInput("rangeSA", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
+                                          selectizeInput("stockSA", label=h4("Stock"), levels(as.factor(bio$stock)), selected=levels(as.factor(bio$stock)),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                                          selectizeInput("indicatorSA", label=h4("Indicators"), c('ssb', 'biomass', 'catch', 'landings', 'discards'),selected='catch',multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                                          selectizeInput("scenarioSA", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
+                                          checkboxInput("percSA", h5("Percentage"), FALSE),
+                                          fluidRow(column(3,checkboxInput("fitSA", "Free scales", FALSE)),
+                                                   column(3,numericInput('nColSA', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200)))
                                            ),
                        shinyBS::bsCollapsePanel("Download",
                            #  Options for file downloading
@@ -94,7 +94,7 @@ tabsetPanel(type = "tabs",
                   sliderInput("rangeK", label=h4("Years"), min(bio$year), max(bio$year), value=range(bio$year),step = 1),
                   selectizeInput("stockK", label=h4("Stock"), unique(RefPts$stock),  selected=unique(RefPts$stock)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioK", label=h4("Scenarios"), unique(as.factor(RefPts$scenario)), selected=unique(RefPts$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  numericInput('nColK', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
+                  numericInput('nColK', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200)
                        ),
                   shinyBS::bsCollapsePanel("Download",
                      #  Options for file downloading
@@ -141,7 +141,7 @@ tabsetPanel(type = "tabs",
                      selectizeInput("stockSP", label=h4("Stock"),          unique(bio$stock),    selected=unique(bio$stock),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("indicatorSP", label=h4("Indicators"), unique(bio$indicator),selected=unique(bio$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                      selectizeInput("scenarioSP", label=h4("Scenarios"),   unique(bio$scenario), selected=unique(bio$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                     numericInput('nColSP', h5("N.Col in facets"), value = 1, min = 1, max = 3, step = 1, width = 100)#hr(),
+                     numericInput('nColSP', h5("Number of columns in facets"), value = 1, min = 1, max = 3, step = 1, width = 200)#hr(),
                      ),
                   shinyBS::bsCollapsePanel("Download",
                       #  Options for file downloading

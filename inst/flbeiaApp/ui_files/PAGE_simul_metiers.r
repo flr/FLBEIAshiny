@@ -17,15 +17,14 @@ tabsetPanel(type = "tabs",
                   selectizeInput("scenarioM", label=h4("Scenarios"), unique(mt$scenario), selected=unique(mt$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorM", label=h4("Indicators"), unique(mt$indicator),selected="effort",multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                   ),
-                  shinyBS::bsCollapsePanel("Graphs",
-                  checkboxInput("fitCIM", h5("Confident intervals"), FALSE),
-                  checkboxInput("fitM", h5("Free scale"), FALSE),
-                  numericInput('nColM', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200),
-                  fluidRow(column(3,checkboxInput("dotLineM", "Dot & Lines", FALSE)),
-                           column(3,numericInput('lwdM', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100)),
-                           column(3,numericInput('dszM', h5("Dot size"), value = 1, min = 0, max = 5, step = 0.1, width = 100)))
-                 
-                  ),
+                  shinyBS::bsCollapsePanel("Graphical options",
+                                           checkboxInput("fitCIM", "Confident interval", FALSE),
+                                           fluidRow(column(3,checkboxInput("fitM", "Free scales", FALSE)),
+                                                    column(3,numericInput('nColM', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200))),
+                                           fluidRow(column(3,checkboxInput("dotLineM", "Dot & Lines", FALSE)),
+                                                    column(3,numericInput('lwdM', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100)),
+                                                    column(3,numericInput('dszM', h5("Dot size"), value = 3, min = 0, max = 5, step = 0.1, width = 100)))
+                  ), 
                   shinyBS::bsCollapsePanel("Download",
                   # Options for file downloading
                   fluidRow(column(8,textInput('filenmM', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
@@ -34,7 +33,7 @@ tabsetPanel(type = "tabs",
                   fluidRow(column(3,numericInput('fileWM', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                            column(3,numericInput('fileHM', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                            column(3,numericInput('fileScM', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-                  downloadButton(outputId = "downM", label = "Download the plot")))),
+                  downloadButton(outputId = "downM", label = "Download plot")))),
                   column(9, uiOutput("plotMM", inline =TRUE))
                 )),
             
@@ -54,8 +53,8 @@ tabsetPanel(type = "tabs",
                 selectizeInput("indicatorMA", label=h4("Indicators"), choices = unique(mt$indicator), selected = unique(mt$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                 selectizeInput("scenarioMA",  label=h4("Scenarios"),  unique(mt$scenario), selected=unique(mt$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                 checkboxInput("percMA", h5("Percentage"), FALSE),
-                checkboxInput("fitMA", "Free scales", FALSE),
-                numericInput('nColMA', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
+                fluidRow(column(3,checkboxInput("fitMA", "Free scales", FALSE)),
+                         column(3,numericInput('nColMA', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200)))
                                                                     #hr(),
                 ),
                 shinyBS::bsCollapsePanel("Download",
@@ -66,7 +65,7 @@ tabsetPanel(type = "tabs",
                     fluidRow(column(3,numericInput('fileWMA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                     column(3,numericInput('fileHMA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                     column(3,numericInput('fileScMA', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-                    downloadButton(outputId = "downMA", label = "Download the plot")))),
+                    downloadButton(outputId = "downMA", label = "Download  plot")))),
                 column(9, uiOutput("plotFSMA", inline =TRUE))
                 ))
 )

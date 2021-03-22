@@ -10,7 +10,7 @@
       selectizeInput("fleetP", label=h4("Fleets"),       unique(flt$fleet), selected = unique(flt$fleet),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
       selectizeInput("stockP",     label=h4("Stocks"),   unique(bio$stock), selected = unique(bio$stock), multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
       selectizeInput("scenarioP", label=h4("Scenarios"), levels(as.factor(bio$scenario)), selected=unique(bio$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-      numericInput('nColP', h5("N.Col in facets"), value = 1, min = 1, max = 3, step = 1, width = 100)
+      numericInput('nColP', h5("Number of columns in facets"), value = 1, min = 1, max = 3, step = 1, width = 200)
       ),
       shinyBS::bsCollapsePanel("Download",
           #  Options for file downloading
@@ -20,7 +20,7 @@
           fluidRow(column(3,numericInput('fileWP', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                    column(3,numericInput('fileHP', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                    column(3,numericInput('fileScP', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-          downloadButton(outputId = "downP", label = "Download the plot")))),
+          downloadButton(outputId = "downP", label = "Download  plot")))),
     column(9, uiOutput("plotP", inline =TRUE) 
       )
    )

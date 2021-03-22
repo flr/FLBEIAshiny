@@ -17,13 +17,15 @@ tabsetPanel(type = "tabs",
                   selectizeInput("indicatorF", label=h4("Indicators"), unique(flt$indicator),     selected= "effort",                  multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("iterF", label=h4("Iterations"), levels(as.factor(fltIt$iter)), selected=NULL, multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                        ),
-                  shinyBS::bsCollapsePanel("Graphs",
-                  checkboxInput("fitCIF", h5("Confident intervals"), FALSE),
-                  checkboxInput("fitF", h5("Free scales"), FALSE),
-                  checkboxInput("dotLineF", "Dot & Lines", FALSE),
-                  numericInput('lwdF', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
-                  numericInput('dszF', h5("Dot size"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
-                  numericInput('nColF', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)),
+                  shinyBS::bsCollapsePanel("Graphical options",
+                                           checkboxInput("fitCIF", "Confident interval", FALSE),
+                                           fluidRow(column(3,checkboxInput("fitF", "Free scales", FALSE)),
+                                                    column(3,numericInput('nColF', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200))),
+                                           fluidRow(column(3,checkboxInput("dotLineF", "Dot & Lines", FALSE)),
+                                                    column(3,numericInput('lwdF', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100)),
+                                                    column(3,numericInput('dszF', h5("Dot size"), value = 3, min = 0, max = 5, step = 0.1, width = 100)))
+                  ), 
+                  
                   shinyBS::bsCollapsePanel("Download",
                      #  Options for file downloading
                      fluidRow(column(8,textInput('filenmF', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
@@ -32,7 +34,7 @@ tabsetPanel(type = "tabs",
                      fluidRow(column(3,numericInput('fileWF', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                               column(3,numericInput('fileHF', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                               column(3,numericInput('fileScF', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-                              downloadButton(outputId = "downF", label = "Download the plot")))),
+                              downloadButton(outputId = "downF", label = "Download plot")))),
             
                 column(9, uiOutput("plotF", inline =TRUE) 
                 ))),
@@ -49,7 +51,7 @@ tabsetPanel(type = "tabs",
                   shinyBS::bsCollapsePanel("Fleet and Scenario",
                   selectizeInput("fleetN",    label=h4("Fleet"),    unique(npv$fleet),    selected = unique(npv$fleet)[1],       multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioN", label=h4("Scenario"), unique(npv$scenario), selected = unique(npv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                  numericInput('nColNPV', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100) ),
+                  numericInput('nColNPV', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200) ),
                   shinyBS::bsCollapsePanel("Download",
                      #  Options for file downloading
                      fluidRow(column(8,textInput('filenmFN', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
@@ -58,7 +60,7 @@ tabsetPanel(type = "tabs",
                      fluidRow(column(3,numericInput('fileWFN', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                               column(3,numericInput('fileHFN', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                               column(3,numericInput('fileScFN', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-                        downloadButton(outputId = "downFN", label = "Download the plot")))),
+                        downloadButton(outputId = "downFN", label = "Download plot")))),
                 column(9,
                   plotOutput("plotFN", height = "600px", width = "900px")
                 ))),
@@ -94,7 +96,7 @@ tabsetPanel(type = "tabs",
                         selectizeInput("fleetFSP", label=h4("Fleets"),          unique(flt$fleet),    selected=unique(flt$fleet),multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                         selectizeInput("indicatorFSP", label=h4("Indicators"), unique(flt$indicator),selected=unique(flt$indicator)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                         selectizeInput("scenarioFSP", label=h4("Scenarios"),   unique(flt$scenario), selected=unique(flt$scenario), multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
-                        numericInput('nColFSP', h5("N.Col in facets"), value = 3, min = 1, max = 3, step = 1, width = 100)#hr(),
+                        numericInput('nColFSP', h5("Number of columns in facets"), value = 3, min = 1, max = 3, step = 1, width = 200)#hr(),
                                            ),
                       shinyBS::bsCollapsePanel("Download",
                           #  Options for file downloading
@@ -104,7 +106,7 @@ tabsetPanel(type = "tabs",
                           # fluidRow(column(3,numericInput('fileWFSP', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                           #  #        column(3,numericInput('fileHFSP', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                           #          column(3,numericInput('fileScFSP', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-                          downloadButton(outputId = "downFSP", label = "Download the plot"))
+                          downloadButton(outputId = "downFSP", label = "Download plot"))
                       )),
                 column(9, uiOutput("plotFSP", inline =TRUE) 
                 )))

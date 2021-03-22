@@ -13,11 +13,14 @@ tabsetPanel(type = "tabs",
                   selectizeInput("indicatorA", label=h4("Indicators"), levels(as.factor(adv$indicator)),selected="tac",multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("scenarioA", label=h4("Scenarios"), levels(as.factor(adv$scenario)), selected=unique(adv$scenario)[1], multiple=T, options=list(plugins=list("remove_button", "drag_drop")))
                   ),
-                  shinyBS::bsCollapsePanel("Graphs",
-                  numericInput('nColA', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100),
-                  checkboxInput("fitCIA", h5("Confident intervals"), FALSE),
-                  checkboxInput("fitA", h5("Free scales"), FALSE)
-                  ),
+                  shinyBS::bsCollapsePanel("Graphical options",
+                                           checkboxInput("fitCIA", "Confident interval", FALSE),
+                                           fluidRow(column(3,checkboxInput("fitA", "Free scales", FALSE)),
+                                                    column(3,numericInput('nColA', h5("Number of columns in facets"), value = 2, min = 1, max = 10, step = 1, width = 200))),
+                                           fluidRow(column(3,checkboxInput("dotLineA", "Dot & Lines", FALSE)),
+                                                    column(3,numericInput('lwdA', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100)),
+                                                    column(3,numericInput('dszA', h5("Dot size"), value = 3, min = 0, max = 5, step = 0.1, width = 100)))
+                  ), 
                   shinyBS::bsCollapsePanel("Download",
                       #  Options for file downloading
                       fluidRow(column(8,textInput('filenmA', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
@@ -26,7 +29,7 @@ tabsetPanel(type = "tabs",
                       fluidRow(column(3,numericInput('fileWA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
                                column(3,numericInput('fileHA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
                                column(3,numericInput('fileScA', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
-                      downloadButton(outputId = "downA", label = "Download the plot")))),
+                      downloadButton(outputId = "downA", label = "Download plot")))),
                 column(9, uiOutput("plotA", inline =TRUE))
                 ))
 )# end of the tabsetPanel

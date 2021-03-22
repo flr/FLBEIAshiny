@@ -824,7 +824,8 @@ server <- function(input, output, session){
     plot_width <- function() {
       
       if(input$fitM==FALSE){ncol <- length(input$indicatorM)}
-      else{ncol <- input$nColM}
+      else{ncol <- min(c(input$nColM, length(input$indicatorM)*length(input$metierM)))}
+      
       values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
       return(values$width)
     }
@@ -1525,18 +1526,22 @@ server <- function(input, output, session){
       
       plotAdvice <- function(){
        p <-ggplot(dataA(), aes(x=as.numeric(year), y=q50, color=scenario))+
-              geom_line(lwd=1)+
+              geom_line(size = input$lwdA)+
               ylab("")+ xlab("Year")+
               theme_bw()+
               theme( strip.text=element_text(size=16),
                       title=element_text(size=16),
                       text=element_text(size=16), legend.position="top")
         
-        if(!is.null(proj.yr)){p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
+       if(!is.null(proj.yr)){p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
           
-        if (input$fitCIA == TRUE){p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)}
-        if(input$fitA==TRUE){p <- p + facet_wrap(indicator~stock, scales="free_y",ncol = input$nColA)}
+       if (input$fitCIA == TRUE){p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)}
+        
+       if(input$fitA==TRUE){p <- p + facet_wrap(indicator~stock, scales="free_y",ncol = input$nColA)}
           else{p <- p + facet_grid(indicator~stock)}
+       
+       if(input$dotLineA == TRUE) p <- p +  geom_point(data = dataA(), aes(x=year, y=q50, color=scenario), size = input$dszA)
+       
         return(p)
         }
       

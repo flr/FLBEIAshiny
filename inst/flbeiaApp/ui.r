@@ -13,7 +13,7 @@ ui <- tagList(
 
   navbarPage( id = "tabs",
     title="FLBEIA SHINY",
-    fluid=FALSE, # TRUE Layout izateko fluid baina FALSE ikonoa jarri ahal izateko
+    fluid=TRUE, # TRUE Layout izateko fluid baina FALSE ikonoa jarri ahal izateko
     inverse=TRUE,
     
 
@@ -41,12 +41,12 @@ ui <- tagList(
                         source("ui_files/PAGE_simul_fleetsby.r",local =TRUE)$value),
                tabPanel("Fleets and metiers",
                         source("ui_files/PAGE_simul_metiers.r",local =TRUE)$value),
-               tabPanel("Fleets, metiers and stocks",
-                        source("ui_files/PAGE_simul_metiersby.r",local =TRUE)$value),
-               tabPanel("Summary",
-                        source("ui_files/PAGE_simul_summary.r",local =TRUE)$value),
-                tabPanel("Advice",
-                        source("ui_files/PAGE_simul_advice.r",local =TRUE)$value)
+                tabPanel("Fleets, metiers and stocks",
+                         source("ui_files/PAGE_simul_metiersby.r",local =TRUE)$value),
+                 tabPanel("Summary",
+                          source("ui_files/PAGE_simul_summary.r",local =TRUE)$value),
+                 tabPanel("Advice",
+                         source("ui_files/PAGE_simul_advice.r",local =TRUE)$value)
     ),
     
     # #FLBEIA logo (with link) in the right of the navigation bar. Note that it should be: fluid=FALSE

@@ -1,0 +1,9 @@
+
+<p style="text-align:JUSTIFY">
+Time series plots show the evolution of indicators over time. The indicator time series in each scenario is
+drawn with a different color. Confidence intervals can also be added marking the corresponding option. 
+Several indicators and stock, fleets or metiers (depending on the case) can be selected simultaneously and
+they are plotted in different facets. 
+<BR>&nbsp;<BR>                   
+
+                     

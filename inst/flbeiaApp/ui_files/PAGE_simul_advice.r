@@ -19,15 +19,14 @@ tabsetPanel(type = "tabs",
                   checkboxInput("fitA", h5("Free scales"), FALSE)
                   ),
                   shinyBS::bsCollapsePanel("Download",
-                  # Options for file downloading
-                  textInput('filenmA', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                  numericInput('fileWA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 75),
-                  numericInput('fileHA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 75),
-                  numericInput('fileScA', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 75),
-                  selectInput(inputId = "fileTypeA", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                  downloadButton(outputId = "downA", label = "Download the plot")
-                  ))),
-                column(9,
-                  plotOutput("plotA", height = "600px", width = "900px")
-                )))
+                      #  Options for file downloading
+                      fluidRow(column(8,textInput('filenmA', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
+                               column(4,selectInput(inputId = "fileTypeA", label = "File type", selected= "png", 
+                                           choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE))),
+                      fluidRow(column(3,numericInput('fileWA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
+                               column(3,numericInput('fileHA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
+                               column(3,numericInput('fileScA', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
+                      downloadButton(outputId = "downA", label = "Download the plot")))),
+                column(9, uiOutput("plotA", inline =TRUE))
+                ))
 )# end of the tabsetPanel

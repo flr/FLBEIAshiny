@@ -1,38 +1,3 @@
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# CASE SPECIFIC SIZE IN PLOT
-# These 4 pieces of code are needed
-#
-# plotPolar = the code with all the code of ggplot...
-# plotP = the name we used in ui to call the plot.
-# 
-#
-# plot_height <- function() {
-#     facets <- length(input$scenario)
-#     values$facetsRows <- ifelse(facets/input$nColP == 1, 600, ifelse(facets/input$nColP == 2, 800, 
-#                                                                  ifelse(facets/input$nColP == 3, 100, 300*ceiling(facets/input$nColP))))
-#     return(values$facetsRows)
-# }
-# 
-# plot_width <- function() {
-#   
-#   values$facetsCols <- ifelse(input$nColP == 1, 600, ifelse(input$nColP <= 2, 900, 1200))
-#   return(values$facetsCols)
-# }
-
-# output$plotPs<-renderPlot({
-#   
-#   print(plotPolar())
-# } #, height = PlotHeight_stk
-# )
-# 
-# # wrap plotOutput in renderUI
-# output$plotP <- renderUI({
-#   plotOutput("plotPs", height = plot_height(), width = plot_width())
-# })
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
 
 # Change the size of the plot area: https://groups.google.com/g/shiny-discuss/c/dkZxTvfHOvo?pli=1
 
@@ -63,7 +28,7 @@ server <- function(input, output, session){
   
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  #### PAGE_about  ####
+#### PAGE_about  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   
   
@@ -90,16 +55,8 @@ server <- function(input, output, session){
    }, colnames = F)
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-   #### PAGE_simulation STOCK  ####
+#### PAGE_simulation STOCK  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
-  
-  # PlotHeight_stk <- reactive({
-  #   
-  #   nids <- length(input$stockS)
-  #   
-  #   return(300*nids)})
-  # 
   
   observe ({
     dataS<-reactive({
@@ -125,14 +82,6 @@ server <- function(input, output, session){
                 & RefPts$indicator%in%input$indicatorS
                 & RefPts$scenario%in%input$scenarioS,]
       })
-    
-      # dataSH <-reactive({
-      #   req(input$stockS)
-      #   bio[bio$year>=input$rangeS[1] & bio$year<=input$rangeS[2] 
-      #       & bio$stock%in%input$stockS
-      #       & bio$indicator%in% c('f2Ftarget', 'B2Btarget', 'ssb2Btarget')
-      #       & bio$scenario%in%input$scenarioS,]
-      # })
       
     plotStock <- function(){
       
@@ -142,7 +91,7 @@ server <- function(input, output, session){
         theme_bw()+
         theme( strip.text=element_text(size=16),
                title=element_text(size=16),
-               text=element_text(size=16))
+               text=element_text(size=16), legend.position="top")
       
       # Iteraction
        if(!is.null(input$iterS)){
@@ -179,15 +128,12 @@ server <- function(input, output, session){
           p <- p + facet_wrap(stock~indicator, scale = 'free_y', ncol = input$nColS)
       }
       
-   #   browser()
       cond1   <- any(sapply(c('pFlim','pFpa','pFtarget', 'pBlim','pBpa','pBtarget'), function(x) any(grepl(x, input$indicatorS))))
       cond2   <- any(sapply(c('ssb2Btarget', 'f2Ftarget'), function(x) any(grepl(x, input$indicatorS))))
-      
         
       if(cond1){  
-        p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('pFlim','pFpa','pFtarget',
-                                                                       'pBlim','pBpa','pBtarget')),
-                           aes(yintercept = 0.05), linetype = 'dashed')
+        p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('pFlim','pFpa','pFtarget','pBlim','pBpa','pBtarget')),
+                               aes(yintercept = 0.05), linetype = 'dashed')
         if(cond2){ # cond1 + cond2
           p <-  p + geom_hline(data= dataS() %>% filter(indicator %in% c('ssb2Btarget', 'f2Ftarget')),
                                aes(yintercept = 1), linetype = 'dashed')}
@@ -204,48 +150,37 @@ server <- function(input, output, session){
 
     
     # Case dependent plot size.
-    #     https://stackoverflow.com/questions/30422849/how-to-make-height-argument-dynamic-in-renderplot-in-shiny-r-package
-    # this function defines a height of the plot
     values <- reactiveValues()
+    
     plot_height <- function() {
-      # calculate values$facetCount
-      values$facetsRows <- ifelse(length(input$stockS) == 1, 600, ifelse(length(input$stockS) == 2, 800, ifelse(length(input$stockS) == 3, 900, 200*length(input$stockS))))
-      return(values$facetsRows)
-    }
-    plot_width <- function() {
-      # calculate values$facetCount
-      values$facetsCols <- ifelse(length(input$indicatorS)==1, 900, 1500)
-      return(values$facetsCols)
+      
+      if(input$fitS==FALSE){nrow <- length(input$stockS)}
+      else{nrow <- ceiling(length(input$stockS)*length(input$indicatorS)/input$nColS)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
     }
     
-    output$plotSs<-renderPlot({
+    plot_width <- function() {
       
-      print(plotStock())
-    } #, height = PlotHeight_stk
-    )
+      if(input$fitS==FALSE){ncol <- length(input$indicatorS)}
+      else{ncol <- input$nColS}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotSs<-renderPlot({print(plotStock())})
     
     # wrap plotOutput in renderUI
-    output$plotS <- renderUI({
-      plotOutput("plotSs", height = plot_height(), width = plot_width())
-    })
-    
-    
+    output$plotS <- renderUI({plotOutput("plotSs", height = plot_height(), width = plot_width())})
     
     # Code to download the plot
-    getW <- function(){
-      return(input$fileWS)
-    }
-    
-    getH <- function(){
-      return(input$fileHS)
-    }
-    
-    getS <- function(){
-      return(input$fileScS)
-    }
+    getW <- function(){return(input$fileWS)}
+    getH <- function(){return(input$fileHS)}
+    getS <- function(){return(input$fileScS)}
     
     # Download the plot
-    output$down <- downloadHandler(
+    output$downS <- downloadHandler(
       filename =  function() {
         paste(input$filenmS, input$fileTypeS, sep=".")
       },
@@ -254,24 +189,16 @@ server <- function(input, output, session){
         ggsave(file, plotStock(), width = getW(), height = getH(), units = 'cm', scale = getS())
         } 
     )
+
     
   })# end of the observe stock 
 
-  print('one')
-  
+
   
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation STOCK AREA  ####
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-  
-  # PlotHeight_stk <- reactive({
-  #   
-  #   nids <- length(input$stockS)
-  #   
-  #   return(300*nids)})
-  # # 
-  # 
   observe ({
     dataSA<-reactive({
       bio <- bio %>% filter(year >= input$rangeSA[1], year <= input$rangeSA[2],
@@ -296,7 +223,8 @@ server <- function(input, output, session){
         theme_bw()+
         theme(strip.text=element_text(size=16),
                title=element_text(size=16),
-               text=element_text(size=16))
+               text=element_text(size=16),
+               legend.position="top")
 
       if(!is.null(proj.yr)){
         p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
@@ -311,47 +239,42 @@ server <- function(input, output, session){
       
     }
 
-
-    output$plotSAs <-renderPlot({
-
-      print(plotStockArea())
-    } #, height = PlotHeight_stk
-    )
-
+    values <- reactiveValues()
     
     # Case dependent plot size.
-    #     https://stackoverflow.com/questions/30422849/how-to-make-height-argument-dynamic-in-renderplot-in-shiny-r-package
-    # this function defines a height of the plot
-    values <- reactiveValues()
     plot_height <- function() {
-      # calculate values$facetCount
-      values$facetsRows <- ifelse(length(input$scenarioSA) == 1, 600, ifelse(length(input$scenarioSA) == 2, 800, ifelse(length(input$scenarioSA) == 3, 900, 200*length(input$scenarioSA))))
-      return(values$facetsRows)
-    }
-    plot_width <- function() {
-      # calculate values$facetCount
-      values$facetsCols <- ifelse(length(input$indicatorSA)==1, 900, 1500)
-      return(values$facetsCols)
+      
+      nSc <- length(input$scenarioSA)
+      nI <- length(input$indicatorSA)
+
+      if(input$fitSA==FALSE){nrow <- nSc}
+      else{nrow <- ceiling(nSc*nI/input$nColSA)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
     }
     
+    plot_width <- function() {
+      
+      nSc <- length(input$scenarioSA)
+      nI <- length(input$indicatorSA)
+      
+      if(input$fitSA==FALSE){ncol <- nI}
+      else{ncol <- min(c(input$nColSA, nSc*nI))}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotSAs <-renderPlot({print(plotStockArea())})
+    
     # wrap plotOutput in renderUI
-    output$plotSA <- renderUI({
-      plotOutput("plotSAs", height = plot_height(), width = plot_width())
-    })
+    output$plotSA <- renderUI({plotOutput("plotSAs", height = plot_height(), width = plot_width())})
     
 
     # Code to download the plot
-    getWSA <- function(){
-      return(input$fileWSA)
-    }
-
-    getHSA <- function(){
-      return(input$fileHSA)
-    }
-
-    getSSA <- function(){
-      return(input$fileScSA)
-    }
+    getWSA <- function(){return(input$fileWSA)}
+    getHSA <- function(){return(input$fileHSA)}
+    getSSA <- function(){return(input$fileScSA)}
 
     # Download the plot
     output$downSA <- downloadHandler(
@@ -366,17 +289,16 @@ server <- function(input, output, session){
 
   })# end of the observe stock
 
-  print('one - b')
   
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
 #### PAGE_simulation STOCK_kobe plot ####
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
- observe({ 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+
+ observe({
    dataK<-reactive({
         req(input$stockK)
-  
-    res <- bio.kobe[bio.kobe$year>=input$rangeK[1] & bio.kobe$year<=input$rangeK[2] 
+
+    res <- bio.kobe[bio.kobe$year>=input$rangeK[1] & bio.kobe$year<=input$rangeK[2]
         & bio.kobe$unit%in%input$stockK
         & bio.kobe$scenario%in%input$scenarioK,]
 
@@ -384,63 +306,56 @@ server <- function(input, output, session){
     }
   )
 
-  
+
   plotKobe <- function(){
 
     dd <- dataK()
     dy0 <- subset(dd, year == unique(dd$year)[1])
     dy1 <- subset(dd, year == unique(dd$year)[length(unique(dd$year))])
-    
-    kobePhase(dataK(), ylim = c(0, max(dataK()$harvest)), xlim = c(0, max(dataK()$stock))) + 
-      geom_point(aes(stock,harvest, group = scenario, col = scenario)) + 
-      geom_path( aes(stock,harvest, group = scenario, col = scenario)) + 
+
+    kobePhase(dataK(), ylim = c(0, max(dataK()$harvest)), xlim = c(0, max(dataK()$stock))) +
+      geom_point(aes(stock,harvest, group = scenario, col = scenario)) +
+      geom_path( aes(stock,harvest, group = scenario, col = scenario)) +
       geom_text(aes(stock, harvest, label = year), data = dy0, pch = 16, col = 1) +
       geom_text(aes(stock, harvest, label = year), data = dy1, pch = 4, col = 1) +
       facet_wrap(~unit, ncol = input$nColK) +
       theme(text=element_text(size=16),
             title=element_text(size=16),
-            strip.text=element_text(size=16)) #+
+            strip.text=element_text(size=16),
+            legend.position="top") #+
   #    labs(caption = 'First year = black dot & Final year = black cross')
   }
-  
-  output$plotKs <- renderPlot({
- #   browser()
-    if (is.null(dataK())) return()
-    plotKobe()
-  })
-  
+
+
   # Case dependent plot size.
   values <- reactiveValues()
+
   plot_height <- function() {
-    # calculate values$facetCount
-    values$facetsRows <- ifelse(length(input$stockK) <=2, 400, ifelse(length(input$stockK) <= 4, 600, 
-                                      ifelse(length(input$stockK) <= 6, 800, 250*ceiling(length(input$stockK)/2))))
-    return(values$facetsRows)
+
+    nrow <- ceiling(length(input$stockK)/input$nColK)
+    values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+    return(values$height)
   }
   plot_width <- function() {
-    # calculate values$facetCount
-    values$facetsCols <- ifelse(length(input$stockK)==1, 600, 900)
-    return(values$facetsCols)
+
+    ncol <- min(input$nColK, length(input$stockK))
+    values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+
+    return(values$width)
   }
-  
+
   # wrap plotOutput in renderUI
-  output$plotK <- renderUI({
-    plotOutput("plotKs", height = plot_height(), width = plot_width())
-  })
-  
+  output$plotKs <- renderPlot({
+    if (is.null(dataK())) return()
+    plotKobe()})
+
+  output$plotK <- renderUI({plotOutput("plotKs", height = plot_height(), width = plot_width())})
+
   # Code to download the plot
-  getWSK <- function(){
-    return(input$fileWSK)
-  }
-  
-  getHSK <- function(){
-    return(input$fileHSK)
-  }
-  
-  getSSK <- function(){
-    return(input$fileScSK)
-  }
-  
+  getWSK <- function(){return(input$fileWSK)}
+  getHSK <- function(){return(input$fileHSK)}
+  getSSK <- function(){return(input$fileScSK)}
+
   # Download the plot
   output$downSK <- downloadHandler(
     filename =  function() {
@@ -449,69 +364,65 @@ server <- function(input, output, session){
     # content is a function with argument file. content writes the plot to the device
     content = function(file) {
       ggsave(file, plotKobe(), width = getWSK(), height = getHSK(), units = 'cm', scale = getSSK())
-    } 
+    }
   )
-  
- })
-  
-  print('two')
 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
+ })
+
+
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
   #### PAGE_simulation STOCK_Spider plot  ####
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+
     dataSP<-reactive({
       req(input$baseSP)
 
       if (input$baseSP == "radio1"){
           req(input$stockSP)
-       dat1 <- subset(bio, year == input$baseSP2 & stock %in% input$stockSP & 
+       dat1 <- subset(bio, year == input$baseSP2 & stock %in% input$stockSP &
                            indicator %in% input$indicatorSP & scenario%in%input$scenarioSP)
-       dat2 <- subset(bio, year == input$baseSP1 & stock %in% input$stockSP & 
+       dat2 <- subset(bio, year == input$baseSP1 & stock %in% input$stockSP &
                            indicator %in% input$indicatorSP & scenario%in%input$scenarioSP)
-       
+
        dat1 <- dat1 %>% group_by(stock, indicator, scenario)
        dat2 <- dat2 %>% group_by(stock, indicator, scenario)
-       
+
        dat2 <- dat2[, c('scenario', 'stock', 'indicator', 'q50')]
-       names(dat2)[4] <- 'q502' 
+       names(dat2)[4] <- 'q502'
       }
-         
+
       if (input$baseSP == "radio2"){ # base1 is scenario and base2 is year
         req(input$stockSP)
         # data frame with all the scenarios and the selected year
-        dat1 <- subset(bio, year == input$baseSP4 & stock %in% input$stockSP & 
+        dat1 <- subset(bio, year == input$baseSP4 & stock %in% input$stockSP &
                          indicator %in% input$indicatorSP & scenario%in%input$scenarioSP)
         # data frame with Base scenario and the selected year
-        dat2 <- subset(bio, year == input$baseSP2 & stock %in% input$stockSP & 
+        dat2 <- subset(bio, year == input$baseSP2 & stock %in% input$stockSP &
                          indicator %in% input$indicatorSP & scenario == input$baseSP3)
-        
+
         dat1 <- dat1 %>% group_by(stock, indicator, scenario)
         dat2 <- dat2 %>% group_by(stock, indicator)
-     
+
         dat2 <- dat2[, c('stock', 'indicator', 'q50')]
-        names(dat2)[3] <- 'q502' 
+        names(dat2)[3] <- 'q502'
       }
-      
         dat <- dat1 %>% left_join(dat2)
-        
         dat <- dat %>% mutate(Ratio = (q50-q502)/q502)
-        
         dat <- dat[order(dat$scenario), ]
-      
+
       dat
       })
 
-    
+
   plotSpider <-function(){
 
        dt <- dataSP()
-       
+
        dt0 <- dt
        dt0$Ratio <- 0
-      
+
        lines <- input$GrpPanSP
-      
+
        if(lines == 'stock'){
         p <-  ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=stock, fill=stock, group=stock))+
          # geom_polygon(alpha=0.2, lwd=1)+
@@ -522,77 +433,62 @@ server <- function(input, output, session){
          theme_bw()+
          theme(text=element_text(size=14),
                strip.text=element_text(size=14),
-               title=element_text(size=18,face="bold"))+
+               title=element_text(size=18,face="bold"),
+               legend.position="top")+
          ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
           facet_wrap(indicator~., ncol = input$nColSP)
-        
+
         }
        else{ #lines == indicator
          p <-  ggplot(data=dataSP(), aes(x=scenario, y=Ratio, col=indicator, fill=indicator, group=indicator))+
-           # geom_polygon(alpha=0.2, lwd=1)+
            geom_polygon(fill=NA, lwd=1)+
            geom_point(cex=1.5)+
            geom_path(data = dt0, aes(x=scenario, y=Ratio), colour = 'black', linetype = 'dashed', size = 1)+
-  #         geom_hline(aes(yintercept=0), lwd=1, lty=2) +
            coord_radar()+
            theme_bw()+
            theme(text=element_text(size=14),
                  strip.text=element_text(size=14),
-                 title=element_text(size=18,face="bold"))+
+                 title=element_text(size=18,face="bold"),
+                 legend.position="top")+
            ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
            facet_wrap(stock~.,  ncol = input$nColSP)
        }
-      return(p)
-      
     }
-  
-  output$plotSPs <- renderPlot({
-    #   browser()
-    if (is.null(dataSP())) return()
-    plotSpider()
-  })
-  
-  # Case dependent plot size.
-  values <- reactiveValues()
-  plot_height <- function() {
-    lines <- input$GrpPanSP
-    if(lines == 'stock'){ facets <- input$indicatorSP} 
-    else{ facets <- input$stockSP}
-    
-    # calculate values$facetCount
-    values$facetsRows <- ifelse(length(facets) <=2, 400, ifelse(length(facets) <= 4, 600, 
-                                                                      ifelse(length(facets) <= 6, 800, 250*ceiling(length(facets)/2))))
-    return(values$facetsRows)
-  }
-  plot_width <- function() {
-    lines <- input$GrpPanSP
-    if(lines == 'stock'){ facets <- input$indicatorSP} 
-    else{ facets <- input$stockSP}
-    # calculate values$facetCount
-    values$facetsCols <- ifelse(length(input$stockK)==1, 600, 900)
-    return(values$facetsCols)
-  }
 
+
+  # Case dependent plot size.
+  # values <- reactiveValues()
+  # 
+  # plot_height <- function() {
+  #   
+  #   lines <- input$GrpPanSP
+  #   
+  #   if(lines == 'stock'){nrow <-  ceiling(length(input$indicatorSP)/input$nColSP)}
+  #   else{                nrow <-  ceiling(length(input$stockSP)/input$nColSP)} 
+  # 
+  #   if(nrow  == 1){values$height <- 600}
+  #   else{           values$height <- 300*nrow} 
+  #   
+  # 
+  #   return(values$height)}
+  # 
+  # plot_width <- function() {
+  #   ncol         <- input$nColSP
+  #   values$width <- ifelse(ncol == 1, 400, 800)
+  #   return(values$width)}
+  
+  output$plotSPs <- renderPlot({print(plotSpider())})
   
   # wrap plotOutput in renderUI
-  output$plotSP<- renderUI({
-    plotOutput("plotSPs", height = plot_height(), width =plot_width())
-  })
-  
+  output$plotSP<- renderUI({plotOutput("plotSPs",height = 700, width = 1200)})
+
   
   # Code to download the plot
-  getWSP <- function(){
-    return(input$fileWSP)
-  }
-  
-  getHSP <- function(){
-    return(input$fileHSP)
-  }
-  
-  getScSP <- function(){
-    return(input$fileScSP)
-  }
-  
+  getWSP  <- function(){return(input$fileWSP)}
+  getHSP  <- function(){return(input$fileHSP)}
+  getScSP <- function(){return(input$fileScSP)}
+
+
   # Download the plot
   output$downSP <- downloadHandler(
     filename =  function() {
@@ -600,12 +496,10 @@ server <- function(input, output, session){
     },
     # content is a function with argument file. content writes the plot to the device
     content = function(file) {
-      ggsave(file, plotSP(), width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
-    } 
+      ggsave(file, plotSpider()) #,  width = getWSP(), height = getHSP(), units = 'cm')#, scale = getScSP())
+    }
   )
-  
-print('three spider')
-    
+
   
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
@@ -613,13 +507,9 @@ print('three spider')
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-#### PAGE_simulation FLEET_TIMES SERIES  ####
+  #### PAGE_simulation FLEET_TIMES SERIES  ####
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-  # PlotHeight_flt <- reactive({
-  #   nids <- length(input$fleetF)
-  #   return(300*nids)})
-  # 
-  
+
   observe ({
     dataF<-reactive({
       req(input$fleetF)
@@ -642,12 +532,13 @@ print('three spider')
     plotFleet <- function(){
       
       p <- ggplot()+
-                geom_line(data= dataF(), aes(x=year, y=q50, color=scenario),lwd=1)+
+                geom_line(data= dataF(), aes(x=year, y=q50, color=scenario),size = input$lwdF)+
                 ylab("")+ xlab("Year")+
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
                         title=element_text(size=16),
-                        text=element_text(size=16))+
+                        text=element_text(size=16),
+                       legend.position="top")+
                 scale_x_continuous(limits = c(input$rangeF[1], input$rangeF[2]))
       
       # Iteraction
@@ -656,47 +547,47 @@ print('three spider')
           scale_linetype_manual(values = c(2:6))
       }
       
+      if(!is.null(proj.yr)){p <- p + geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
       
-      if(!is.null(proj.yr)){
-        p <- p + geom_vline(data=dataF(), aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
-          
-      }
-      
+      if(input$dotLineF == TRUE) p <- p +  geom_point(data = dataF(), aes(x=year, y=q50, color=scenario), size = input$dszF)
       
       # With Conf Int.
-      if (input$fitCIF == TRUE){
-        p <- p + geom_ribbon(data = dataF(),  aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)#+
-                 #geom_ribbon(data = dataFI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
-      }
-      
-      if(input$fitF==TRUE){
-        p <- p + facet_wrap(fleet ~ indicator, ncol = input$nColF, scales="free_y")
-      }
-      else{
-        p <- p + facet_grid(fleet ~ indicator)  
-      }
+      if (input$fitCIF == TRUE){p <- p + geom_ribbon(data = dataF(),  aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)}#+
+               
+      if(input$fitF==TRUE){p <- p + facet_wrap(fleet ~ indicator, ncol = input$nColF, scales="free_y")}
+      else{p <- p + facet_grid(fleet ~ indicator)}
       
       return(p)
       }
     
-   
-    output$plotF <-renderPlot({
-      print(plotFleet())
-    }#, height = PlotHeight_flt
-    )
+    values <- reactiveValues()
+    
+    plot_height <- function() {
+      
+      if(input$fitF==FALSE){nrow <- length(input$fleetF)}
+      else{nrow <- ceiling(length(input$fleetF)*length(input$indicatorF)/input$nColF)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
+    }
+    
+    plot_width <- function() {
+      
+      if(input$fitF==FALSE){ncol <- length(input$indicatorF)}
+      else{ncol <- input$nColF}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotFs<-renderPlot({print(plotFleet())})
+    
+    # wrap plotOutput in renderUI
+    output$plotF <- renderUI({plotOutput("plotFs", height = plot_height(), width = plot_width())})
     
     # Code to download the plot
-    getFW <- function(){
-      return(input$fileWF)
-    }
-    
-    getFH <- function(){
-      return(input$fileHF)
-    }
-    
-    getFS <- function(){
-      return(input$fileScF)
-    }
+    getFW <- function(){return(input$fileWF)}
+    getFH <- function(){return(input$fileHF)}
+    getFS <- function(){return(input$fileScF)}
     
     # Download the plot
     output$downF <- downloadHandler(
@@ -710,13 +601,12 @@ print('three spider')
     )
     
     })#end of the observer
-  print('four') 
 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
-  #### PAGE_simulation FLEET_NPV  ####
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+    #### PAGE_simulation FLEET_NPV  ####
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
   
-    # print('caracola02')   
     dataN<-reactive({
         req(input$fleetN)
         npv[npv$fleet%in%input$fleetN & npv$scenario%in%input$scenarioN,]})
@@ -731,26 +621,17 @@ print('three spider')
               title=element_text(size=16),
               strip.text=element_text(size=16),
               axis.text.x=element_blank(),
-              axis.ticks.x=element_blank())+
+              axis.ticks.x=element_blank(),
+              legend.position="top")+
         ylab("NPV")
     }
     
-    output$plotFN<-renderPlot({
-      plotNPV()
-    })
+    output$plotFN<-renderPlot({ plotNPV() })
       
       # Code to download the plot
-      getFNW <- function(){
-        return(input$fileWFN)
-      }
-      
-      getFNH <- function(){
-        return(input$fileHFN)
-      }
-      
-      getFNS <- function(){
-        return(input$fileScFN)
-      }
+      getFNW <- function(){return(input$fileWFN)}
+      getFNH <- function(){return(input$fileHFN)}
+      getFNS <- function(){return(input$fileScFN)}
       
       # Download the plot
       output$downFN <- downloadHandler(
@@ -762,11 +643,7 @@ print('three spider')
           ggsave(file, plotNPV(), width = getFNW(), height = getFNH(), units = 'cm', scale = getFNS())
         } 
       )
-    
-  
-  
-      print('five')  
-    
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #### PAGE_simulation FLEET_Spider plot  ####
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -805,9 +682,7 @@ print('three spider')
         }
         
         dat <- dat1 %>% left_join(dat2)
-        
         dat <- dat %>% mutate(Ratio = (q50-q502)/q502)
-        
         dat <- dat[order(dat$scenario), ]
         
         dat
@@ -833,7 +708,8 @@ print('three spider')
             theme_bw()+
             theme(text=element_text(size=14),
                   strip.text=element_text(size=14),
-                  title=element_text(size=18,face="bold"))+
+                  title=element_text(size=18,face="bold"), 
+                  legend.position="top")+
             ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
             facet_wrap(indicator~., ncol = input$nColFSP)
           
@@ -849,86 +725,52 @@ print('three spider')
             theme_bw()+
             theme(text=element_text(size=14),
                   strip.text=element_text(size=14),
-                  title=element_text(size=18,face="bold"))+
+                  title=element_text(size=18,face="bold"), legend.position="top")+
             ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
             facet_wrap(fleet~.,  ncol = input$nColFSP)
         }
-        return(p)
-        
       }
       
-      output$plotFSPs <- renderPlot({
-        #   browser()
-        if (is.null(dataFSP())) return()
-        plotFSpider()
-      })
+      output$plotFSPs <- renderPlot({print(plotFSpider())})
       
       # Case dependent plot size.
       values <- reactiveValues()
       plot_height <- function() {
-        lines <- input$GrpPanFSP
-        if(lines == 'stock'){ facets <- input$indicatorFSP} 
-        else{ facets <- input$fleetFSP}
         
-        # calculate values$facetCount
-        values$facetsRows <- ifelse(length(facets) <=2, 400, ifelse(length(facets) <= 4, 600, 
-                                                                    ifelse(length(facets) <= 6, 800, 250*ceiling(length(facets)/2))))
-        return(values$facetsRows)
-      }
-      plot_width <- function() {
-        lines <- input$GrpPanFSP
-        if(lines == 'fleet'){ facets <- input$indicatorFSP} 
-        else{ facets <- input$fleetFSP}
-        # calculate values$facetCount
-        values$facetsCols <- ifelse(length(input$fleetFSP)==1, 600, 900)
-        return(values$facetsCols)
+        if(input$GrpPanFSP=='fleet'){nrow <- ceiling(length(input$indicatorFSP)/input$nColFSP)}
+                                else{nrow <- ceiling(length(input$fleetFSP)/input$nColFSP)}
+        values$height <- ifelse(nrow == 1, 600, ifelse(nrow == 2, 1000, ifelse(nrow == 3, 1200, 350*nrow)))
+        print(height)
+        return(values$height)
       }
       
-      
+      # plot_width <- function() {
+      #   ncol <- input$nColFSP
+      #   values$width <- ifelse(ncol == 1, 600, 1200)
+      # 
+      #   return(values$width)
+      # }
+      # 
       # wrap plotOutput in renderUI
-      output$plotFSP<- renderUI({
-        plotOutput("plotFSPs", height = plot_height(), width =plot_width())
-      })
-      
+      output$plotFSP<- renderUI({plotOutput("plotFSPs", height = 700, width = 1200)})
       
       # Code to download the plot
-      getWSP <- function(){
-        return(input$fileWFSP)
-      }
-      
-      getHSP <- function(){
-        return(input$fileHFSP)
-      }
-      
-      getScSP <- function(){
-        return(input$fileScFSP)
-      }
+      getWSP <- function(){return(input$fileWFSP)}
+      getScSP <- function(){return(input$fileScFSP)}
       
       # Download the plot
-      output$downFSP <- downloadHandler(
-        filename =  function() {
-          paste(input$filenmFSP, input$fileTypeFSP, sep=".")
-        },
+      output$downFSP <- downloadHandler(filename =  function() {paste(input$filenmFSP, input$fileTypeFSP, sep=".")},
         # content is a function with argument file. content writes the plot to the device
         content = function(file) {
-          ggsave(file, plotFSP(), width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
+          ggsave(file, plotFSpider())#, width = getWSP(), units = 'cm')#, scale = getScSP())
         } 
       )
-      
-      
-    print('six spider')
+
     
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
 #### PAGE_simulation METIER_Times series  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
-  # PlotHeight_mt <- reactive({
-  #   
-  #   nids <- length(input$metierM)
-  #   
-  #   return(300*nids)})
-  # 
   
   observe ({
     
@@ -946,13 +788,13 @@ print('three spider')
     })
     
     plotMetier <- function(){
-        p <-ggplot(dataM(), aes(x=as.numeric(year), y=q50, color=scenario))+
+        p <-ggplot(dataM(), aes(x=as.numeric(year), y=q50, color=scenario), size = input$lwdM)+
                   geom_line(aes(color=scenario),lwd=1)+
                   ylab("")+xlab("Year")+
                   theme_bw()+
                   theme( strip.text=element_text(size=16),
                           title=element_text(size=16),
-                        text=element_text(size=16))+
+                        text=element_text(size=16), legend.position="top")+
                   scale_x_continuous(limits = c(input$rangeM[1], input$rangeM[2]))
       
         if(!is.null(proj.yr)){
@@ -960,64 +802,59 @@ print('three spider')
           
         }
         
-        if(input$fitCIM == TRUE)
-            p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+        if(input$dotLineM == TRUE) p <- p +  geom_point(data = dataM(), aes(x=year, y=q50, color=scenario), size = input$dszM)
         
-        if(input$fitM==TRUE){
-          p <- p + facet_wrap(metier ~ indicator, scale = 'free_y',  ncol = input$nColM)
-        }
-        else{
-          p <- p + facet_grid(metier ~ indicator)
-        }
+        if(input$fitCIM == TRUE)   p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+        
+        if(input$fitM==TRUE){p <- p + facet_wrap(metier ~ indicator, scale = 'free_y',  ncol = input$nColM)}
+        else{p <- p + facet_grid(metier ~ indicator)}
         return(p)}
     
+    values <- reactiveValues()
     
-    output$plotMM<-renderPlot({
-      print(plotMetier())}
-      #, height = PlotHeight_mt
-      )
+    plot_height <- function() {
+      
+      if(input$fitM==FALSE){nrow <- length(input$metierM)}
+      else{nrow <- ceiling(length(input$metierM)*length(input$indicatorM)/input$nColM)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
+    }
+    
+    plot_width <- function() {
+      
+      if(input$fitM==FALSE){ncol <- length(input$indicatorM)}
+      else{ncol <- input$nColM}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotMMs<-renderPlot({print(plotMetier())})
+    
+    # wrap plotOutput in renderUI
+    output$plotMM <- renderUI({plotOutput("plotMMs", height = plot_height(), width = plot_width())})
+    
     
     # Code to download the plot
-    getMW <- function(){
-      return(input$fileWM)
-    }
-    
-    getMH <- function(){
-      return(input$fileHM)
-    }
-    
-    getMS <- function(){
-      return(input$fileScM)
-    }
+    getMW <- function(){return(input$fileWM)}
+    getMH <- function(){return(input$fileHM)}
+    getMS <- function(){return(input$fileScM)}
     
     # Download the plot
-    output$downM <- downloadHandler(
-      filename =  function() {
-        paste(input$filenmM, input$fileTypeM, sep=".")
-      },
-      # content is a function with argument file. content writes the plot to the device
-      content = function(file) {
-        ggsave(file, plotMetier(), width = getMW(), height = getMH(), units = 'cm', scale = getMS())
-      } 
-    )
+    output$downM <- downloadHandler(filename =  function() {paste(input$filenmM, input$fileTypeM, sep=".")},
+             # content is a function with argument file. content writes the plot to the device
+            content = function(file) {
+            ggsave(file, plotMetier(), width = getMW(), height = getMH(), units = 'cm', scale = getMS())
+      })
     
   })#end of the observer
   
-  print('seven')
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation FLEET BY_Times series  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   
-  # print('caracola06')      
-  # PlotHeight_Fby <- reactive({
-  #   
-  #   nids <- length(input$fleetFby)*length(input$stockFby)
-  #   
-  #   return(300*nids)})
-  
   observe ({
-    
-    updateSelectInput(session, inputId  = "stockFby", 
+     updateSelectInput(session, inputId  = "stockFby", 
                                choices  = unique(subset(fltStk, fleet %in% input$fleetFby)$stock), 
                                selected = unique(subset(fltStk, fleet %in% input$fleetFby)$stock)[1]) #, server = TRUE)#,
     })    
@@ -1029,9 +866,6 @@ print('three spider')
                                    indicator %in% input$indicatorFby & scenario %in% input$scenarioFby)
           })
       
-   #   browser()
-
-      # print('caracola061')  
 
       
       plotFleetby <- function(){
@@ -1043,7 +877,7 @@ print('three spider')
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
                       title=element_text(size=16),
-                      text=element_text(size=16))
+                      text=element_text(size=16), legend.position="top")
         
         if(input$fitCIFby == TRUE){
           p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
@@ -1057,31 +891,59 @@ print('three spider')
         }
         
          if(input$fitFby == FALSE){
-           p <- p + facet_grid(fleet*stock ~ indicator)
-         }
+           if(input$rowFby == 'Fleet-Stock'){
+             p <- p + facet_grid(fleet*stock ~ indicator)}
+             else{
+               if(input$rowFby == 'Fleet-Indicator'){p <- p + facet_grid(fleet*indicator ~ stock)}
+               else{ p <- p + facet_grid(stock*indicator ~ fleet)}
+         }}
          else{
-           p <- p + facet_wrap(fleet*stock ~ indicator, ncol = input$nColFby, scales="free_y")
-         }
+           if(input$rowFby == 'Fleet-Stock'){
+             p <- p + facet_wrap(fleet*stock ~ indicator, scales="free_y",  ncol = input$nColFby)}
+           else{
+             if(input$rowFby == 'Fleet-Indicator'){p <- p + facet_wrap(fleet*indicator ~ stock, ncol = input$nColFby, scales="free_y")}
+             else{ p <- p + facet_wrap(stock*indicator ~ fleet, ncol = input$nColFby, scales="free_y")}
+           }}
         return(p)}
       
       
-      output$plotFby <-renderPlot({
-        print(plotFleetby())
-      }#, height = PlotHeight_Fby
-      )
+      values <- reactiveValues()
+      
+      plot_height <- function() {
+        
+        nS <- length(input$stockFby)
+        nF <- length(input$fleetFby)
+        nI <- length(input$indicatorFby)
+        
+        if(input$fitFby==FALSE){
+            nrow <- ifelse(input$rowFby == 'Fleet-Stock', nF*nS, ifelse(input$rowFby == 'Fleet-Indicator', nF*nI, nI*nS))}
+        else{nrow <- ceiling(nS*nF*nI/input$nColFby)}
+        
+        values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+        return(values$height)
+      }
+      
+      plot_width <- function() {
+        
+        nS <- length(input$stockFby)
+        nF <- length(input$fleetFby)
+        nI <- length(input$indicatorFby)
+        
+        if(input$fitFby==FALSE){ncol <- ifelse(input$rowFby == 'Fleet-Stock', nI, ifelse(input$rowFby == 'Fleet-Indicator', nS, nF))}
+        else{ncol <- min(input$nColFby, nS*nF*nI)}
+        values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+        return(values$width)
+      }
+      
+      output$plotFbys <-renderPlot({print(plotFleetby())})
+
+      # wrap plotOutput in renderUI
+      output$plotFby <- renderUI({plotOutput("plotFbys", height = plot_height(), width = plot_width())})
       
       # Code to download the plot
-      getFbyW <- function(){
-        return(input$fileWFby)
-      }
-      
-      getFbyH <- function(){
-        return(input$fileHFby)
-      }
-      
-      getFbyS <- function(){
-        return(input$fileScFby)
-      }
+      getFbyW <- function(){return(input$fileWFby)}
+      getFbyH <- function(){return(input$fileHFby)}
+      getFbyS <- function(){return(input$fileScFby)}
       
       # Download the plot
       output$downFby <- downloadHandler(
@@ -1094,7 +956,6 @@ print('three spider')
         } 
       )
 })
-  print('eight')
 
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
@@ -1131,41 +992,51 @@ print('three spider')
         theme_bw()+
         theme(strip.text=element_text(size=16),
               title=element_text(size=16),
-              text=element_text(size=16))
+              text=element_text(size=16), legend.position="top")
       
-      if(!is.null(proj.yr)){
-        p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
-      }
+      if(!is.null(proj.yr)){p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)}
       
-      if(input$fitbyA == FALSE){
-        p <- p + facet_grid(fleet*scenario~indicator)
-      }
-      else{
-        p <- p + facet_wrap(fleet*scenario~indicator, ncol = input$nColbyA, scale = 'free_y')
-      }
+      if(input$fitbyA == FALSE){p <- p + facet_grid(fleet*scenario~indicator)}
+      else{p <- p + facet_wrap(fleet*scenario~indicator, ncol = input$nColbyA, scale = 'free_y')}
       
     }
     
+    values <- reactiveValues()
     
-    output$plotFSbyA <-renderPlot({
+    plot_height <- function() {
       
-      print(plotFleetStockArea())
-    } #, height = PlotHeight_stk
-    )
+      nF  <- length(input$fleetbyA)
+      nI  <- length(input$indicatorbyA)
+      nSc <- length(input$scenariobyA)
+      
+      if(input$fitbyA==FALSE){nrow <- nF*nSc}
+      else{nrow <- ceiling(nF*nSc*nI/input$nColbyA)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
+    }
     
+    plot_width <- function() {
+      
+      nF  <- length(input$fleetbyA)
+      nI  <- length(input$indicatorbyA)
+      nSc <- length(input$scenariobyA)
+      
+      if(input$fitbyA==FALSE){ncol <- length(input$indicatorbyA)}
+      else{ncol <- input$nColbyA}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
     
+    output$plotFSbyAs<-renderPlot({print(plotFleetStockArea())})
+    
+    # wrap plotOutput in renderUI
+    output$plotFSbyA <- renderUI({plotOutput("plotFSbyAs", height = plot_height(), width = plot_width())})
+
     # Code to download the plot
-    getWbyA <- function(){
-      return(input$fileWbyA)
-    }
-    
-    getHbyA <- function(){
-      return(input$fileHbyA)
-    }
-    
-    getSbyA <- function(){
-      return(input$fileScbyA)
-    }
+    getWbyA <- function(){return(input$fileWbyA)}
+    getHbyA <- function(){return(input$fileHbyA)}
+    getSbyA <- function(){return(input$fileScbyA)}
     
     # Download the plot
     output$downbyA <- downloadHandler(
@@ -1258,7 +1129,7 @@ print('three spider')
         theme_bw()+
         theme(text=element_text(size=14),
               strip.text=element_text(size=14),
-              title=element_text(size=18,face="bold"))+
+              title=element_text(size=18,face="bold"), legend.position="top")+
         ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
         facet_wrap(indicator~stock, ncol = input$nColFSPby)
       
@@ -1275,7 +1146,7 @@ print('three spider')
             theme_bw()+
             theme(text=element_text(size=14),
                 strip.text=element_text(size=14),
-                title=element_text(size=18,face="bold"))+
+                title=element_text(size=18,face="bold"), legend.position="top")+
             ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
           facet_wrap(fleet~indicator,  ncol = input$nColFSPby)
       }
@@ -1290,7 +1161,7 @@ print('three spider')
           theme_bw()+
           theme(text=element_text(size=14),
                 strip.text=element_text(size=14),
-                title=element_text(size=18,face="bold"))+
+                title=element_text(size=18,face="bold"), legend.position="top")+
           ylab("") +#ylim(c(0,max(c(1,dt$Ratio)))) +
           facet_wrap(fleet~stock,  ncol = input$nColFSPby)
       }
@@ -1306,54 +1177,45 @@ print('three spider')
   })
   
   # Case dependent plot size.
-  values <- reactiveValues()
-  plot_height <- function() {
-    lines <- input$GrpPanFSPby
-    if(lines == 'stock'){ facets <- length(input$indicatorFSPby)*length(input$fleetFSPby)} 
-    else{ 
-      if(lines == 'fleet'){facets <- length(input$indicatorFSPby)*length(input$stockFSPby)} 
-      else{facets <- length(input$fleetFSPby)*length(input$stockFSPby)}
-    }
-    
-    # calculate values$facetCount
-    values$facetsRows <- ifelse(facets/input$nColFSPby == 1, 600, ifelse(facets/input$nColFSPby == 2, 800, 
-                                                                ifelse(facets/input$nColFSPby == 3, 100, 300*ceiling(facets/input$nColFSPby))))
-    return(values$facetsRows)
-  }
-  
-  plot_width <- function() {
-    
-    lines <- input$GrpPanFSPby
-    if(lines == 'stock'){ facets <- length(input$indicatorFSPby)*length(input$fleetFSPby)} 
-    else{ 
-      if(lines == 'fleet'){facets <- length(input$indicatorFSPby)*length(input$stockFSPby)} 
-      else{facets <- length(input$fleetFSPby)*length(input$stockFSPby)}
-    }
-    
-
-    values$facetsCols <- ifelse(input$nColFSPby == 1, 600, ifelse(input$nColFSPby <= 2, 900, 1200))
-    return(values$facetsCols)
-  }
+  # values <- reactiveValues()
+  # plot_height <- function() {
+  #   lines <- input$GrpPanFSPby
+  #   if(lines == 'stock'){ facets <- length(input$indicatorFSPby)*length(input$fleetFSPby)} 
+  #   else{ 
+  #     if(lines == 'fleet'){facets <- length(input$indicatorFSPby)*length(input$stockFSPby)} 
+  #     else{facets <- length(input$fleetFSPby)*length(input$stockFSPby)}
+  #   }
+  #   
+  #   # calculate values$facetCount
+  #   values$facetsRows <- ifelse(facets/input$nColFSPby == 1, 600, ifelse(facets/input$nColFSPby == 2, 800, 
+  #                                                               ifelse(facets/input$nColFSPby == 3, 100, 300*ceiling(facets/input$nColFSPby))))
+  #   return(values$facetsRows)
+  # }
+  # 
+  # plot_width <- function() {
+  #   
+  #   lines <- input$GrpPanFSPby
+  #   if(lines == 'stock'){ facets <- length(input$indicatorFSPby)*length(input$fleetFSPby)} 
+  #   else{ 
+  #     if(lines == 'fleet'){facets <- length(input$indicatorFSPby)*length(input$stockFSPby)} 
+  #     else{facets <- length(input$fleetFSPby)*length(input$stockFSPby)}
+  #   }
+  #   
+  # 
+  #   values$facetsCols <- ifelse(input$nColFSPby == 1, 600, ifelse(input$nColFSPby <= 2, 900, 1200))
+  #   return(values$facetsCols)
+  # }
   
   
   # wrap plotOutput in renderUI
   output$plotFSPby<- renderUI({
-    plotOutput("plotFSPbys", height = plot_height(), width =plot_width())
+     plotOutput("plotFSPbys", height = 700, width = 1200)
   })
   
-  
   # Code to download the plot
-  getWSP <- function(){
-    return(input$fileWFSPby)
-  }
-  
-  getHSP <- function(){
-    return(input$fileHFSPby)
-  }
-  
-  getScSP <- function(){
-    return(input$fileScFSPby)
-  }
+  getWSP  <- function(){ return(input$fileWFSPby)}
+  getHSP  <- function(){return(input$fileHFSPby)}
+  getScSP <- function(){return(input$fileScFSPby)}
   
   # Download the plot
   output$downFSPby <- downloadHandler(
@@ -1362,12 +1224,11 @@ print('three spider')
     },
     # content is a function with argument file. content writes the plot to the device
     content = function(file) {
-      ggsave(file, plotFSPby(), width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
+      ggsave(file, plotFbySpider())#, width = getWSP(), height = getHSP(), units = 'cm', scale = getScSP())
     } 
   )
   
-  
-  
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation METIER AREA  ####
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
@@ -1377,7 +1238,6 @@ print('three spider')
                       choices  = unique(subset(mt, fleet %in% input$fleetMA)$metier), 
                       selected = unique(subset(mt, fleet %in% input$fleetMA)$metier)) #, server = TRUE)#,
   })  
-  
   
   observe ({
     dataMA<-reactive({
@@ -1390,13 +1250,11 @@ print('three spider')
           group_by(year, scenario, indicator, fleet) %>%
           mutate(p = q50/sum(q50)) %>% mutate(q50=p)
       }
-   
-      
       return(mt)
     })
     
+    
     plotFleetMetierArea <- function(){
-      
       
       p <-ggplot(data = dataMA())+
         geom_area(aes(x=year, y=q50, fill=metier), size=0.5, colour="grey") +
@@ -1404,41 +1262,53 @@ print('three spider')
         theme_bw()+
         theme(strip.text=element_text(size=16),
               title=element_text(size=16),
-              text=element_text(size=16))
+              text=element_text(size=16), legend.position="top")
       
-      if(!is.null(proj.yr)){
-        p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
-      }
-      
-      if(input$fitMA == FALSE){
-        p <- p + facet_grid(fleet*scenario~indicator)
-      }
-      else{
-        p <- p + facet_wrap(fleet*scenario~indicator, ncol = input$nColMA, scale = 'free_y')
-      }
+      if(!is.null(proj.yr)){p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year
+  
+      if(input$fitMA == FALSE){p <- p + facet_grid(fleet*scenario~indicator)}
+      else{ p <- p + facet_wrap(fleet*scenario~indicator, ncol = input$nColMA, scale = 'free_y')}
       
     }
     
+    values <- reactiveValues()
     
-    output$plotFSMA <-renderPlot({
+    plot_height <- function() {
       
-      print(plotFleetMetierArea())
-    } #, height = PlotHeight_stk
-    )
+      nI  <- length(input$indicatorMA)
+      nSc <- length(input$scenarioMA)
+      nF  <- length(input$fleetMA)
+      
+      if(input$fitMA==FALSE){nrow <- nF*nSc}
+      else{nrow <- ceiling(nI*nSc*nF/input$nColMA)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
+    }
+    
+    plot_width <- function() {
+      
+      nI  <- length(input$indicatorMA)
+      nSc <- length(input$scenarioMA)
+      nF  <- length(input$fleetMA)
+      
+      if(input$fitMA==FALSE){ncol <- nI}
+      else{ncol <- min(nI*nSc*nF, input$nColMA)}
+      
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotFSMAs <-renderPlot({print(plotFleetMetierArea())})
+    
+    # wrap plotOutput in renderUI
+    output$plotFSMA <- renderUI({plotOutput("plotFSMAs", height = plot_height(), width = plot_width())})
     
     
     # Code to download the plot
-    getWMA <- function(){
-      return(input$fileWMA)
-    }
-    
-    getHMA <- function(){
-      return(input$fileHMA)
-    }
-    
-    getSMA <- function(){
-      return(input$fileScMA)
-    }
+    getWMA <- function(){return(input$fileWMA)}
+    getHMA <- function(){return(input$fileHMA)}
+    getSMA <- function(){return(input$fileScMA)}
     
     # Download the plot
     output$downMA <- downloadHandler(
@@ -1483,7 +1353,6 @@ print('three spider')
   
   observe ({
       dataMby<-reactive({
-      
       mtStk[mtStk$year>=input$rangeMby[1]           & mtStk$year<=input$rangeMby[2] & mtStk$stock %in% input$stockMby
           & mtStk$metier %in% input$metierMby       & mtStk$fleet %in% input$fleetMby
           & mtStk$indicator %in% input$indicatorMby & mtStk$scenario %in% input$scenarioMby,]
@@ -1498,42 +1367,44 @@ print('three spider')
                 theme_bw()+
                 theme( strip.text=element_text(size=16),
                       title=element_text(size=16),
-                      text=element_text(size=16))
+                      text=element_text(size=16), legend.position="top")
 
-        if (input$fitCIMby == TRUE){
-          p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
-        } 
-        if(input$fitMby==TRUE){
-          p <- p + facet_wrap(metier*stock ~ indicator, ncol = input$nColMby, scales="free_y")
-        }
-        if(!is.null(proj.yr)){
-          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
-          
-        }
-        else{
-          p <- p + facet_grid(metier*stock ~ indicator)
-        }
+        if (input$fitCIMby == TRUE){p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)} 
+        if(input$fitMby==TRUE){ p <- p + facet_wrap(metier*stock ~ indicator, ncol = input$nColMby, scales="free_y")}
+        if(!is.null(proj.yr)){p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
+          else{p <- p + facet_grid(metier*stock ~ indicator)}
+      
         return(p)
     }
     
-    output$plotMby <- renderPlot({
-             print(plotMetierby())
-      }#, height = PlotHeight_Mby
-      )
-         
+    values <- reactiveValues()
     
+    plot_height <- function() {
+      
+      if(input$fitMby==FALSE){nrow <- length(input$fleetMby)}
+      else{nrow <- ceiling(length(input$fleetMby)*length(input$indicatorMby)/input$nColMby)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
+    }
+    
+    plot_width <- function() {
+      
+      if(input$fitMby==FALSE){ncol <- length(input$indicatorMby)}
+      else{ncol <- input$nColMby}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotMbys<-renderPlot({print(plotMetierby())})
+    
+    # wrap plotOutput in renderUI
+    output$plotMby <- renderUI({plotOutput("plotMbys", height = plot_height(), width = plot_width())})
+ 
     # Code to download the plot
-    getMbyW <- function(){
-      return(input$fileWMby)
-    }
-    
-    getMbyH <- function(){
-      return(input$fileHMby)
-    }
-    
-    getMbyS <- function(){
-      return(input$fileScMby)
-    }
+    getMbyW <- function(){return(input$fileWMby)}
+    getMbyH <- function(){return(input$fileHMby)}
+    getMbyS <- function(){return(input$fileScMby)}
     
     # Download the plot
     output$downMby <- downloadHandler(
@@ -1545,10 +1416,8 @@ print('three spider')
         ggsave(file, plotMetierby(), width = getMbyW(), height = getMbyH(), units = 'cm', scale = getMbyS())
       } 
     )
-})
-         
-  print('nine')
-  
+    })
+    
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation FLEET-METIER-STOCK AREA  ####
@@ -1581,7 +1450,7 @@ print('three spider')
       return(mtStk)
     })
     
-    plotFleetStockArea <- function(){
+    plotMetierStockArea <- function(){
       
       p <-ggplot(data = dataMbyA())+
         geom_area(aes(x=year, y=q50, fill=stock), size=0.5, colour="grey") +
@@ -1589,41 +1458,46 @@ print('three spider')
         theme_bw()+
         theme(strip.text=element_text(size=16),
               title=element_text(size=16),
-              text=element_text(size=16))
+              text=element_text(size=16), legend.position="top")
       
-      if(!is.null(proj.yr)){
-        p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year
-      }
+      if(!is.null(proj.yr)){p <- p +  geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year
       
-      if(input$fitMbyA == FALSE){
-        p <- p + facet_grid(metier*scenario~indicator)
-      }
-      else{
-        p <- p + facet_wrap(meiter*scenario~indicator, ncol = input$nColMbyA, scale = 'free_y')
-      }
+      if(input$fitMbyA == FALSE){p <- p + facet_grid(metier*scenario~indicator)}
+        else{p <- p + facet_wrap(meiter*scenario~indicator, ncol = input$nColMbyA, scale = 'free_y')}
       
+   }
+    
+    
+    values <- reactiveValues()
+    
+    plot_height <- function() {
+      
+      if(input$fitMbyA==FALSE){nrow <- length(input$metierMbyA)}
+      else{nrow <- ceiling(length(input$metierMbyA)*length(input$indicatorMbyA)/input$nColMbyA)}
+      
+      values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+      return(values$height)
     }
     
-    
-    output$plotFSMbyA <-renderPlot({
+    plot_width <- function() {
       
-      print(plotFleetStockArea())
-    } #, height = PlotHeight_stk
-    )
+      if(input$fitMbyA==FALSE){ncol <- length(input$indicatorMbyA)}
+      else{ncol <- input$nColMbyA}
+      values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+      return(values$width)
+    }
+    
+    output$plotFSMbyAs<-renderPlot({print(plotMetierStockArea())})
+    
+    # wrap plotOutput in renderUI
+    output$plotFSMbyA <- renderUI({plotOutput("plotFSMbyAs", height = plot_height(), width = plot_width())})
+
     
     
     # Code to download the plot
-    getWMbyA <- function(){
-      return(input$fileWMbyA)
-    }
-    
-    getHMbyA <- function(){
-      return(input$fileHMbyA)
-    }
-    
-    getSMbyA <- function(){
-      return(input$fileScMbyA)
-    }
+    getWMbyA <- function(){return(input$fileWMbyA)}
+    getHMbyA <- function(){return(input$fileHMbyA)}
+    getSMbyA <- function(){return(input$fileScMbyA)}
     
     # Download the plot
     output$downMbyA <- downloadHandler(
@@ -1632,7 +1506,7 @@ print('three spider')
       },
       # content is a function with argument file. content writes the plot to the device
       content = function(file) {
-        ggsave(file, plotFleetStockArea(), width = getWMbyA(), height = getHMbyA(), units = 'cm', scale = getSMbyA())
+        ggsave(file, plotMetierStockArea(), width = getWMbyA(), height = getHMbyA(), units = 'cm', scale = getSMbyA())
       }
     )
     
@@ -1642,14 +1516,6 @@ print('three spider')
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
   #### PAGE_simulation ADVICE_Times series  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-  
-     PlotHeight_adv <- reactive({
-       
-       nids <- length(input$indicatorA)
-       
-       return(300*nids)})
-     
-         # print('caracola08')     
     observe ({
       dataA<-reactive({
         req(input$stockA)
@@ -1664,45 +1530,48 @@ print('three spider')
               theme_bw()+
               theme( strip.text=element_text(size=16),
                       title=element_text(size=16),
-                      text=element_text(size=16))
+                      text=element_text(size=16), legend.position="top")
         
-        if(!is.null(proj.yr)){
-          p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1) # projection starting year 
+        if(!is.null(proj.yr)){p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
           
-        }
-        
-        
-        if (input$fitCIA == TRUE){
-          p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
-        }
-        if(input$fitA==TRUE){
-          p <- p + facet_wrap(indicator~stock, scales="free_y",ncol = input$nColA)
-        }
-        else{
-          p <- p + facet_grid(indicator~stock)
-        }
+        if (input$fitCIA == TRUE){p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)}
+        if(input$fitA==TRUE){p <- p + facet_wrap(indicator~stock, scales="free_y",ncol = input$nColA)}
+          else{p <- p + facet_grid(indicator~stock)}
         return(p)
         }
       
       
-      output$plotA <- renderPlot({
-        print(plotAdvice())
-      }#, height = PlotHeight_adv
-      )
+      values <- reactiveValues()
       
+      plot_height <- function() {
+        
+        if(input$fitA==FALSE){nrow <- length(input$indicatorA)}
+        else{nrow <- ceiling(length(input$stockA)*length(input$indicatorA)/input$nColA)}
+        
+        values$height <- ifelse(nrow == 1, 400, ifelse(nrow == 2, 600, ifelse(nrow == 3, 800, 250*nrow)))
+        return(values$height)
+      }
+      
+      plot_width <- function() {
+        
+        if(input$fitA==FALSE){ncol <- length(input$stockA)}
+        else{ncol <- min(c(input$nColA, length(input$stockA)*length(input$indicatorA)))}
+        
+        values$width <- ifelse(ncol == 1, 650, ifelse(ncol == 2, 970, 1300))
+        return(values$width)
+      }
+      
+      output$plotAs <- renderPlot({print(plotAdvice())})
+      
+      # wrap plotOutput in renderUI
+      output$plotA <- renderUI({plotOutput("plotAs", height = plot_height(), width = plot_width())})
+      
+    #  output$plotA <- renderUI({plotOutput("plotAs")}) #, height = plot_height(), width = plot_width())})
       
       # Code to download the plot
-      getAW <- function(){
-        return(input$fileWA)
-      }
-      
-      getAH <- function(){
-        return(input$fileHA)
-      }
-      
-      getAS <- function(){
-        return(input$fileScA)
-      }
+      getWA <- function(){return(input$fileWA)}
+      getHA <- function(){return(input$fileHA)}
+      getSA <- function(){return(input$fileScA)}
       
       # Download the plot
       output$downA <- downloadHandler(
@@ -1711,26 +1580,17 @@ print('three spider')
         },
         # content is a function with argument file. content writes the plot to the device
         content = function(file) {
-          ggsave(file, plotAdvice(), width = getAW(), height = getAH(), units = 'cm', scale = getAS())
+          ggsave(file, plotAdvice(), width = getWA(), height = getHA(), units = 'cm', scale = getSA())
         } 
       )
         
       
     })# end of the observe advice
     
-    print('ten')
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-    #### PAGE_simulation Summary_polar plots  ####
+#### PAGE_simulation Summary_polar plots  ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-  
-    # 
-    # PlotHeight_sum <- reactive({
-    #   
-    #   nids <- length(input$scenarioP)
-    #   
-    #   return(300*nids)})
-    
-    # print('caracola09')   
     #reactive: ssb and f
     st1 <- reactive({subset(bio, scenario %in% input$scenarioP & indicator %in% c("ssb", "f") & stock %in% input$stockP & year==input$yearP)[,c("stock","year","indicator", "scenario", "q50")]})
     st2 <- reactive({subset(bio, scenario %in% input$scenarioP & indicator %in% c("ssb", "f") & stock %in% input$stockP & year %in% input$rangeP)[,c("stock","year","indicator", "scenario", "q50")]})  
@@ -1792,8 +1652,6 @@ print('three spider')
 
       ymax <- max(c(dat.stpolar$ratio, dat.flpolar$ratio))*(1+sqrt(5))/2
   
-      # The number of 
-      #    # print('caracola22')    
       # Polar plot (ggplot)
       p <- ggplot(dat.stpolar, aes(x=ind, y=ratio))+
         geom_bar(data=dat.stpolar, aes(fill=stock), stat="identity", position="dodge", width=wst)+
@@ -1808,7 +1666,7 @@ print('three spider')
               axis.line.x = element_blank(),
               text=element_text(size=16),
               title=element_text(size=16,face="bold"),
-              strip.text=element_text(size=16))+
+              strip.text=element_text(size=16), legend.position="top")+
         geom_hline(aes(yintercept=1))+
         geom_vline(aes(xintercept=0), lwd=1)+
         geom_vline(aes(xintercept=wst*nst), lwd=1)+
@@ -1826,57 +1684,32 @@ print('three spider')
       
     }
     
-    output$plotP <- renderPlot({
-      # browser()
-        print(plotPolar())
-    }#, height = PlotHeight_sum
-    )
     
-    
-    # Case dependent plot size.
     values <- reactiveValues()
+    
     plot_height <- function() {
-      
-      facets <- length(input$scenarioP)
-      
-      values$facetsRows <- ifelse(facets/input$nColP == 1, 600, ifelse(facets/input$nColP == 2, 800, 
-                                                                           ifelse(facets/input$nColP == 3, 100, 300*ceiling(facets/input$nColP))))
-      return(values$facetsRows)
+       nrow <- ceiling(length(input$scenarioP)/input$nColP)
+      values$height <- ifelse(nrow == 1, 600, ifelse(nrow == 2, 900, ifelse(nrow == 3, 1100, 300*nrow)))
+      return(values$height)
     }
     
     plot_width <- function() {
-
-      values$facetsCols <- ifelse(input$nColP == 1, 600, ifelse(input$nColP <= 2, 900, 1200))
-      return(values$facetsCols)
+      ncol <- min(c(input$nColP, input$scenarioP))
+      values$width <- ifelse(ncol == 1, 550, ifelse(ncol == 2, 1000, 1300))
+      return(values$width)
     }
     
-    
-    output$plotPs<-renderPlot({
-      
-      print(plotPolar())
-    } #, height = PlotHeight_stk
-    )
+    output$plotPs<-renderPlot({print(plotPolar())})
     
     # wrap plotOutput in renderUI
-    output$plotP <- renderUI({
-      plotOutput("plotPs", height = plot_height(), width = plot_width())
-    })
-    
-    
+    output$plotP <- renderUI({plotOutput("plotPs", height = plot_height(), width = plot_width())})
+  
     
     
     # Code to download the plot
-    getPW <- function(){
-      return(input$fileWP)
-    }
-    
-    getPH <- function(){
-      return(input$fileHP)
-    }
-    
-    getPS <- function(){
-      return(input$fileScP)
-    }
+    getPW <- function(){return(input$fileWP)}
+    getPH <- function(){return(input$fileHP)}
+    getPS <- function(){return(input$fileScP)}
     
     # Download the plot
     output$downP <- downloadHandler(

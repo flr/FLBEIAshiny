@@ -1,0 +1,11 @@
+
+<p style="text-align:JUSTIFY">
+Kobe plots provide the trajectory of SSB and F pairs (in median) over time. They divide the plot area in 
+different quadrants defined by the ratio between SSB and F and their corresponding MSY values. 
+The green quadrant represents the area where the stock is sustainably exploited (SSB>Bmsy and F <Fmsy),
+the yellow the area where the stock is over-exploited (SSB<Bmsy and F<Fmsy), 
+the orange the area where the stock is over-fished (SSB>Bmsy and F>Fmsy), and 
+the red the area where the stock is over-exploited and over-fished (SSB<Bmsy and F>Fmsy).
+<BR>&nbsp;<BR>                   
+
+                     

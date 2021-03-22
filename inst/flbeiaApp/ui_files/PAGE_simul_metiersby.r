@@ -17,22 +17,22 @@ tabsetPanel(type = "tabs",
                  shinyBS::bsCollapsePanel("Graphs",
                   checkboxInput("fitCIMby", h5("Confident interval"), FALSE),
                   checkboxInput("fitMby", h5("Free scales"), FALSE),
+                  checkboxInput("dotLineMby", "Dot & Lines", FALSE),
+                  numericInput('lwdMby', h5("Line width"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
+                  numericInput('dszMby', h5("Dot size"), value = 1, min = 0, max = 5, step = 0.1, width = 100),
                   numericInput('nColMby', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
                   ),
                  shinyBS::bsCollapsePanel("Download",
-                 # Options for file downloading
-                 textInput('filenmMby', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                 numericInput('fileWMby', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-                 numericInput('fileHMby', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-                 numericInput('fileScMby', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-                 selectInput(inputId = "fileTypeMby", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                 downloadButton(outputId = "downMby", label = "Download the plot")
-                 ))),
-                column(9,
-                  plotOutput("plotMby", height = "600px", width = "900px")
-                ))),
-            
-            
+                     #  Options for file downloading
+                     fluidRow(column(8,textInput('filenmMby', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
+                              column(4,selectInput(inputId = "fileTypeMby", label = "File type", selected= "png", 
+                                         choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE))),
+                     fluidRow(column(3,numericInput('fileWMby', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
+                              column(3,numericInput('fileHMby', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
+                              column(3,numericInput('fileScMby', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
+                     downloadButton(outputId = "downMby", label = "Download the plot")))),
+                column(9, uiOutput("plotMby", inline =TRUE))
+                )),
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             #  Area plot
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,14 +54,15 @@ tabsetPanel(type = "tabs",
                                 numericInput('nColMbyA', h5("N.Col in facets"), value = 2, min = 1, max = 10, step = 1, width = 100)
                                                                     #hr(),
                                            ),
-                                           shinyBS::bsCollapsePanel("Download",  # Options for file downloading
-                                                                    textInput('filenmMbyA', h5("File Name"), value = "", width = NULL, placeholder = NULL),
-                                                                    numericInput('fileWMbyA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100),
-                                                                    numericInput('fileHMbyA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100),
-                                                                    numericInput('fileScMbyA', h5("Scale in ggsave"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100),
-                                                                    selectInput(inputId = "fileTypeMbyA", label = "Select the file type", selected= "png", choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE),
-                                                                    downloadButton(outputId = "downMbyA", label = "Download the plot")
-                                           ))),
-                column(9, plotOutput("plotFSMbyA", height = "600px", width = "900px")
-                )))
+                       shinyBS::bsCollapsePanel("Download",
+                                 #  Options for file downloading
+                                 fluidRow(column(8,textInput('filenmMbyA', h5("File Name"), value = "", width = NULL, placeholder = NULL)),
+                                          column(4,selectInput(inputId = "fileTypeMbyA", label = "File type", selected= "png", 
+                                                        choices = c("eps", "ps", "pdf", "jpeg", "tiff", "png", "bmp", "svg", "wmf"), multiple = FALSE))),
+                                 fluidRow(column(3,numericInput('fileWMbyA', h5("Width (cm)"), value = 14, min = 0, max = 25, step = 1, width = 100)),
+                                          column(3,numericInput('fileHMbyA', h5("Height (cm)"), value = 10, min = 0, max = 25, step = 1, width = 100)),
+                                          column(3,numericInput('fileScMbyA', h5("Scale"), value = 1.5, min = 0, max = 3, step = 0.1, width = 100))),
+                                 downloadButton(outputId = "downMbyA", label = "Download the plot")))),
+                column(9, uiOutput("plotFSMbyA", inline =TRUE))
+                ))
 )# end of the tabsetPanel

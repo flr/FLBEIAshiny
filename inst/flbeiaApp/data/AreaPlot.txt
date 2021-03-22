@@ -1,0 +1,8 @@
+
+<p style="text-align:JUSTIFY">
+Area plots show the composition, in median, of an specific indicator (catch, biomass...) over time. 
+Each coloured area corresponds with one stock, fleet or metier (depending on the case). 
+When several indicators  are selected simultaneously they are plotted in different facets. 
+<BR>&nbsp;<BR>                   
+
+                     

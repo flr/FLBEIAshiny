@@ -1,0 +1,12 @@
+
+<p style="text-align:JUSTIFY">
+Spider plots allow to compare the (median) value of an indicator along a big set of scenarios for a certain year. 
+The scenarios correspond with the edges of the web. The value is standardized comparing the value in one year 
+with a base year (year option) or with a base scenario (scenario option). Thus, the dashed black line correspond with 
+the unit circle, lines outside the circle represent values higher than in the base year or scenario and 
+those inside the circle represent lower values. The variables used to draw lines 
+and facets can be exchange, so lines can correspond with stock or fleets (depending on the case) and facets with
+indicators or the other way around.
+<BR>&nbsp;<BR>                   
+
+                     

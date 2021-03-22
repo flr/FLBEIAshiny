@@ -155,6 +155,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   library(schoolmath)
   library(dplyr)
   library(scales)
+  library(pals)
   
 
   

@@ -21,6 +21,7 @@ if(deploy == TRUE){
     library(dplyr)
     library(schoolmath)
     library(kobe)
+  library(pals)
  }
 # radar coordinate system for spider plots::
 

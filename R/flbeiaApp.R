@@ -369,9 +369,6 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   
   ## Assign object in globalenv() to code ui and sever
 
-  print(min(bio$year))
-  print(max(bio$year))
-  print((max(bio$year)-2):max(bio$year))
 
    assign("bio",        bio,envir = globalenv())
    assign("bioIt",      bioIt,envir = globalenv())

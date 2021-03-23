@@ -1624,7 +1624,7 @@ server <- function(input, output, session){
          
     #reactive: profits and capacity
     fl1 <- reactive({subset(flt, scenario %in% input$scenarioP & indicator %in% c("grossSurplus", "capacity") & fleet %in% input$fleetP & year==input$yearP)[,c("fleet","year","indicator", "scenario", "q50")]})
-    fl2 <- reactive({subset(flt, scenario %in% input$scenarioP & indicator %in% c("grossSurplus", "capacity") & fleet %in% input$fleetP & year==input$yearP)[,c("fleet","year","indicator", "scenario", "q50")]})
+    fl2 <- reactive({subset(flt, scenario %in% input$scenarioP & indicator %in% c("grossSurplus", "capacity") & fleet %in% input$fleetP & year %in% input$rangeP)[,c("fleet","year","indicator", "scenario", "q50")]})
 
 
     plotPolar <- function(){
@@ -1632,9 +1632,10 @@ server <- function(input, output, session){
       dat.stpolar <- NULL
       dat.flpolar <- NULL
       
-      st3 <- aggregate(q50 ~ stock + indicator + scenario, data=st2(), FUN=mean)
-      fl3 <- aggregate(q50 ~ fleet + indicator + scenario, data=fl2(), FUN=mean)
+      st3 <- aggregate(q50 ~ stock + indicator + scenario, data=st2(), FUN=mean, na.rm = TRUE)
+      fl3 <- aggregate(q50 ~ fleet + indicator + scenario, data=fl2(), FUN=mean, na.rm = TRUE)
 
+     # browser()
       # cuadrante superior: 2 biological indicators by stock:
       st <- merge(st1(), st3, by=c("indicator","stock", "scenario"))
       st$ratio <- st$q50.y/st$q50.x
@@ -1673,12 +1674,13 @@ server <- function(input, output, session){
       # Palettes for fleet and stock (alphabetic order 1:fleet and 2:stock)
       # Add more tones to this palette :
       palfl <- pals::glasbey()[length(glasbey()):1][1:nfl]
-      palst <- pals::glasbey()[1:nfl]
+      palst <- pals::glasbey()[1:nst]
       
       pal <- c(palfl, palst) # it will sort the categories in alphabetic order
 
-      ymax <- max(c(dat.stpolar$ratio, dat.flpolar$ratio))*(1+sqrt(5))/2
-  
+      ymax <- max(c(dat.stpolar$ratio, dat.flpolar$ratio), na.rm = TRUE)*1.05#(1+sqrt(5))/2
+
+
       # Polar plot (ggplot)
       p <- ggplot(dat.stpolar, aes(x=ind, y=ratio))+
         geom_bar(data=dat.stpolar, aes(fill=stock), stat="identity", position="dodge", width=wst)+
@@ -1700,10 +1702,10 @@ server <- function(input, output, session){
         geom_vline(aes(xintercept=wst*nst+wst*nst), lwd=1)+
         geom_vline(aes(xintercept=wst*nst+wst*nst+wfl*nfl), lwd=1)+
         xlim(c(0,4*w))+
-        annotate(geom="text",x=w/2, y=ymax, label=c("SSB"), size=6)+
-        annotate(geom="text",x=w*3/2, y=ymax, label=c("F"), size=6)+
-        annotate(geom="text",x=w*5/2, y=ymax, label=c("Capacity"), size=6)+
-        annotate(geom="text",x=w*7/2, y=ymax, label=c("Gross-Surplus"), size=6)+
+        annotate(geom="text",x=w/2, y=ymax*1.02, label=c("F"), size=6)+
+        annotate(geom="text",x=w*3/2, y=ymax*1.02, label=c("SSB"), size=6)+
+        annotate(geom="text",x=w*5/2, y=ymax*1.02, label=c("Capacity"), size=6)+
+        annotate(geom="text",x=w*7/2, y=ymax*1.02, label=c("Gross-Surplus"), size=6)+
         labs(fill="")+
         geom_text(aes(x=1, y = min(dat.flpolar$ratio),label = sum(npv$q50)))
       

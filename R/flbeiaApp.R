@@ -240,6 +240,13 @@ flbeiaApp <- function (flbeiaObjs = NULL,
  
  ## --------------------------------------------------------------------------
  
+ # When flbeiaObs is NULL and any of mt, mtQ... is NULL, create an empty object.
+ 
+ if(is.null(flbeiaObjs)){
+   if(is.null(mt))       mt <- data.frame(fleet = NA, metier = NA, indicator = NA, year = 9999, scenario = NA, q95 = NA, q50 = NA, q05 = NA)
+   if(is.null(mtStk)) mtStk <- data.frame(fleet = NA, metier = NA, indicator = NA, year = 9999, scenario = NA, q95 = NA, q50 = NA, q05 = NA)
+   
+ }
  ## --------------------------------------------------------------------------
  
  # Reduced version ::
@@ -361,6 +368,10 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   ## --------------------------------------------------------------------------
   
   ## Assign object in globalenv() to code ui and sever
+
+  print(min(bio$year))
+  print(max(bio$year))
+  print((max(bio$year)-2):max(bio$year))
 
    assign("bio",        bio,envir = globalenv())
    assign("bioIt",      bioIt,envir = globalenv())

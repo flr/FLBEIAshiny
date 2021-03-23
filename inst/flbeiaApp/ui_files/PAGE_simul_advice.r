@@ -8,7 +8,7 @@ tabsetPanel(type = "tabs",
               fluidRow(
                 column(3,
                   shinyBS::bsCollapse(id = "collapse", #open = "Stock and Indicator",
-                  shinyBS::bsCollapsePanel("Stock and Indicator",
+                  shinyBS::bsCollapsePanel("Select variables",
                   sliderInput("rangeA", label=h4("Years"), min(as.numeric(adv$year)), max(as.numeric(adv$year)), value=range(as.numeric(adv$year)),step = 1),
                   selectizeInput("stockA", label=h4("Stock"), levels(as.factor(adv$stock)), selected=unique(adv$stock)[1],multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),
                   selectizeInput("indicatorA", label=h4("Indicators"), levels(as.factor(adv$indicator)),selected="tac",multiple=T, options=list(plugins=list("remove_button", "drag_drop"))),

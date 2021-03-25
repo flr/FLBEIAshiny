@@ -1,6 +1,6 @@
 <p style="text-align:JUSTIFY">
 This plot summarizes, for a specific scenario, the biological and  economic results in a single plot. 
-Each quadrant represents one indicator SSB (top-left), F (top-right), Gross Surplus (bottom-left),
+Each quadrant represents one indicator F (top-left), SSB (top-right),  Gross Surplus (bottom-left),
 Capacity (bottom-right). The values of those indicators in a certain year (or the mean over a range of years) are
 compared with the values in a reference year. The black circle corresponds with the unit circle, so 
 areas outside the circle correspond with indicator values higher than in the reference year and those inside the circle represent lower values.

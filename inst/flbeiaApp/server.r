@@ -4,10 +4,10 @@
 source ("global.R") # radar plot function
 
 server <- function(input, output, session){
+  
 
   observe({
 
-      
       # By default stock and advice are always there.
       
       # Version fleet => default + fleet ones  + summary

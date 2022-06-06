@@ -132,7 +132,7 @@ server <- function(input, output, session){
           validate (
             need(nrow(datarpS())>0, "Please check if reference points are loaded or adequate indicator selected"))
           #p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
-          p <- p +geom_hline(data = datarpS(), aes(yintercept=value, group = interaction(scenario, refpt_type),  color= scenario, linetype=refpt_type), lwd =1)+
+          p <- p +geom_hline(data = datarpS(), aes(yintercept=value, group = interaction(scenario, ind_type),  color= scenario, linetype=refpt_type), lwd =1)+
             scale_linetype_manual(values = c(2:4))
           #! MK: debes cambiar para que acepte mas de un pto de referencia (poner distintos tipos de linea)
           }

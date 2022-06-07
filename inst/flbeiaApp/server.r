@@ -144,10 +144,10 @@ server <- function(input, output, session){
       }
       
       if(input$fitS == FALSE){
-          p <- p + facet_grid(stock~indicator)
+          p <- p + facet_grid(stock~ind_type)
       }
       else{
-          p <- p + facet_wrap(stock~indicator, scale = 'free_y', ncol = input$nColS)
+          p <- p + facet_wrap(stock~ind_type, scale = 'free_y', ncol = input$nColS)
       }
       
       cond1   <- any(sapply(c('pFlim','pFpa','pFtarget', 'pBlim','pBpa','pBtarget'), function(x) any(grepl(x, input$indicatorS))))

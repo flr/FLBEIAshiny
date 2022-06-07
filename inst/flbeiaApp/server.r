@@ -101,7 +101,7 @@ server <- function(input, output, session){
     datarpS<-reactive({
         req(input$stockS)
         RefPts[RefPts$stock%in%input$stockS
-                & RefPts$indicator%in%input$indicatorS
+                & RefPts$ind_type%in%input$indicatorS
                 & RefPts$scenario%in%input$scenarioS,]
       })
       

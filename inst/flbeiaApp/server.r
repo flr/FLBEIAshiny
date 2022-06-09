@@ -134,7 +134,8 @@ server <- function(input, output, session){
           #p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
           
           RefCol <- c(2,3,1)
-          names(RedCol) <- levels(datarpS()$refpt_type)
+          names(RefCol) <- c("LIM", "MSY", "PA")
+          
           p <- p +     
                 new_scale_color() +
                 geom_hline(data = datarpS(), aes(yintercept=value, group = interaction(scenario, ind_type),  color= refpt_type), lwd =1)+

@@ -21,7 +21,8 @@ if(deploy == TRUE){
     library(dplyr)
     library(schoolmath)
     library(kobe)
-  library(pals)
+    library(pals)
+    library(ggnewscale)
  }
 # radar coordinate system for spider plots::
 

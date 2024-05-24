@@ -399,7 +399,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    
    dir.create(file.path(getwd(), 'inst/flbeiaApp/data')) 
    save(deploy, file= "inst/flbeiaApp/data/deploy.RData")
-   save(deploy, file=file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/data/deploy.RData"))
+   save(deploy, file=file.path(.libPaths()[1], "FLBEIAshiny/flbeiaApp/data/deploy.RData"))
    
     
    

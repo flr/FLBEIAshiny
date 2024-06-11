@@ -22,7 +22,7 @@ if(deploy == TRUE){
     library(schoolmath)
     library(kobe)
     library(pals)
-    library(ggnewscale)
+    # library(ggnewscale)
  }
 # radar coordinate system for spider plots::
 

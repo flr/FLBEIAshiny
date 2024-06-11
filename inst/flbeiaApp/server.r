@@ -101,7 +101,7 @@ server <- function(input, output, session){
     datarpS<-reactive({
         req(input$stockS)
         RefPts[RefPts$stock%in%input$stockS
-                & RefPts$ind_type%in%input$indicatorS
+                & RefPts$indicator%in%input$indicatorS
                 & RefPts$scenario%in%input$scenarioS,]
       })
       
@@ -122,7 +122,7 @@ server <- function(input, output, session){
        }
 
       if(!is.null(proj.yr)){
-        p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dashed", lwd =1) # projection starting year 
+        p <- p +  geom_vline(data = dataS(), aes(xintercept=proj.yr), color="grey", linetype="dashed", lwd=1) # projection starting year 
       }
       
       if(input$dotLineS == TRUE) p <- p +  geom_point(data = dataS(), aes(x=year, y=q50, color=scenario), size = input$dszS)
@@ -132,16 +132,7 @@ server <- function(input, output, session){
           validate (
             need(nrow(datarpS())>0, "Please check if reference points are loaded or adequate indicator selected"))
           #p <- p +geom_hline(data = datarpS(), aes(yintercept=value), color="red", linetype="dotted", lwd =1)
-          
-          # RefCol <- c(2,3,1)
-          # names(RefCol) <- c("LIM", "MSY", "PA")
-          # 
-          # p <- p +     
-          #       new_scale_color() +
-          #       geom_hline(data = datarpS(), aes(yintercept=value, group = interaction(scenario, ind_type),  color= refpt_type), lwd =1)+
-          #       scale_color_manual(values = RefCol, name="Ref.Point")
-          
-          p <- p +geom_hline(data = datarpS(), aes(yintercept=value, group = interaction(scenario, ind_type),  color= scenario, linetype=refpt_type), lwd =1)+
+          p <- p + geom_hline(data = datarpS(), aes(yintercept=value, group = interaction(scenario, refpt_type),  color=scenario, linetype=refpt_type), lwd=1)+
             scale_linetype_manual(values = c(2:4))
           #! MK: decide cambiar lineas tipo por colores de lineas según: 
             # MSY = BERDEA
@@ -157,10 +148,10 @@ server <- function(input, output, session){
       }
       
       if(input$fitS == FALSE){
-          p <- p + facet_grid(stock~ind_type)
+          p <- p + facet_grid(stock~indicator)
       }
       else{
-          p <- p + facet_wrap(stock~ind_type, scale = 'free_y', ncol = input$nColS)
+          p <- p + facet_wrap(stock~indicator, scale = 'free_y', ncol = input$nColS)
       }
       
       cond1   <- any(sapply(c('pFlim','pFpa','pFtarget', 'pBlim','pBpa','pBtarget'), function(x) any(grepl(x, input$indicatorS))))

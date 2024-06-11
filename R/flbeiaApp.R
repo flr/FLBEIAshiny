@@ -140,7 +140,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        desc = NULL,
                        version = 'all',
                        deploy = FALSE,
-                       appName = paste('flbeiaApp', sample(1,1), sep = ""),
+                       appName = paste('flbeiaApp', Sys.Date(), sep = "_"),
                        appTitle = appName
                        ) {
   
@@ -184,11 +184,10 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     # reference_points$indicator[reference_points$indicator =="Fmsy"] <-"f"
     # # # ## *********************************
     
-    }
-  # else{
-  # 
-  #   reference_points <- RefPts
-  # }
+  } else {
+    # keep only required values
+    RefPts <- subset(RefPts, indicator%in% c('Bmsy','Fmsy','Bpa','Blim','Fpa','Flim'))[,c('stock','scenario','indicator','value')]
+  }
 
   if(!is.null(flbeiaObjs)){
     if(is.null(names(flbeiaObjs))){
@@ -202,7 +201,6 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     flt   <- NULL
     fltIt <- NULL
     fltStk <- NULL
-    # RefPts <- NULL
     mt     <- NULL
     mtStk  <- NULL
     adv    <- NULL
@@ -355,12 +353,14 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    # reference_points[reference_points$indicator %in% c("Fmsy","Fpa","Flim")] <-"f"
 
   # names(RefPts)<- c("stock", "scenario", "indicator","value")
-  RefPts$ind_type <- NA
-  RefPts$ind_type[RefPts$indicator %in% c("Bmsy","Bpa", "Blim")]  <-"ssb"
-  RefPts$ind_type[RefPts$indicator %in% c("Fmsy","Fpa","Flim")]   <-"f"
-  RefPts$refpt_type[RefPts$indicator %in% c("Fmsy","Bmsy")]   <-"MSY"
-  RefPts$refpt_type[RefPts$indicator %in% c("Fpa","Bpa")]     <-"PA"
-  RefPts$refpt_type[RefPts$indicator %in% c("Flim","Blim")]   <-"LIM"
+  RefPts$ind_name <- RefPts$indicator
+  RefPts$indicator <- NA
+  RefPts$indicator[RefPts$ind_name %in% c("Bmsy","Bpa", "Blim")]  <-"ssb"
+  RefPts$indicator[RefPts$ind_name %in% c("Fmsy","Fpa","Flim")]   <-"f"
+  RefPts$refpt_type[RefPts$ind_name %in% c("Fmsy","Bmsy")]   <-"MSY"
+  RefPts$refpt_type[RefPts$ind_name %in% c("Fpa","Bpa")]     <-"PA"
+  RefPts$refpt_type[RefPts$ind_name %in% c("Flim","Blim")]   <-"LIM"
+  
   
   
   ## --------------------------------------------------------------------------
@@ -397,7 +397,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    
    print('before deploy')
    
-   dir.create(file.path(getwd(), 'inst/flbeiaApp/data')) 
+   dir.create(file.path(getwd(), 'inst/flbeiaApp/data'), recursive = TRUE) 
    save(deploy, file= "inst/flbeiaApp/data/deploy.RData")
    save(deploy, file=file.path(.libPaths()[1], "FLBEIAshiny/flbeiaApp/data/deploy.RData"))
    

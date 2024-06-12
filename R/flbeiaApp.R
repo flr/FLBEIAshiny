@@ -24,7 +24,10 @@
 #' @param version c('all', 'stock', 'fleet'), the default is 'all'. Allows using a reduced version of the FLBEIA Shiny app 
 #'                (if 'all' , all the pages are shown, if 'stock' only the 'Stocks' and 'Advice' pages are shown and if 'fleet' 
 #'                 'Stock', 'Advice', 'Fleets', 'Fleets and Stock' and 'Summary' pages are shown.). 
-#' @param deploy logical (default = FALSE). The application is deployed in the external shiny server (shinyapps.io) configured in the computer.
+#' @param deploy logical (default = FALSE). The application is deployed in the external Shiny server (shinyapps.io) configured in the computer.
+#' @param appName Name of the application (default = paste('flbeiaApp', Sys.Date(), sep = "_")).
+#' @param appTitle Title of the Shiny App (default = appName), 
+#' @param appSave logical (default = FALSE). The application files and data are saved in appName folder for publishing the App in an external Shiny server (other than shinyapps.io).
 #' 
 #' @return The function launches a Shiny app to analyse the results of FLBEIA in an interactive way.
 #' 
@@ -140,8 +143,9 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        desc = NULL,
                        version = 'all',
                        deploy = FALSE,
-                       appName = paste('flbeiaApp', Sys.Date(), sep = "_"),
-                       appTitle = appName
+                       appName = paste('flbeiaApp', format(Sys.Date(), "%Y%m%d"), sep = "_"),
+                       appTitle = appName, 
+                       appSave = FALSE
                        ) {
   
   # Check: if flbeiaObjs != NULL --> necessarely bio = bioIt = flt = fltIt = fltStk = mt = mtStk = adv = risk = NULL
@@ -201,6 +205,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     flt   <- NULL
     fltIt <- NULL
     fltStk <- NULL
+    # RefPts <- NULL
     mt     <- NULL
     mtStk  <- NULL
     adv    <- NULL
@@ -362,7 +367,6 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   RefPts$refpt_type[RefPts$ind_name %in% c("Flim","Blim")]   <-"LIM"
   
   
-  
   ## --------------------------------------------------------------------------
   
   ## --------------------------------------------------------------------------
@@ -390,30 +394,41 @@ flbeiaApp <- function (flbeiaObjs = NULL,
    # assign("reference_points",  reference_points,envir = globalenv())
    # assign("bio.scaled", bio.scaled,envir = globalenv())
    # assign("flt.scaled", flt.scaled,envir = globalenv())
-   # 
+    
+   vars <- c("bio", "bioIt", "bio.kobe", "flt", "fltIt", "fltStk", 
+             "mt", "mtStk", "adv", "risk", "RefPts", "npv2", "npv", 
+             "proj.yr", "version", "data", "desc")
+   
    ## --------------------------------------------------------------------------
 
- # load('FLBEIAApp.Rdata')
+   # load('FLBEIAApp.Rdata')
    
    print('before deploy')
    
-   dir.create(file.path(getwd(), 'inst/flbeiaApp/data'), recursive = TRUE) 
-   save(deploy, file= "inst/flbeiaApp/data/deploy.RData")
    save(deploy, file=file.path(.libPaths()[1], "FLBEIAshiny/flbeiaApp/data/deploy.RData"))
    
-    
+   if (appSave == TRUE) {
+     # save data in the library
+     save(list = vars, file=file.path(.libPaths()[1], "FLBEIAshiny/flbeiaApp/data/App.RData"))
+     # copy files
+     if (!dir.exists(appName)) dir.create(appName)
+     file.copy(file.path(.libPaths()[1], "FLBEIAshiny/flbeiaApp"), 
+               file.path(appName), recursive = TRUE)
+   }
    
    if (deploy == FALSE){
-
+     
      print('deploy = FALSE: local application')
+     shiny::runApp(system.file('flbeiaApp', package='FLBEIAshiny'), launch.browser = TRUE)
      
-    shiny::runApp(system.file('flbeiaApp', package='FLBEIAshiny'), launch.browser = TRUE)
-   }
-   else{
-     print('deploy = TRUE: publish the application in an external server')
+   } else {
      
+     print('deploy = TRUE: publish the application in shinyapps.io')
+     
+     dir.create(file.path(getwd(), 'inst/flbeiaApp/data'), recursive = TRUE)
+     save(deploy, file= "inst/flbeiaApp/data/deploy.RData")
      save.image(file= "inst/flbeiaApp/data/App.RData")
-     save.image(file=file.path(.libPaths(), "FLBEIAshiny/flbeiaApp/data/App.RData"))
+     save.image(file=file.path(.libPaths()[1], "FLBEIAshiny/flbeiaApp/data/App.RData"))
      
       appDir <- file.path(getwd(), "inst/flbeiaApp")
       

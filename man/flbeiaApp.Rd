@@ -25,8 +25,9 @@ flbeiaApp(
   desc = NULL,
   version = "all",
   deploy = FALSE,
-  appName = paste("flbeiaApp", sample(1, 1), sep = ""),
-  appTitle = appName
+  appName = paste("flbeiaApp", Sys.Date(), sep = "_"),
+  appTitle = appName,
+  appSave = FALSE
 )
 }
 \arguments{
@@ -68,7 +69,13 @@ flbeiaApp(
 (if 'all' , all the pages are shown, if 'stock' only the 'Stocks' and 'Advice' pages are shown and if 'fleet' 
  'Stock', 'Advice', 'Fleets', 'Fleets and Stock' and 'Summary' pages are shown.).}
 
-\item{deploy}{logical (default = FALSE). The application is deployed in the external shiny server (shinyapps.io) configured in the computer.}
+\item{deploy}{logical (default = FALSE). The application is deployed in the external Shiny server (shinyapps.io) configured in the computer.}
+
+\item{appName}{Name of the application (default = paste('flbeiaApp', Sys.Date(), sep = "_")).}
+
+\item{appTitle}{Title of the Shiny App (default = appName),}
+
+\item{appSave}{logical (default = FALSE). The application files and data are saved in appName folder for publishing the App in an external Shiny server (other than shinyapps.io).}
 }
 \value{
 The function launches a Shiny app to analyse the results of FLBEIA in an interactive way.

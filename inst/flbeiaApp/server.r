@@ -143,8 +143,8 @@ server <- function(input, output, session){
       
       # Confidence intervals
       if (input$fitCIS == TRUE){
-        p <- p + geom_ribbon(data = dataS(), aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)#+
-                 #geom_ribbon(data = dataSI(), aes(x=year, ymin=q05, ymax=q95,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
+        p <- p + geom_ribbon(data = dataS(), aes(x=year, ymin=qmin, ymax=qmax, fill = scenario), alpha=0.3)#+
+                 #geom_ribbon(data = dataSI(), aes(x=year, ymin=qmin, ymax=qmax,group = interaction(scenario, iter), fill = scenario), alpha=0.1)
       }
       
       if(input$fitS == FALSE){
@@ -578,7 +578,7 @@ server <- function(input, output, session){
       if(input$dotLineF == TRUE) p <- p +  geom_point(data = dataF(), aes(x=year, y=q50, color=scenario), size = input$dszF)
       
       # With Conf Int.
-      if (input$fitCIF == TRUE){p <- p + geom_ribbon(data = dataF(),  aes(x=year, ymin=q05, ymax=q95,fill = scenario), alpha=0.3)}#+
+      if (input$fitCIF == TRUE){p <- p + geom_ribbon(data = dataF(),  aes(x=year, ymin=qmin, ymax=qmax,fill = scenario), alpha=0.3)}#+
                
       if(input$fitF==TRUE){p <- p + facet_wrap(fleet ~ indicator, ncol = input$nColF, scales="free_y")}
       else{p <- p + facet_grid(fleet ~ indicator)}
@@ -640,7 +640,7 @@ server <- function(input, output, session){
     plotNPV <- function(){
       ggplot(dataN(), aes(x=fleet, y=q50, group=scenario))+
         geom_point(aes(color=fleet),cex=2)+
-        geom_errorbar(aes(ymin=q05, ymax=q95, color=fleet), lwd=1)+
+        geom_errorbar(aes(ymin=qmin, ymax=qmax, color=fleet), lwd=1)+
         theme_bw()+
         facet_wrap(~scenario, ncol = input$nColNPV)+
         theme(text=element_text(size=16),
@@ -830,7 +830,7 @@ server <- function(input, output, session){
         
         if(input$dotLineM == TRUE) p <- p +  geom_point(data = dataM(), aes(x=year, y=q50, color=scenario), size = input$dszM)
         
-        if(input$fitCIM == TRUE)   p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+        if(input$fitCIM == TRUE)   p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=qmin, ymax=qmax,fill = scenario), alpha=0.3)
         
         if(input$fitM==TRUE){p <- p + facet_wrap(metier ~ indicator, scale = 'free_y',  ncol = input$nColM)}
         else{p <- p + facet_grid(metier ~ indicator)}
@@ -907,7 +907,7 @@ server <- function(input, output, session){
                       text=element_text(size=16), legend.position="top")
         
         if(input$fitCIFby == TRUE){
-          p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)
+          p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=qmin, ymax=qmax,fill = scenario), alpha=0.3)
         }
         
         if(input$dotLineFby == TRUE) p <- p +  geom_point(data = dataFby(), aes(x=year, y=q50, color=scenario), size = input$dszFby)
@@ -1396,7 +1396,7 @@ server <- function(input, output, session){
                       title=element_text(size=16),
                       text=element_text(size=16), legend.position="top")
 
-        if (input$fitCIMby == TRUE){p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)} 
+        if (input$fitCIMby == TRUE){p <- p + geom_ribbon(aes(x=as.numeric(year), ymin=qmin, ymax=qmax,fill = scenario), alpha=0.3)} 
         if(input$fitMby==TRUE){ p <- p + facet_wrap(metier*stock ~ indicator, ncol = input$nColMby, scales="free_y")}
         if(!is.null(proj.yr)){p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
           else{p <- p + facet_grid(metier*stock ~ indicator)}
@@ -1561,7 +1561,7 @@ server <- function(input, output, session){
         
        if(!is.null(proj.yr)){p <- p + geom_vline(aes(xintercept=proj.yr), color="grey", linetype="dotted", lwd =1)} # projection starting year 
           
-       if (input$fitCIA == TRUE){p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=q05, ymax=q95,fill = scenario), alpha=0.3)}
+       if (input$fitCIA == TRUE){p <- p +  geom_ribbon(aes(x=as.numeric(year), ymin=qmin, ymax=qmax,fill = scenario), alpha=0.3)}
         
        if(input$fitA==TRUE){p <- p + facet_wrap(indicator~stock, scales="free_y",ncol = input$nColA)}
           else{p <- p + facet_grid(indicator~stock)}

@@ -1,7 +1,7 @@
 Package: FLBEIAshiny
 Title: Shiny application to explore the output of FLBEIA simulation model
-Version: 2.0.3
-Date: 2024-06-11
+Version: 2.0.4
+Date: 2024-01-20
 Authors@R: c(person("Dorleta", "Garcia", email = "dgarcia@azti.es", role = c("cre")),
              person("Maria", "Korta", email = "mkorta@azti.es", role = c("aut")))
 Description: Shiny application to explore the output of FLBEIA simulation model
@@ -12,4 +12,4 @@ Depends:
 Additional_repositories: http://flr-project.org/R
 License: GPL-2
 VignetteBuilder: R.rsp
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.2

@@ -22,10 +22,11 @@ flbeiaApp(
   npv = NULL,
   npv.y0 = NULL,
   npv.yrs = NULL,
+  ci = 0.9,
   desc = NULL,
   version = "all",
   deploy = FALSE,
-  appName = paste("flbeiaApp", Sys.Date(), sep = "_"),
+  appName = paste("flbeiaApp", format(Sys.Date(), "\%Y\%m\%d"), sep = "_"),
   appTitle = appName,
   appSave = FALSE
 )

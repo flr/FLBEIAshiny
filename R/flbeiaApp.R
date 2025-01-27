@@ -140,6 +140,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
                        npv = NULL, 
                        npv.y0 = NULL, 
                        npv.yrs = NULL,
+                       ci = 0.90,
                        desc = NULL,
                        version = 'all',
                        deploy = FALSE,
@@ -163,6 +164,14 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   library(pals)
   
 
+  # Appropriate CI
+  
+  d <- (1-ci)/2
+  
+  probs <- c(d, 0.5, 1-d)
+  
+  qmin_name <- paste0("q", unlist(strsplit(ac(probs[1]), split = "[.]"))[2])
+  qmax_name <- paste0("q", unlist(strsplit(ac(probs[3]), split = "[.]"))[2])
   
  npv2 <- npv
 
@@ -209,22 +218,22 @@ flbeiaApp <- function (flbeiaObjs = NULL,
     mt     <- NULL
     mtStk  <- NULL
     adv    <- NULL
-    risk  <- NULL
+    risk   <- NULL
     npv2   <- NULL
 
     for(sc in names(flbeiaObjs)){
       print(sc)
       flbeiaObj <- flbeiaObjs[[sc]]
       aux     <- bioSum(flbeiaObj, scenario = sc, years = years, long = TRUE)
-      bio     <- rbind(bio,bioSumQ(aux))
+      bio     <- rbind(bio,bioSumQ(aux, prob = probs))
       bioIt   <- rbind(bioIt,aux)
       aux     <- fltSum(flbeiaObj, scenario = sc, years = years, long = TRUE)
-      flt     <- rbind(flt,fltSumQ(aux))
+      flt     <- rbind(flt,fltSumQ(aux, prob = probs))
       fltIt   <- rbind(fltIt,aux)
-      fltStk  <- rbind(fltStk,fltStkSumQ(fltStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
-      mt      <- rbind(mt,mtSumQ(mtSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
-      mtStk   <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
-      adv     <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years, long = TRUE)))
+      fltStk  <- rbind(fltStk,fltStkSumQ(fltStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE), prob = probs))
+      mt      <- rbind(mt,mtSumQ(mtSum(flbeiaObj, scenario = sc, years = years, long = TRUE), prob = probs))
+      mtStk   <- rbind(mtStk,mtStkSumQ(mtStkSum(flbeiaObj, scenario = sc, years = years, long = TRUE), prob = probs))
+      adv     <- rbind(adv,advSumQ(advSum(flbeiaObj, scenario = sc, years = years, long = TRUE), prob = probs))
 
       Bpa <- subset(RefPts, indicator=='Bpa' & scenario == sc)[,'value']
       names(Bpa) <- subset(RefPts, indicator=='Bpa' & scenario == sc)[,'stock']
@@ -233,7 +242,7 @@ flbeiaApp <- function (flbeiaObjs = NULL,
       risk   <- rbind(risk,riskSum(flbeiaObj, scenario = sc, Bpa = Bpa, Blim = Blim, Prflim = 0, years = years))
   
   if(calculate_npv == TRUE) 
-    npv2    <- rbind(npv2,npvQ(npv(flbeiaObj, scenario = sc, y0 = npv.y0, years = npv.yrs )))
+    npv2    <- rbind(npv2,npvQ(npv(flbeiaObj, scenario = sc, y0 = npv.y0, years = npv.yrs), prob = probs))
     }
     
     bioIt$iter <- as.factor(bioIt$iter)
@@ -243,13 +252,25 @@ flbeiaApp <- function (flbeiaObjs = NULL,
  
  ## --------------------------------------------------------------------------
  
+ civals <- function(x) x %>% dplyr::rename(qmin = qmin_name, qmax = qmax_name)
+ 
+ if (!is.null(bio))    bio    <- civals(bio)
+ if (!is.null(flt))    flt    <- civals(flt)
+ if (!is.null(fltStk)) fltStk <- civals(fltStk)
+ if (!is.null(mt))     mt     <- civals(mt)
+ if (!is.null(mtStk))  mtStk  <- civals(mtStk)
+ if (!is.null(adv))    adv    <- civals(adv)
+ 
+ ## --------------------------------------------------------------------------
+ 
  # When flbeiaObs is NULL and any of mt, mtQ... is NULL, create an empty object.
  
  if(is.null(flbeiaObjs)){
-   if(is.null(mt))       mt <- data.frame(fleet = NA, metier = NA, indicator = NA, year = 9999, scenario = NA, q95 = NA, q50 = NA, q05 = NA)
-   if(is.null(mtStk)) mtStk <- data.frame(fleet = NA, metier = NA, indicator = NA, year = 9999, scenario = NA, q95 = NA, q50 = NA, q05 = NA)
+   if(is.null(mt))       mt <- data.frame(fleet = NA, metier = NA, indicator = NA, year = 9999, scenario = NA, qmax = NA, q50 = NA, qmin = NA)
+   if(is.null(mtStk)) mtStk <- data.frame(fleet = NA, metier = NA, indicator = NA, year = 9999, scenario = NA, qmax = NA, q50 = NA, qmin = NA)
    
  }
+ 
  ## --------------------------------------------------------------------------
  
  # Reduced version ::
@@ -324,13 +345,13 @@ flbeiaApp <- function (flbeiaObjs = NULL,
   for(st in unique(RefPts$stock)){
     for(sc in unique(RefPts$scenario)){
       
-      bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'f', c('q05', 'q50','q95')] <- 
-            bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'f',  c('q05', 'q50','q95')]/
+      bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'f', c('qmin', 'q50','qmax')] <- 
+            bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'f',  c('qmin', 'q50','qmax')]/
             RefPts[RefPts$stock == st & RefPts$scenario == sc & RefPts$indicator == 'Fmsy', 'value']
       
       
-      bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'ssb',  c('q05', 'q50','q95')] <- 
-        bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'ssb',  c('q05', 'q50','q95')]/
+      bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'ssb',  c('qmin', 'q50','qmax')] <- 
+        bio.msy[bio.msy$stock == st & bio.msy$scenario == sc & bio.msy$indicator == 'ssb',  c('qmin', 'q50','qmax')]/
         RefPts[RefPts$stock == st & RefPts$scenario == sc & RefPts$indicator == 'Bmsy', 'value']
       
     }}
